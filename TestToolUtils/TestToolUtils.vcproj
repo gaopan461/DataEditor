@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(VSInstallDir)..\Lua\5.1\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\ToolUtils&quot;;&quot;$(VSInstallDir)..\Lua\5.1\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,9 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="lua51.lib"
+				AdditionalDependencies="lua51.lib ToolUtils.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(VSInstallDir)..\Lua\5.1\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)..\Debug\&quot;;&quot;$(VSInstallDir)..\Lua\5.1\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"

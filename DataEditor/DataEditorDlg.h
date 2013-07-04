@@ -3,13 +3,20 @@
 
 #pragma once
 
+#include "ACDef.h"
+#include "ToolBase.h"
+#include "ToolTree.h"
+#include "afxcmn.h"
+
+USE_NS_AC
 
 // CDataEditorDlg 对话框
-class CDataEditorDlg : public CDialog
+class CDataEditorDlg : public CDialog, public ToolBase
 {
 // 构造
 public:
 	CDataEditorDlg(CWnd* pParent = NULL);	// 标准构造函数
+	virtual ~CDataEditorDlg();
 
 // 对话框数据
 	enum { IDD = IDD_DATAEDITOR_DIALOG };
@@ -28,4 +35,12 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+public:
+	void InitTab();
+private:
+	ToolTree m_objMainTree;
+public:
+	CTabCtrl m_objMainTab;
 };

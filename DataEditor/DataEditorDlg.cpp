@@ -52,9 +52,15 @@ CDataEditorDlg::CDataEditorDlg(CWnd* pParent /*=NULL*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
+CDataEditorDlg::~CDataEditorDlg()
+{
+	DeInitTool();
+}
+
 void CDataEditorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_TAB1, m_objMainTab);
 }
 
 BEGIN_MESSAGE_MAP(CDataEditorDlg, CDialog)
@@ -62,6 +68,7 @@ BEGIN_MESSAGE_MAP(CDataEditorDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -95,6 +102,21 @@ BOOL CDataEditorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+
+	// 设置心跳，10ms一次
+	::SetTimer(m_hWnd,1,10,NULL);
+
+	// 初始化工具
+	InitTool("DataEditor",GetDlgItem(IDC_LOG)->m_hWnd);
+
+	// 初始化tab
+	InitTab();
+
+	INFO_MSG("--------------------------------------------\n");
+	INFO_MSG("               DataEditor Start             \n");
+	INFO_MSG("--------------------------------------------\n");
+
+	m_objMainTree.Create(CRect(10,10,180,340),this,IDC_TREE_MAIN);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -148,3 +170,39 @@ HCURSOR CDataEditorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+void CDataEditorDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+
+	if(nIDEvent == 1)
+	{
+		this->Update();
+	}
+
+	__super::OnTimer(nIDEvent);
+}
+
+void CDataEditorDlg::InitTab()
+{
+	lua_State* pLua = GetLuaState();
+	ACCHECK(pLua);
+
+	TCITEM item;
+	int index = 0;
+
+	m_pLuaConfig->PushTable("/Tables");
+
+	lua_pushnil(pLua);
+	while(lua_next(pLua,-2) != 0)
+	{
+		std::string strRName = m_pLuaConfig->GetString("./rname");
+		item.mask = TCIF_TEXT;
+		CString temp = ("%s",strRName.c_str());
+		item.pszText = temp.GetBuffer(0);
+		m_objMainTab.InsertItem(index++,&item);
+
+		lua_pop(pLua,1);
+	}
+	lua_pop(pLua,1);
+}

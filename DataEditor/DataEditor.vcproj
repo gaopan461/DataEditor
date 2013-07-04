@@ -22,7 +22,7 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
-			CharacterSet="1"
+			CharacterSet="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -45,6 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(VSInstallDir)..\Lua\5.1\include&quot;;&quot;$(ProjectDir)..\ToolUtils\Base&quot;;&quot;$(ProjectDir)..\ToolUtils\COptionTree&quot;;&quot;$(ProjectDir)..\ToolUtils\Utils&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -67,7 +68,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="ToolUtils.lib lua51.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(VSInstallDir)..\Lua\5.1\lib&quot;;&quot;$(ProjectDir)..\Debug&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -264,5 +267,9 @@
 		</File>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="DataEditor.rc"
+		/>
 	</Globals>
 </VisualStudioProject>

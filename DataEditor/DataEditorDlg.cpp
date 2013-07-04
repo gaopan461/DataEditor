@@ -69,6 +69,7 @@ BEGIN_MESSAGE_MAP(CDataEditorDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
 	ON_WM_TIMER()
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CDataEditorDlg::OnTcnSelchangeTab1)
 END_MESSAGE_MAP()
 
 
@@ -188,21 +189,47 @@ void CDataEditorDlg::InitTab()
 	lua_State* pLua = GetLuaState();
 	ACCHECK(pLua);
 
-	TCITEM item;
+	//设置页面的位置在m_tab控件范围内 
+	CRect rect; 
+	m_objMainTab.GetClientRect(&rect); 
+	rect.top += 28; 
+	rect.bottom -= 4; 
+	rect.left += 4; 
+	rect.right -= 4; 
+
 	int index = 0;
+	CString temp = ("%s",m_pLuaConfig->GetString("/Tables/MagicType/rname").c_str());
+	m_objMainTab.InsertItem(index,temp.GetBuffer(0));
+	m_objTabItem1.Create(IDD_TAB_DIALOG1,&m_objMainTab);
+	m_objTabItem1.MoveWindow(&rect);
 
-	m_pLuaConfig->PushTable("/Tables");
+	index++;
+	temp = ("%s",m_pLuaConfig->GetString("/Tables/AuraEffectType/rname").c_str());
+	m_objMainTab.InsertItem(index,temp.GetBuffer(0));
+	m_objTabItem2.Create(IDD_TAB_DIALOG2,&m_objMainTab);
+	m_objTabItem2.MoveWindow(&rect);
 
-	lua_pushnil(pLua);
-	while(lua_next(pLua,-2) != 0)
-	{
-		std::string strRName = m_pLuaConfig->GetString("./rname");
-		item.mask = TCIF_TEXT;
-		CString temp = ("%s",strRName.c_str());
-		item.pszText = temp.GetBuffer(0);
-		m_objMainTab.InsertItem(index++,&item);
+	m_objTabItem1.ShowWindow(TRUE);
+	m_objTabItem2.ShowWindow(FALSE);
+	m_objMainTab.SetCurSel(0);
+}
+void CDataEditorDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	// TODO: 在此添加控件通知处理程序代码
 
-		lua_pop(pLua,1);
+	int CurSel = m_objMainTab.GetCurSel(); 
+	switch(CurSel) 
+	{ 
+	case 0: 
+		m_objTabItem1.ShowWindow(TRUE); 
+		m_objTabItem2.ShowWindow(FALSE); 
+		break; 
+	case 1: 
+		m_objTabItem1.ShowWindow(FALSE); 
+		m_objTabItem2.ShowWindow(TRUE); 
+		break; 
+	default: ; 
 	}
-	lua_pop(pLua,1);
+
+	*pResult = 0;
 }

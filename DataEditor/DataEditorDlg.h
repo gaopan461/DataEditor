@@ -8,6 +8,10 @@
 #include "ToolTree.h"
 #include "afxcmn.h"
 
+#include <vector>
+#include "TabItemDialog1.h"
+#include "TabItemDialog2.h"
+
 USE_NS_AC
 
 // CDataEditorDlg ¶Ô»°¿ò
@@ -43,4 +47,9 @@ private:
 	ToolTree m_objMainTree;
 public:
 	CTabCtrl m_objMainTab;
+private:
+	TabItemDialog1 m_objTabItem1;
+	TabItemDialog2 m_objTabItem2;
+public:
+	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
 };

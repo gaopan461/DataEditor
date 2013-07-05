@@ -34,6 +34,7 @@ int LogMFC::Update()
 	if(!m_vtLogCache.empty())
 	{
 		std::string str = m_vtLogCache.front();
+		str = str + '\n';
 		m_vtLogCache.pop_front();
 		::SendMessage(m_lpPrintHwnd, LB_ADDSTRING, 0, (LPARAM)str.c_str());
 		::SendMessage(m_lpPrintHwnd, WM_VSCROLL, SB_PAGEDOWN, NULL);

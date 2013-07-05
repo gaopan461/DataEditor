@@ -2,7 +2,8 @@
 #define _AC_DEF_H_
 
 #define _CRT_SECURE_NO_WARNINGS
-#include <Windows.h>
+#include <afx.h>
+#include <afxwin.h>
 
 #include <vector>
 #include <string>

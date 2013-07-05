@@ -5,6 +5,8 @@
 #include "DataEditor.h"
 #include "DataEditorDlg.h"
 
+#include "ACString.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -113,9 +115,9 @@ BOOL CDataEditorDlg::OnInitDialog()
 	// 初始化tab
 	InitTab();
 
-	INFO_MSG("--------------------------------------------\n");
-	INFO_MSG("               DataEditor Start             \n");
-	INFO_MSG("--------------------------------------------\n");
+	INFO_MSG("--------------------------------------------");
+	INFO_MSG("               DataEditor Start             ");
+	INFO_MSG("--------------------------------------------");
 
 	m_objMainTree.Create(CRect(10,10,180,340),this,IDC_TREE_MAIN);
 
@@ -186,9 +188,6 @@ void CDataEditorDlg::OnTimer(UINT_PTR nIDEvent)
 
 void CDataEditorDlg::InitTab()
 {
-	lua_State* pLua = GetLuaState();
-	ACCHECK(pLua);
-
 	//设置页面的位置在m_tab控件范围内 
 	CRect rect; 
 	m_objMainTab.GetClientRect(&rect); 
@@ -198,14 +197,19 @@ void CDataEditorDlg::InitTab()
 	rect.right -= 4; 
 
 	int index = 0;
-	CString temp = ("%s",m_pLuaConfig->GetString("/Tables/MagicType/rname").c_str());
-	m_objMainTab.InsertItem(index,temp.GetBuffer(0));
+	std::string str;
+	CString cstr;
+
+	str = m_pLuaConfig->GetString("/Config/MagicType/Name");
+	cstr = StlStringToCString(str);
+	m_objMainTab.InsertItem(index,cstr.GetBuffer(0));
 	m_objTabItem1.Create(IDD_TAB_DIALOG1,&m_objMainTab);
 	m_objTabItem1.MoveWindow(&rect);
 
 	index++;
-	temp = ("%s",m_pLuaConfig->GetString("/Tables/AuraEffectType/rname").c_str());
-	m_objMainTab.InsertItem(index,temp.GetBuffer(0));
+	str = m_pLuaConfig->GetString("/Config/AuraEffectType/Name");
+	cstr = StlStringToCString(str);
+	m_objMainTab.InsertItem(index,cstr.GetBuffer(0));
 	m_objTabItem2.Create(IDD_TAB_DIALOG2,&m_objMainTab);
 	m_objTabItem2.MoveWindow(&rect);
 

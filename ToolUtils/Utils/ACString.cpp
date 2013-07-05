@@ -21,4 +21,10 @@ void SplitString(const std::string& strSrc, std::vector<std::string>& vtDst, cha
 	vtDst.push_back(&strSrc[spos]);
 };
 
+CString StlStringToCString(const std::string& str)
+{
+	CString cstr = ("%s",str.c_str());
+	return cstr;
+}
+
 END_NS_AC

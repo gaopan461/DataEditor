@@ -71,7 +71,7 @@ void LogEx::AddFacility(LogFacilityBase* pFacility)
 
 void LogFacilityConsole::Output(const std::string& str)
 {
-	std::cout << str;
+	std::cout << str << std::endl;
 }
 
 //------------------------------------------------------
@@ -87,7 +87,8 @@ LogFacilityFile::~LogFacilityFile()
 
 void LogFacilityFile::Output(const std::string &str)
 {
-	m_objFileStream << str;
+	m_objFileStream << str << '\n';
+	m_objFileStream.flush();
 }
 
 END_NS_AC

@@ -17,6 +17,9 @@
 #define AC_LOG
 #define AC_DEBUG
 
+#define MAIN_TREE_WIDTH 180
+#define MAIN_LOG_HEIGHT 150
+
 BEGIN_NS_AC
 
 inline void InnerAssert(const char* _strExp, const char* _strFile, int _nLine)

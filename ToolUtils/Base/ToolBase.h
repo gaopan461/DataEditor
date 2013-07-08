@@ -7,6 +7,7 @@
 #include <afxwin.h>
 #include "ACThreadGuard.h"
 #include "ACLuaUtils.h"
+#include "ACTabCtrl.h"
 
 BEGIN_NS_AC
 
@@ -93,13 +94,13 @@ public:
 	ToolBase();
 	virtual ~ToolBase();
 public:
-	virtual int InitTool(const std::string& filename, HWND lpPrintHwnd);
+	virtual int InitTool(CWnd* pParent, const std::string& strAppName);
 	virtual int Update();
 	virtual void DeInitTool();
 public:
 	lua_State* GetLuaState()
 	{
-		return m_pLuaConfig->GetLuaState();
+		return m_objConfig.GetLuaState();
 	}
 public:
 	static ToolBase& Instance()
@@ -107,9 +108,14 @@ public:
 		return *m_pInstance;
 	}
 private:
+	void InitLog(CWnd* pParent, const std::string& strAppName);
+	void LoadConfig(const std::string& strAppName);
+private:
 	static ToolBase* m_pInstance;
 protected:
-	LuaConfig* m_pLuaConfig;
+	LuaConfig m_objConfig;
+	ACTabCtrl m_objMainTab;
+	CListBox m_objLogWnd;
 };
 
 END_NS_AC

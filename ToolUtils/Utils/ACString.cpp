@@ -21,10 +21,24 @@ void SplitString(const std::string& strSrc, std::vector<std::string>& vtDst, cha
 	vtDst.push_back(&strSrc[spos]);
 };
 
-CString StlStringToCString(const std::string& str)
+CString StlStringToCString(const std::string& stlstr)
 {
-	CString cstr = ("%s",str.c_str());
+	int nLength = stlstr.length();
+	TCHAR* pszBuffer = new TCHAR[nLength + 1];
+	mbstowcs(pszBuffer, stlstr.c_str(), nLength + 1);
+	CString cstr = pszBuffer;
+	delete[] pszBuffer;
 	return cstr;
+}
+
+std::string CStringToStlString(const CString& cstr)
+{
+	int nLength = wcslen(cstr.GetString()) * 2;
+	char* pszBuffer = new char[nLength + 1];
+	wcstombs(pszBuffer, cstr.GetString(), nLength + 1);
+	std::string stlstr = pszBuffer;
+	delete[] pszBuffer;
+	return stlstr;
 }
 
 END_NS_AC

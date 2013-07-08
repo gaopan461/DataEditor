@@ -7,13 +7,7 @@
 #define IDS_ABOUTBOX                    101
 #define IDD_DATAEDITOR_DIALOG           102
 #define IDR_MAINFRAME                   128
-#define IDD_TAB_DIALOG1                 129
-#define IDD_TAB_DIALOG2                 130
-#define IDC_TREE1                       1000
 #define IDC_TREE_MAIN                   1000
-#define IDC_TAB1                        1001
-#define IDC_LOG                         1002
-#define IDC_BUTTON1                     1003
 
 // Next default values for new objects
 // 

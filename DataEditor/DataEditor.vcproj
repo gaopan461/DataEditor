@@ -23,7 +23,7 @@
 			ConfigurationType="1"
 			UseOfMFC="2"
 			UseOfATL="0"
-			CharacterSet="0"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -217,14 +217,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\TabItemDialog1.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TabItemDialog2.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Í·ÎÄ¼þ"
@@ -245,14 +237,6 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TabItemDialog1.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TabItemDialog2.h"
 				>
 			</File>
 			<File

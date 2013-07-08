@@ -2,6 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DataEditor", "DataEditor\DataEditor.vcproj", "{44CCB79E-DCBC-406F-84D5-3414717CD537}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9926FBFC-04B9-44AB-BAFD-0B267A6263D1} = {9926FBFC-04B9-44AB-BAFD-0B267A6263D1}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestToolUtils", "TestToolUtils\TestToolUtils.vcproj", "{7E46569D-58EB-4EDE-B71D-BF7956DA11AA}"
 EndProject

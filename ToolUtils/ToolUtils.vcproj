@@ -22,7 +22,7 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
 			UseOfMFC="2"
-			CharacterSet="0"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -214,6 +214,22 @@
 		<Filter
 			Name="Base"
 			>
+			<File
+				RelativePath=".\Base\ACTabCtrl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ACTabCtrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\BasicExcel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\BasicExcel.h"
+				>
+			</File>
 			<File
 				RelativePath=".\Base\CheckComboBox.cpp"
 				>

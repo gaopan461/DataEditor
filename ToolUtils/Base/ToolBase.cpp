@@ -1,8 +1,11 @@
 #include "stdafx.h"
 #include "ToolBase.h"
 #include "ACThreadGuard.h"
+#include "ACString.h"
 
 BEGIN_NS_AC
+
+#define IDC_LOG 2002
 
 LogMFC* LogMFC::m_pInstance = 0;
 long LogMFC::m_nSingletonGuard = 0;
@@ -34,9 +37,9 @@ int LogMFC::Update()
 	if(!m_vtLogCache.empty())
 	{
 		std::string str = m_vtLogCache.front();
-		str = str + '\n';
 		m_vtLogCache.pop_front();
-		::SendMessage(m_lpPrintHwnd, LB_ADDSTRING, 0, (LPARAM)str.c_str());
+		CString cstr = StlStringToCString(str);
+		::SendMessage(m_lpPrintHwnd, LB_ADDSTRING, 0, (LPARAM)cstr.GetBuffer());
 		::SendMessage(m_lpPrintHwnd, WM_VSCROLL, SB_PAGEDOWN, NULL);
 	}
 
@@ -81,22 +84,39 @@ ToolBase::ToolBase()
 
 ToolBase::~ToolBase()
 {
+	DeInitTool();
 	m_pInstance = NULL;
 }
 
-int ToolBase::InitTool(const std::string& filename, HWND lpPrintHwnd)
+int ToolBase::InitTool(CWnd* pParent, const std::string& strAppName)
 {
-	//初始化日志
-	std::string strLogFileName = filename + ".txt";
+	InitLog(pParent, strAppName);
+	LoadConfig(strAppName);
+	m_objMainTab.Init(pParent,m_objConfig);
+	return 0;
+}
+
+void ToolBase::InitLog(CWnd* pParent, const std::string& strAppName)
+{
+	CRect prect,rect;
+	pParent->GetClientRect(&prect);
+	rect.left = prect.left + 20 + MAIN_TREE_WIDTH;
+	rect.top = prect.bottom - 10 - MAIN_LOG_HEIGHT;
+	rect.right = prect.right - 10;
+	rect.bottom = prect.bottom - 10;
+
+	m_objLogWnd.Create(WS_CHILD|WS_VISIBLE|WS_BORDER, rect, pParent, IDC_LOG);
+
+	std::string strLogFileName = strAppName + ".txt";
 	Log::Instance().AddFacility(new LogFacilityFile(strLogFileName));
 	Log::Instance().AddFacility(new LogFacilityMFC());
-	LogMFC::Instance().OpenLog(lpPrintHwnd);
+	LogMFC::Instance().OpenLog(m_objLogWnd.m_hWnd);
+}
 
-	//lua相关初始化
-	std::string strConfigFileName = filename + ".lua";
-	m_pLuaConfig = new LuaConfig(strConfigFileName);
-
-	return 0;
+void ToolBase::LoadConfig(const std::string& strAppName)
+{
+	std::string strConfigFileName = strAppName + ".lua";
+	m_objConfig.Load(strConfigFileName);
 }
 
 int ToolBase::Update()
@@ -108,8 +128,6 @@ int ToolBase::Update()
 void ToolBase::DeInitTool()
 {
 	LogMFC::Instance().CloseLog();
-
-	delete m_pLuaConfig;
 }
 
 END_NS_AC

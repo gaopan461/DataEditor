@@ -5,27 +5,29 @@
 
 BEGIN_NS_AC
 
-LuaConfig::LuaConfig(const std::string& strFileName)
+LuaConfig::LuaConfig()
 {
 	m_pLua = luaL_newstate();
 	luaL_openlibs(m_pLua);
-
-	int ret = luaL_dofile(m_pLua,strFileName.c_str());
-	if(ret != 0)
-	{
-		ERROR_MSG("%s",lua_tostring(m_pLua,-1));
-		lua_close(m_pLua);
-		m_pLua = NULL;
-	}
 }
 
 LuaConfig::~LuaConfig()
 {
-	if(m_pLua)
+	lua_close(m_pLua);
+}
+
+int LuaConfig::Load(const std::string& strFileName)
+{
+	int ret = luaL_dofile(m_pLua,strFileName.c_str());
+	if(ret != 0)
 	{
-		lua_close(m_pLua);
-		m_pLua = NULL;
+		CString strErr;
+		strErr.Format(_T("LuaConfig,load config failed : %s"),strFileName.c_str());
+		AfxMessageBox(strErr.GetBuffer());
+		ExitProcess(-1);
 	}
+
+	return ret;
 }
 
 int LuaConfig::GetInteger(const std::string& strParamName)

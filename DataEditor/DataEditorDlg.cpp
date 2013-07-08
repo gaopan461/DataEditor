@@ -56,13 +56,11 @@ CDataEditorDlg::CDataEditorDlg(CWnd* pParent /*=NULL*/)
 
 CDataEditorDlg::~CDataEditorDlg()
 {
-	DeInitTool();
 }
 
 void CDataEditorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_TAB1, m_objMainTab);
 }
 
 BEGIN_MESSAGE_MAP(CDataEditorDlg, CDialog)
@@ -71,7 +69,6 @@ BEGIN_MESSAGE_MAP(CDataEditorDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
 	ON_WM_TIMER()
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CDataEditorDlg::OnTcnSelchangeTab1)
 END_MESSAGE_MAP()
 
 
@@ -106,20 +103,29 @@ BOOL CDataEditorDlg::OnInitDialog()
 
 	// TODO: 在此添加额外的初始化代码
 
+	_tsetlocale(LC_ALL, _T(""));
+
 	// 设置心跳，10ms一次
 	::SetTimer(m_hWnd,1,10,NULL);
 
 	// 初始化工具
-	InitTool("DataEditor",GetDlgItem(IDC_LOG)->m_hWnd);
+	InitTool(this,"DataEditor");
 
 	// 初始化tab
-	InitTab();
+	//InitTab();
 
 	INFO_MSG("--------------------------------------------");
 	INFO_MSG("               DataEditor Start             ");
 	INFO_MSG("--------------------------------------------");
 
-	m_objMainTree.Create(CRect(10,10,180,340),this,IDC_TREE_MAIN);
+	CRect prect,rect;
+	GetClientRect(&prect);
+	rect.left = prect.left + 10;
+	rect.top = prect.top + 10;
+	rect.right = prect.left + MAIN_TREE_WIDTH;
+	rect.bottom = prect.bottom - 10;
+
+	m_objMainTree.Create(rect, this, IDC_TREE_MAIN);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -186,7 +192,7 @@ void CDataEditorDlg::OnTimer(UINT_PTR nIDEvent)
 	__super::OnTimer(nIDEvent);
 }
 
-void CDataEditorDlg::InitTab()
+/*void CDataEditorDlg::InitTab()
 {
 	//设置页面的位置在m_tab控件范围内 
 	CRect rect; 
@@ -202,38 +208,18 @@ void CDataEditorDlg::InitTab()
 
 	str = m_pLuaConfig->GetString("/Config/MagicType/Name");
 	cstr = StlStringToCString(str);
-	m_objMainTab.InsertItem(index,cstr.GetBuffer(0));
+	m_objMainTab.InsertItem(index,cstr);
 	m_objTabItem1.Create(IDD_TAB_DIALOG1,&m_objMainTab);
 	m_objTabItem1.MoveWindow(&rect);
 
 	index++;
 	str = m_pLuaConfig->GetString("/Config/AuraEffectType/Name");
 	cstr = StlStringToCString(str);
-	m_objMainTab.InsertItem(index,cstr.GetBuffer(0));
+	m_objMainTab.InsertItem(index,cstr);
 	m_objTabItem2.Create(IDD_TAB_DIALOG2,&m_objMainTab);
 	m_objTabItem2.MoveWindow(&rect);
 
 	m_objTabItem1.ShowWindow(TRUE);
 	m_objTabItem2.ShowWindow(FALSE);
 	m_objMainTab.SetCurSel(0);
-}
-void CDataEditorDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	// TODO: 在此添加控件通知处理程序代码
-
-	int CurSel = m_objMainTab.GetCurSel(); 
-	switch(CurSel) 
-	{ 
-	case 0: 
-		m_objTabItem1.ShowWindow(TRUE); 
-		m_objTabItem2.ShowWindow(FALSE); 
-		break; 
-	case 1: 
-		m_objTabItem1.ShowWindow(FALSE); 
-		m_objTabItem2.ShowWindow(TRUE); 
-		break; 
-	default: ; 
-	}
-
-	*pResult = 0;
-}
+}*/

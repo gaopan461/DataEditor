@@ -161,7 +161,7 @@ void COptionTreeColorPopUp::Initialize()
         CLIP_DEFAULT_PRECIS, // ClipPrecision
         DEFAULT_QUALITY, // Quality
         DEFAULT_PITCH | FF_SWISS, // PitchAndFamily
-        "MS Sans Serif"); // Facename
+        _T("MS Sans Serif")); // Facename
 
     // Create the palette
     pLogPalette = (LOGPALETTE*) &pal;

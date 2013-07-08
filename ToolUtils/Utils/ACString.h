@@ -8,7 +8,8 @@
 BEGIN_NS_AC
 
 void SplitString( const std::string& strSrc ,std::vector<std::string>& vtDst ,char cSep );
-CString StlStringToCString(const std::string& str);
+CString StlStringToCString(const std::string& stlstr);
+std::string CStringToStlString(const CString& cstr);
 
 END_NS_AC
 

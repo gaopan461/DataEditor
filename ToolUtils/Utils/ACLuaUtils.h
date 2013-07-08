@@ -11,8 +11,10 @@ BEGIN_NS_AC
 class LuaConfig
 {
 public:
-	LuaConfig(const std::string& strFileName);
+	LuaConfig();
 	~LuaConfig();
+public:
+	int Load(const std::string& strFileName);
 public:
 	int GetInteger(const std::string& strParamName);
 	std::string GetString(const std::string& strParamName);

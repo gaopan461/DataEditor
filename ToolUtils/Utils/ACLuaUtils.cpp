@@ -21,8 +21,9 @@ int LuaConfig::Load(const std::string& strFileName)
 	int ret = luaL_dofile(m_pLua,strFileName.c_str());
 	if(ret != 0)
 	{
+		std::string strLuaError = lua_tostring(m_pLua,-1);
 		CString strErr;
-		strErr.Format(_T("LuaConfig,load config failed : %s"),strFileName.c_str());
+		strErr.Format(_T("Load config failed : %s"),StlStringToCString(strLuaError));
 		AfxMessageBox(strErr.GetBuffer());
 		ExitProcess(-1);
 	}

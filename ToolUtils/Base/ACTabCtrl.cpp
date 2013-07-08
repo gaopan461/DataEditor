@@ -8,7 +8,6 @@
 
 BEGIN_NS_AC
 
-#define IDC_MAIN_TAB 2000
 #define IDC_TAB_ITEM 2100
 
 // ACTabCtrl
@@ -49,34 +48,11 @@ void ACTabCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 }
 
-void ACTabCtrl::Init(CWnd* pParent, LuaConfig& rConfig)
-{
-	Create(pParent);
-
-	InitTabItems(rConfig);
-}
-
 void ACTabCtrl::InitTabItems(LuaConfig& rConfig)
 {
 	// 初始化tab选项卡
 	AddTabItem(_T("技能"), _T("技能.xls"));
 	AddTabItem(_T("Buff"), _T("Buff.xls"));
-}
-
-void ACTabCtrl::Create(CWnd* pParent)
-{
-	CRect prect,rect;
-	pParent->GetClientRect(&prect);
-	rect.left = prect.left + 20 + MAIN_TREE_WIDTH;
-	rect.top = prect.top + 10;
-	rect.right = prect.right - 10;
-	rect.bottom = prect.bottom - 20 - MAIN_LOG_HEIGHT;
-
-	if(!CTabCtrl::Create(WS_CHILD|WS_VISIBLE,rect,pParent,IDC_MAIN_TAB))
-	{
-		AfxMessageBox(_T("Create main tab ctrl failed!"));
-		ExitProcess(-1);
-	}
 }
 
 void ACTabCtrl::AddTabItem(const CString& strName, const CString& strExcel)

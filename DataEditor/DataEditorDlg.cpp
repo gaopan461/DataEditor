@@ -111,22 +111,6 @@ BOOL CDataEditorDlg::OnInitDialog()
 	// 初始化工具
 	InitTool(this,"DataEditor");
 
-	// 初始化tab
-	//InitTab();
-
-	INFO_MSG("--------------------------------------------");
-	INFO_MSG("               DataEditor Start             ");
-	INFO_MSG("--------------------------------------------");
-
-	CRect prect,rect;
-	GetClientRect(&prect);
-	rect.left = prect.left + 10;
-	rect.top = prect.top + 10;
-	rect.right = prect.left + MAIN_TREE_WIDTH;
-	rect.bottom = prect.bottom - 10;
-
-	m_objMainTree.Create(rect, this, IDC_TREE_MAIN);
-
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 

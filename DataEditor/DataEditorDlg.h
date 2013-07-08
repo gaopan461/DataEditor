@@ -3,12 +3,7 @@
 
 #pragma once
 
-#include "ACDef.h"
 #include "ToolBase.h"
-#include "ToolTree.h"
-#include "afxcmn.h"
-
-#include <vector>
 
 USE_NS_AC
 
@@ -39,6 +34,4 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-private:
-	ToolTree m_objMainTree;
 };

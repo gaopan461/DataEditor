@@ -31,11 +31,10 @@ public:
 	virtual ~ACTabCtrl();
 
 public:
-	void Init(CWnd* pParent, LuaConfig& rConfig);
+	void InitTabItems(LuaConfig& rConfig);
 
 protected:
-	void InitTabItems(LuaConfig& rConfig);
-	void Create(CWnd* pParent);
+	
 	void AddTabItem(const CString& strName, const CString& strExcel);
 
 protected:

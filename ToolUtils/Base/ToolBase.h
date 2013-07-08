@@ -8,6 +8,7 @@
 #include "ACThreadGuard.h"
 #include "ACLuaUtils.h"
 #include "ACTabCtrl.h"
+#include "ToolTree.h"
 
 BEGIN_NS_AC
 
@@ -108,7 +109,9 @@ public:
 		return *m_pInstance;
 	}
 private:
-	void InitLog(CWnd* pParent, const std::string& strAppName);
+	void CreateLogWnd(CWnd* pParent, const std::string& strAppName);
+	void CreateMainTree(CWnd* pParent);
+	void CreateMainTab(CWnd* pParent);
 	void LoadConfig(const std::string& strAppName);
 private:
 	static ToolBase* m_pInstance;
@@ -116,6 +119,7 @@ protected:
 	LuaConfig m_objConfig;
 	ACTabCtrl m_objMainTab;
 	CListBox m_objLogWnd;
+	ToolTree m_objMainTree;
 };
 
 END_NS_AC

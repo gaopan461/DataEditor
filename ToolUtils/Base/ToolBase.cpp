@@ -5,6 +5,8 @@
 
 BEGIN_NS_AC
 
+#define IDC_MAIN_TAB 2000
+#define IDC_MAIN_TREE 2001
 #define IDC_LOG 2002
 
 LogMFC* LogMFC::m_pInstance = 0;
@@ -90,13 +92,20 @@ ToolBase::~ToolBase()
 
 int ToolBase::InitTool(CWnd* pParent, const std::string& strAppName)
 {
-	InitLog(pParent, strAppName);
 	LoadConfig(strAppName);
-	m_objMainTab.Init(pParent,m_objConfig);
+
+	CreateLogWnd(pParent, strAppName);
+	CreateMainTab(pParent);
+	CreateMainTree(pParent);
+
+	INFO_MSG("--------------------------------------------");
+	INFO_MSG("               %s Start             ",strAppName.c_str());
+	INFO_MSG("--------------------------------------------");
+
 	return 0;
 }
 
-void ToolBase::InitLog(CWnd* pParent, const std::string& strAppName)
+void ToolBase::CreateLogWnd(CWnd* pParent, const std::string& strAppName)
 {
 	CRect prect,rect;
 	pParent->GetClientRect(&prect);
@@ -105,12 +114,50 @@ void ToolBase::InitLog(CWnd* pParent, const std::string& strAppName)
 	rect.right = prect.right - 10;
 	rect.bottom = prect.bottom - 10;
 
-	m_objLogWnd.Create(WS_CHILD|WS_VISIBLE|WS_BORDER, rect, pParent, IDC_LOG);
+	if(!m_objLogWnd.Create(WS_CHILD|WS_VISIBLE|WS_BORDER, rect, pParent, IDC_LOG))
+	{
+		AfxMessageBox(_T("Create log window failed!"));
+		ExitProcess(-1);
+	}
 
 	std::string strLogFileName = strAppName + ".txt";
 	Log::Instance().AddFacility(new LogFacilityFile(strLogFileName));
 	Log::Instance().AddFacility(new LogFacilityMFC());
 	LogMFC::Instance().OpenLog(m_objLogWnd.m_hWnd);
+}
+
+void ToolBase::CreateMainTree(CWnd* pParent)
+{
+	CRect prect,rect;
+	pParent->GetClientRect(&prect);
+	rect.left = prect.left + 10;
+	rect.top = prect.top + 10;
+	rect.right = prect.left + MAIN_TREE_WIDTH;
+	rect.bottom = prect.bottom - 10;
+
+	if(!m_objMainTree.Create(rect, pParent, IDC_MAIN_TREE))
+	{
+		AfxMessageBox(_T("Create main tree failed!"));
+		ExitProcess(-1);
+	}
+}
+
+void ToolBase::CreateMainTab(CWnd* pParent)
+{
+	CRect prect,rect;
+	pParent->GetClientRect(&prect);
+	rect.left = prect.left + 20 + MAIN_TREE_WIDTH;
+	rect.top = prect.top + 10;
+	rect.right = prect.right - 10;
+	rect.bottom = prect.bottom - 20 - MAIN_LOG_HEIGHT;
+
+	if(!m_objMainTab.Create(WS_CHILD|WS_VISIBLE,rect,pParent,IDC_MAIN_TAB))
+	{
+		AfxMessageBox(_T("Create main tab ctrl failed!"));
+		ExitProcess(-1);
+	}
+
+	m_objMainTab.InitTabItems(m_objConfig);
 }
 
 void ToolBase::LoadConfig(const std::string& strAppName)

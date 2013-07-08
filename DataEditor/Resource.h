@@ -7,7 +7,6 @@
 #define IDS_ABOUTBOX                    101
 #define IDD_DATAEDITOR_DIALOG           102
 #define IDR_MAINFRAME                   128
-#define IDC_TREE_MAIN                   1000
 
 // Next default values for new objects
 // 

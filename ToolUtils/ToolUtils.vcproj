@@ -247,6 +247,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Base\ToolCtrl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolCtrl.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Base\ToolTree.cpp"
 				>
 			</File>

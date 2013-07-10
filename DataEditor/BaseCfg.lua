@@ -37,7 +37,7 @@ function Edit(t)
 		Ctrl = SupportCtrl.Edit,
 		Name = t.Name,
 		Column = t.Column,
-		Type = t.Type or SupportType.String,
+		Type = SupportType[t.Type] or SupportType.String,
 		Default = t.Default or "",
 		Width1 = t.Width1 or 50,
 		Width2 = t.Width2 or 50,
@@ -82,6 +82,7 @@ function Static(t)
 	_Static = {
 		Ctrl = SupportCtrl.Static,
 		Name = t.Name,
+		Column = -1,
 		Width1 = t.Width1 or 50,
 	}
 	

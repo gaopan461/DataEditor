@@ -4,6 +4,7 @@
 #include "BasicExcel.h"
 #include "ACDef.h"
 #include "ACLuaUtils.h"
+#include "ToolCtrl.h"
 
 using namespace YExcel;
 
@@ -17,6 +18,7 @@ class ACTabCtrl : public CTabCtrl
 	{
 		CWnd* m_pWnd;
 		BasicExcel* m_pExcel;
+		std::vector<SCtrlBase*> m_vtCtrlItems;
 		
 		STabItem(CWnd* pWnd, BasicExcel* pExcel)
 			: m_pWnd(pWnd)

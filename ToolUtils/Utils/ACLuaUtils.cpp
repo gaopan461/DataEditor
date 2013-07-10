@@ -67,6 +67,24 @@ std::string LuaConfig::GetString(const std::string& strParamName)
 	return result;
 }
 
+bool LuaConfig::GetBoolean(const std::string& strParamName)
+{
+	int oldTop = lua_gettop(m_pLua);
+
+	int ret = PushParam(strParamName);
+	if(ret != 0)
+	{
+		ERROR_MSG("Param format invalid:%s",strParamName.c_str());
+		ACCHECK(false);
+	}
+
+	ACCHECK(lua_isboolean(m_pLua,-1));
+	bool result = (bool)lua_toboolean(m_pLua,-1);
+
+	lua_settop(m_pLua,oldTop);
+	return result;
+}
+
 int LuaConfig::PushParam(const std::string& strParamName)
 {
 	std::vector<std::string> vtStr;

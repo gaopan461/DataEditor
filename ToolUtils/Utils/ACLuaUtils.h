@@ -18,6 +18,7 @@ public:
 public:
 	int GetInteger(const std::string& strParamName);
 	std::string GetString(const std::string& strParamName);
+	bool GetBoolean(const std::string& strParamName);
 public:
 	inline lua_State* GetLuaState()
 	{

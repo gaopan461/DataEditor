@@ -1,24 +1,31 @@
 
 SupportType = {
-	Int = 0,
-	Float = 1,
-	String = 2,
+	Int 	= 0,
+	Float 	= 1,
+	String 	= 2,
 }
 
 SupportCtrl = {
-	Edit = 0,
-	Check = 1,
-	Static = 2,
-	Combobox = 3,
-	CheckCombo = 4,
+	Edit 		= 0,
+	Check 		= 1,
+	Static 		= 2,
+	Combobox 	= 3,
+	CheckCombo 	= 4,
+}
+
+SupportDB = 
+{
+	Excel 	= 0,
+	Lua 	= 1,
+	Python 	= 2,
 }
 
 function Edit(t)
 	if type(t.Name) ~= "string" then
 		error("Edit:Require Name or Name must be string")
 	end
-	if type(t.Column) ~= "number" then
-		error("Edit:Require Column or Column must be number")
+	if type(t.CName) ~= "string" then
+		error("Edit:Require CName or CName must be string")
 	end
 	if type(t.Type) ~= "nil" and SupportType[t.Type] == nil then
 		error("Edit:Type unknown")
@@ -36,7 +43,7 @@ function Edit(t)
 	_Edit = {
 		Ctrl = SupportCtrl.Edit,
 		Name = t.Name,
-		Column = t.Column,
+		CName = t.CName,
 		Type = SupportType[t.Type] or SupportType.String,
 		Default = t.Default or "",
 		Width1 = t.Width1 or 50,
@@ -50,8 +57,8 @@ function Check(t)
 	if type(t.Name) ~= "string" then
 		error("Check:Require Name or Name must be string")
 	end
-	if type(t.Column) ~= "number" then
-		error("Check:Require Column or Column must be number")
+	if type(t.CName) ~= "string" then
+		error("Check:Require CName or CName must be string")
 	end
 	if type(t.Checked) ~= "nil" and type(t.Checked) ~= "boolean" then
 		error("Check:Checked must be boolean")
@@ -63,7 +70,7 @@ function Check(t)
 	_Check = {
 		Ctrl = SupportCtrl.Check,
 		Name = t.Name,
-		Column = t.Column,
+		CName = t.CName,
 		Checked = Checked or false,
 		Width1 = t.Width1 or 50,
 	}
@@ -93,8 +100,8 @@ function Combobox(t)
 	if type(t.Name) ~= "string" then
 		error("Combobox:Require Name or Name must be string")
 	end
-	if type(t.Column) ~= "number" then
-		error("Combobox:Require Column or Column must be number")
+	if type(t.CName) ~= "string" then
+		error("Combobox:Require CName or CName must be string")
 	end
 	if type(t.Confs) ~= "table" then
 		error("Combobox:Require Confs or Confs must be table")
@@ -109,7 +116,7 @@ function Combobox(t)
 	_Combobox = {
 		Ctrl = SupportCtrl.Combobox,
 		Name = t.Name,
-		Column = t.Column,
+		CName = t.CName,
 		Confs = t.Confs,
 		Width1 = t.Width1 or 50,
 		Width2 = t.Width2 or 50,
@@ -122,8 +129,8 @@ function CheckCombo(t)
 	if type(t.Name) ~= "string" then
 		error("CheckCombo:Require Name or Name must be string")
 	end
-	if type(t.Column) ~= "number" then
-		error("CheckCombo:Require Column or Column must be number")
+	if type(t.CName) ~= "string" then
+		error("CheckCombo:Require CName or CName must be string")
 	end
 	if type(t.Confs) ~= "table" then
 		error("CheckCombo:Require Confs or Confs must be table")
@@ -138,7 +145,7 @@ function CheckCombo(t)
 	_CheckCombo = {
 		Ctrl = SupportCtrl.CheckCombo,
 		Name = t.Name,
-		Column = t.Column,
+		CName = t.CName,
 		Confs = t.Confs,
 		Width1 = t.Width1 or 50,
 		Width2 = t.Width2 or 50,

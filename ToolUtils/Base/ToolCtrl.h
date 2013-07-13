@@ -1,7 +1,7 @@
 #ifndef _TOOL_CTRL_H_
 #define _TOOL_CTRL_H_
 
-#include "ACDef.h"
+#include "ToolDef.h"
 #include "ACLuaUtils.h"
 #include "CheckComboBox.h"
 
@@ -16,11 +16,11 @@ struct SComboItem
 	virtual int Init(LuaConfig& rLuaConfig);
 };
 
-struct SCtrlBase
+struct SCtrl
 {
 	CString strName;
+	CString strCName;
 	int nCtrl;
-	int nColumn;
 	int nWidth1;
 
 	virtual int Set(){}
@@ -29,7 +29,7 @@ struct SCtrlBase
 	virtual int Init(LuaConfig& rLuaConfig);
 };
 
-struct SEdit : public SCtrlBase
+struct SEdit : public SCtrl
 {
 	int nType;
 	int nWidth2;
@@ -40,7 +40,7 @@ struct SEdit : public SCtrlBase
 	virtual int Init(LuaConfig& rLuaConfig);
 };
 
-struct SCheck : public SCtrlBase
+struct SCheck : public SCtrl
 {
 	bool bChecked;
 
@@ -49,14 +49,14 @@ struct SCheck : public SCtrlBase
 	virtual int Init(LuaConfig& rLuaConfig);
 };
 
-struct SStatic : public SCtrlBase
+struct SStatic : public SCtrl
 {
 	CStatic* pCtrl;
 
 	virtual int Init(LuaConfig& rLuaConfig);
 };
 
-struct SCombobox : public SCtrlBase
+struct SCombobox : public SCtrl
 {
 	int nWidth2;
 	std::vector<SComboItem> vtItems;
@@ -66,7 +66,7 @@ struct SCombobox : public SCtrlBase
 	virtual int Init(LuaConfig& rLuaConfig);
 };
 
-struct SCheckCombo : public SCtrlBase
+struct SCheckCombo : public SCtrl
 {
 	int nWidth2;
 	std::vector<SComboItem> vtItems;

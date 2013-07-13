@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include "ToolBase.h"
+#include "ToolApp.h"
 
 USE_NS_AC
 
 // CDataEditorDlg 对话框
-class CDataEditorDlg : public CDialog, public ToolBase
+class CDataEditorDlg : public CDialog, public ToolApp
 {
 // 构造
 public:
@@ -34,4 +34,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+public:
+	virtual CWnd* GetMainWnd();
 };

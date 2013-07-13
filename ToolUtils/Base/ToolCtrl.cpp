@@ -12,19 +12,20 @@ int SComboItem::Init(LuaConfig& rLuaConfig)
 	return 0;
 }
 
-int SCtrlBase::Init(LuaConfig& rLuaConfig)
+int SCtrl::Init(LuaConfig& rLuaConfig)
 {
 	std::string str = rLuaConfig.GetString("./Name");
 	strName = StlStringToCString(str);
+	str = rLuaConfig.GetString("./CName");
+	strCName = StlStringToCString(str);
 	nCtrl = rLuaConfig.GetInteger("./Ctrl");
-	nColumn = rLuaConfig.GetInteger("./Column");
 	nWidth1 = rLuaConfig.GetInteger("./Width1");
 	return 0;
 }
 
 int SEdit::Init(LuaConfig& rLuaConfig)
 {
-	SCtrlBase::Init(rLuaConfig);
+	SCtrl::Init(rLuaConfig);
 	nType = rLuaConfig.GetInteger("./Type");
 	nWidth2 = rLuaConfig.GetInteger("./Width2");
 	std::string str = rLuaConfig.GetString("./Default");
@@ -38,7 +39,7 @@ int SEdit::Init(LuaConfig& rLuaConfig)
 
 int SCheck::Init(LuaConfig& rLuaConfig)
 {
-	SCtrlBase::Init(rLuaConfig);
+	SCtrl::Init(rLuaConfig);
 	bChecked = rLuaConfig.GetBoolean("./Checked");
 
 	pCtrl = new CButton();
@@ -48,7 +49,7 @@ int SCheck::Init(LuaConfig& rLuaConfig)
 
 int SStatic::Init(LuaConfig& rLuaConfig)
 {
-	SCtrlBase::Init(rLuaConfig);
+	SCtrl::Init(rLuaConfig);
 
 	pCtrl = new CStatic();
 
@@ -57,7 +58,7 @@ int SStatic::Init(LuaConfig& rLuaConfig)
 
 int SCombobox::Init(LuaConfig& rLuaConfig)
 {
-	SCtrlBase::Init(rLuaConfig);
+	SCtrl::Init(rLuaConfig);
 	nWidth2 = rLuaConfig.GetInteger("./Width2");
 
 	rLuaConfig.PushTable("./Confs");
@@ -87,7 +88,7 @@ int SCombobox::Init(LuaConfig& rLuaConfig)
 
 int SCheckCombo::Init(LuaConfig& rLuaConfig)
 {
-	SCtrlBase::Init(rLuaConfig);
+	SCtrl::Init(rLuaConfig);
 	nWidth2 = rLuaConfig.GetInteger("./Width2");
 
 	rLuaConfig.PushTable("./Confs");

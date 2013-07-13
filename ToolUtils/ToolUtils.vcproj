@@ -215,14 +215,6 @@
 			Name="Base"
 			>
 			<File
-				RelativePath=".\Base\ACTabCtrl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ACTabCtrl.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Base\BasicExcel.cpp"
 				>
 			</File>
@@ -239,11 +231,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Base\ToolBase.cpp"
+				RelativePath=".\Base\ToolApp.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Base\ToolBase.h"
+				RelativePath=".\Base\ToolApp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolConfig.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolConfig.h"
 				>
 			</File>
 			<File
@@ -252,6 +252,26 @@
 			</File>
 			<File
 				RelativePath=".\Base\ToolCtrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolDef.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolLog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolLog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolTab.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolTab.h"
 				>
 			</File>
 			<File

@@ -7,24 +7,24 @@
 #include <afxwin.h>
 #include <afxcmn.h>
 #include <afxdtctl.h>
-#include <string>
 #include "OptionTree.h"
-#include "ACDef.h"
+#include "ToolDef.h"
+#include "ToolApp.h"
 
 BEGIN_NS_AC
 
-class ToolTree : public COptionTree
+// 下面的多继承必须将CTabCtrl放前面，否则BEGIN_MESSAGE_MAP时
+// 会报警，运行时会出现指针转换导致出错
+
+class ToolTree : public COptionTree, public Module<ToolApp>
 {
 public:
-	ToolTree();
+	ToolTree(ToolApp* app);
 	virtual ~ToolTree();
 public:
 	BOOL Create(RECT rcRect, CWnd* pWnd, UINT nID);
-	int SetDB(const std::string& strDBName);
 public:
-	int UpdateDBToTree(const std::string& strDBName);
-private:
-	std::string m_strCurrDBName;
+	int Initial();
 };
 
 END_NS_AC

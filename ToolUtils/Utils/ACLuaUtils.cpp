@@ -79,7 +79,7 @@ bool LuaConfig::GetBoolean(const std::string& strParamName)
 	}
 
 	ACCHECK(lua_isboolean(m_pLua,-1));
-	bool result = (bool)lua_toboolean(m_pLua,-1);
+	bool result = (lua_toboolean(m_pLua,-1) ? true : false);
 
 	lua_settop(m_pLua,oldTop);
 	return result;
@@ -129,6 +129,11 @@ void LuaConfig::PushTable(const std::string& strTableName)
 	lua_insert(m_pLua,oldTop + 1);
 
 	lua_settop(m_pLua,oldTop + 1);
+}
+
+bool LuaConfig::IsTopTable()
+{
+	return lua_istable(m_pLua,-1);
 }
 
 END_NS_AC

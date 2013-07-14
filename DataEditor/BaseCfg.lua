@@ -13,7 +13,7 @@ SupportCtrl = {
 	CheckCombo 	= 4,
 }
 
-SupportDB = 
+SupportPlatform = 
 {
 	Excel 	= 0,
 	Lua 	= 1,

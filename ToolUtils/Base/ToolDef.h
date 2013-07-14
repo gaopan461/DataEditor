@@ -31,6 +31,16 @@ struct SItemTab
 	CString strDes;
 	std::vector<SCtrl*> vtCtrls;
 	CWnd* pWnd;
+
+	SItemTab()
+	{
+		strName = _T("");
+		strCName = _T("");
+		strKey = _T("");
+		strDes = _T("");
+		vtCtrls.clear();
+		pWnd = NULL;
+	}
 };
 
 typedef std::map<CString,int> MapCNameToColumnT;
@@ -51,6 +61,31 @@ typedef std::vector<SItemDB*> VectorItemDBsT;
 
 extern VectorItemTabsT g_vtItemTabs;
 extern VectorItemDBsT g_vtItemDBs;
+
+//-----------------------------------------------------------
+
+enum EPlatformType
+{
+	PLATFORM_TYPE_EXCEL = 0,
+	PLATFORM_TYPE_LUA,
+	PLATFORM_TYPE_PYTHON,
+};
+
+struct SExcelPlatformConfig
+{
+	int nHeadColumn;
+};
+
+struct SPlatformConfig
+{
+	int nPlatformType;
+	union
+	{
+		SExcelPlatformConfig objExcelConfig;
+	};
+};
+
+extern SPlatformConfig g_objPlatformConfig;
 
 //-----------------------------------------------------------
 

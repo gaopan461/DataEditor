@@ -1,15 +1,16 @@
 require "./BaseCfg"
 
-Configs =
+PlatformConfig =
 {
-	DBType = SupportDB.Excel,
+	PlatformType = SupportPlatform.Excel,
 	ExcelHead = 2,
 }
 
-Datas = 
+EditorConfig = 
 {
-	MagicType = {
+	{
 		Name = "技能",
+		CName = "MagicType",
 		Excel = "./MagicTypeConfig.xls",
 		Key = "ID",
 		Des = "Des",
@@ -36,9 +37,9 @@ Datas =
 			Check{Name = "受伤时打断", CName = "HitedBreak", Checked = true},
 		}
 	},
-	AuraEffectType = 
 	{
 		Name = "Buff",
+		CName = "AuraEffectType",
 		Excel = "./AuraEffectTypeConfig.xls",
 		Key = "ID",
 		Des = "Des",

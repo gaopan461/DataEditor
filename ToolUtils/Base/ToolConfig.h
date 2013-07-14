@@ -13,6 +13,13 @@ public:
 public:
 	int Initial(const CString& strAppName);
 private:
+	void LoadPlatformConfig();
+	void LoadEditorConfig();
+	void LoadEditorCtrlConfig();
+public:
+	void pfnLoadEditorItem();
+	void pfnLoadEditorCtrlItem();
+private:
 	LuaConfig m_objLua;
 };
 

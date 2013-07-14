@@ -14,6 +14,8 @@ BEGIN_NS_AC
 VectorItemTabsT g_vtItemTabs;
 VectorItemDBsT g_vtItemDBs;
 
+SPlatformConfig g_objPlatformConfig;
+
 //-----------------------------------------------------------
 
 ToolApp* ToolApp::m_pInstance = NULL;
@@ -21,6 +23,10 @@ ToolApp* ToolApp::m_pInstance = NULL;
 ToolApp::ToolApp()
 {
 	m_pInstance = this;
+	m_pConfig = new ToolConfig(this);
+	m_pTree = new ToolTree(this);
+	m_pTab = new ToolTab(this);
+	m_pLog = new ToolLog(this);
 }
 
 ToolApp::~ToolApp()
@@ -34,11 +40,6 @@ ToolApp::~ToolApp()
 
 int ToolApp::InitTool(const CString& strAppName)
 {
-	m_pConfig = new ToolConfig(this);
-	m_pTree = new ToolTree(this);
-	m_pTab = new ToolTab(this);
-	m_pLog = new ToolLog(this);
-
 	m_pLog->Initial(strAppName);
 	m_pConfig->Initial(strAppName);
 	m_pTab->Initial();

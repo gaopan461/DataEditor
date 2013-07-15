@@ -1,7 +1,10 @@
 #ifndef _TOOL_CTRL_H_
 #define _TOOL_CTRL_H_
 
-#include "ToolDef.h"
+#include <afxwin.h>
+#include <afxcmn.h>
+
+#include "ACDef.h"
 #include "ACLuaUtils.h"
 #include "CheckComboBox.h"
 
@@ -26,6 +29,15 @@ struct SCtrl
 
 	CStatic* pStatic;
 
+	SCtrl()
+	{
+		pStatic = NULL;
+	}
+	virtual ~SCtrl()
+	{
+		_safe_delete(pStatic);
+	}
+
 	virtual int Set(){return 0;}
 	virtual int Get(){return 0;}
 
@@ -42,6 +54,15 @@ struct SEdit : public SCtrl
 
 	CEdit* pCtrl;
 
+	SEdit()
+	{
+		pCtrl = NULL;
+	}
+	virtual ~SEdit()
+	{
+		_safe_delete(pCtrl);
+	}
+
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
 };
 
@@ -51,11 +72,23 @@ struct SCheck : public SCtrl
 
 	CButton* pCtrl;
 
+	SCheck()
+	{
+		pCtrl = NULL;
+	}
+	virtual ~SCheck()
+	{
+		_safe_delete(pCtrl);
+	}
+
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
 };
 
 struct SStatic : public SCtrl
 {
+	virtual ~SStatic()
+	{}
+
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
 };
 
@@ -66,7 +99,18 @@ struct SCombobox : public SCtrl
 
 	CComboBox* pCtrl;
 
+	SCombobox()
+	{
+		pCtrl = NULL;
+	}
+	virtual ~SCombobox()
+	{
+		_safe_delete(pCtrl);
+	}
+
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
+
+	void pfnAddComboItem(void* ctx);
 };
 
 struct SCheckCombo : public SCtrl
@@ -76,7 +120,18 @@ struct SCheckCombo : public SCtrl
 
 	CCheckComboBox* pCtrl;
 
+	SCheckCombo()
+	{
+		pCtrl = NULL;
+	}
+	virtual ~SCheckCombo()
+	{
+		_safe_delete(pCtrl);
+	}
+
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
+
+	void pfnAddComboItem(void* ctx);
 };
 
 END_NS_AC

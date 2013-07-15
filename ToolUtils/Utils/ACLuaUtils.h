@@ -28,6 +28,7 @@ public:
 	void PushTable(const std::string& strTableName);
 public:
 	bool IsTopTable();
+	int GetTableLen(const std::string& strTableName);
 public:
 	template <class T>
 	void IterTable(const std::string& strTableName, T* obj, void(T::*func)(void*), void* ctx = NULL)

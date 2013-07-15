@@ -136,4 +136,12 @@ bool LuaConfig::IsTopTable()
 	return lua_istable(m_pLua,-1);
 }
 
+int LuaConfig::GetTableLen(const std::string& strTableName)
+{
+	PushTable(strTableName);
+	int len = lua_objlen(m_pLua,-1);
+	lua_pop(m_pLua,1);
+	return len;
+}
+
 END_NS_AC

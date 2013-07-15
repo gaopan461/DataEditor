@@ -2,6 +2,7 @@
 #include "ACString.h"
 #include "ToolCtrl.h"
 #include "ToolTab.h"
+#include "ToolLayout.h"
 #include "ACLog.h"
 
 BEGIN_NS_AC
@@ -58,6 +59,7 @@ void ToolConfig::pfnLoadEditorItem(void* ctx)
 
 void ToolConfig::LoadEditorCtrlConfig(CWnd* pCtrlParent)
 {
+	m_pOwner->GetLayout()->Reset();
 	m_objLua.IterTable("./Items",this,&ToolConfig::pfnLoadEditorCtrlItem,pCtrlParent);
 }
 
@@ -92,6 +94,9 @@ void ToolConfig::pfnLoadEditorCtrlItem(void* ctx)
 	}
 
 	pCtrl->Init(m_objLua,pParent);
+
+	SItemTab* pLastItem = g_vtItemTabs.back();
+	pLastItem->vtCtrls.push_back(pCtrl);
 }
 
 END_NS_AC

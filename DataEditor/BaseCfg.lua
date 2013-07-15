@@ -49,8 +49,8 @@ function Edit(t)
 		CName = t.CName,
 		Type = SupportType[t.Type] or SupportType.String,
 		Default = t.Default or "",
-		Width1 = t.Width1 or 50,
-		Width2 = t.Width2 or 50,
+		Width1 = t.Width1 or 100,
+		Width2 = t.Width2 or 100,
 		Newline = t.Newline or false,
 	}
 	
@@ -79,7 +79,7 @@ function Check(t)
 		Name = t.Name,
 		CName = t.CName,
 		Checked = Checked or false,
-		Width1 = t.Width1 or 50,
+		Width1 = t.Width1 or 100,
 		Newline = t.Newline or false,
 	}
 	
@@ -101,7 +101,7 @@ function Static(t)
 		Ctrl = SupportCtrl.Static,
 		Name = t.Name,
 		CName = "",
-		Width1 = t.Width1 or 50,
+		Width1 = t.Width1 or 800,
 		Newline = t.Newline or false,
 	}
 	
@@ -133,8 +133,8 @@ function Combobox(t)
 		Name = t.Name,
 		CName = t.CName,
 		Confs = t.Confs,
-		Width1 = t.Width1 or 50,
-		Width2 = t.Width2 or 50,
+		Width1 = t.Width1 or 100,
+		Width2 = t.Width2 or 100,
 		Newline = t.Newline or false,
 	}
 	
@@ -166,8 +166,8 @@ function CheckCombo(t)
 		Name = t.Name,
 		CName = t.CName,
 		Confs = t.Confs,
-		Width1 = t.Width1 or 50,
-		Width2 = t.Width2 or 50,
+		Width1 = t.Width1 or 100,
+		Width2 = t.Width2 or 100,
 		Newline = t.Newline or false,
 	}
 	

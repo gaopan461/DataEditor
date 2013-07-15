@@ -33,6 +33,7 @@ ToolApp::ToolApp()
 
 ToolApp::~ToolApp()
 {
+	FinalizeTool();
 	_safe_delete(m_pConfig);
 	_safe_delete(m_pTree);
 	_safe_delete(m_pTab);
@@ -41,11 +42,13 @@ ToolApp::~ToolApp()
 	m_pInstance = NULL;
 }
 
-int ToolApp::InitTool(const CString& strAppName)
+int ToolApp::InitializeTool(const CString& strAppName)
 {
 	m_pLog->Create(strAppName);
 	m_pTab->Create();
 	m_pTree->Create();
+
+	m_pLayout->Init();
 
 	m_pConfig->Load(strAppName);
 
@@ -53,6 +56,20 @@ int ToolApp::InitTool(const CString& strAppName)
 	INFO_MSG("               %s Start             ",CStringToStlString(strAppName).c_str());
 	INFO_MSG("--------------------------------------------");
 
+	return 0;
+}
+
+int ToolApp::FinalizeTool()
+{
+	for(size_t i = 0; i < g_vtItemTabs.size(); ++i)
+		_safe_delete(g_vtItemTabs[i]);
+
+	g_vtItemTabs.clear();
+
+	for(size_t i = 0; i < g_vtItemDBs.size(); ++i)
+		_safe_delete(g_vtItemDBs[i]);
+
+	g_vtItemDBs.clear();
 	return 0;
 }
 

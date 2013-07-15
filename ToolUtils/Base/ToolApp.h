@@ -18,8 +18,9 @@ public:
 	ToolApp();
 	virtual ~ToolApp();
 public:
-	virtual int InitTool(const CString& strAppName);
+	virtual int InitializeTool(const CString& strAppName);
 	virtual int Update();
+	virtual int FinalizeTool();
 public:
 	virtual CWnd* GetMainWnd()
 	{

@@ -15,8 +15,9 @@ EditorConfig =
 		Key = "ID",
 		Des = "Des",
 		Items = {
-			Edit{Name = "ID", CName = "ID", Type = "Int", Default = "-1"},
-			Edit{Name = "ÃèÊö", CName = "Des", Type = "String", Default = "ÇëÌîÒ»¶ÎÃèÊö"},
+			Edit{Name = "ID", CName = "ID", Type = "Int", Default = "-1",},
+			Edit{Name = "ÃèÊö", CName = "Des", Type = "String", Default = "ÇëÌîÒ»¶ÎÃèÊö", Newline = true,},
+			Static{Name = string.rep("-",100), Newline = true,},
 			Combobox{
 				Name = "¹¥»÷ÀàĞÍ",
 				CName = "AttackType",
@@ -33,8 +34,9 @@ EditorConfig =
 					ComboItem{Name = "¹­¼ıÊÖ", Value = 1, Checked = true,},
 					ComboItem{Name = "·¨Ê¦", Value = 2, Checked = true,},
 				},
+				Newline = true,
 			},
-			Check{Name = "ÊÜÉËÊ±´ò¶Ï", CName = "HitedBreak", Checked = true},
+			Check{Name = "ÊÜÉËÊ±´ò¶Ï", CName = "HitedBreak", Checked = true, Width1 = 200, Newline = true,},
 		}
 	},
 	{
@@ -44,8 +46,8 @@ EditorConfig =
 		Key = "ID",
 		Des = "Des",
 		Items = {
-			Edit{Name = "ID", CName = "ID", Type = "Int", Default = "-1"},
-			Edit{Name = "ÃèÊö", CName = "Des", Type = "String", Default = "ÇëÌîÒ»¶ÎÃèÊö"},
+			Edit{Name = "ID", CName = "ID", Type = "Int", Default = "-1",Newline = true,},
+			Edit{Name = "ÃèÊö", CName = "Des", Type = "String", Default = "ÇëÌîÒ»¶ÎÃèÊö",Newline = true,},
 		},
 	},
 }

@@ -31,7 +31,7 @@ void SCtrl::CreateStatic(CWnd* pParent)
 	CRect rect = ToolApp::Instance().GetLayout()->GetNextRect(nWidth1,false);
 	int id = ToolApp::Instance().GetLayout()->GetNextID();
 	pStatic = new CStatic;
-	pStatic->Create(strName,WS_CHILD|WS_VISIBLE,rect,pParent,id);
+	pStatic->Create(strName,WS_CHILD|WS_VISIBLE|SS_CENTER,rect,pParent,id);
 }
 
 int SEdit::Init( LuaConfig& rLuaConfig,CWnd* pParent )
@@ -82,29 +82,29 @@ int SCombobox::Init( LuaConfig& rLuaConfig,CWnd* pParent )
 	SCtrl::Init(rLuaConfig,pParent);
 	nWidth2 = rLuaConfig.GetInteger("./Width2");
 
-	rLuaConfig.PushTable("./Confs");
+	CreateStatic(pParent);
 
-	lua_State* pLua = rLuaConfig.GetLuaState();
-	ACCHECK(pLua);
+	CRect rect = ToolApp::Instance().GetLayout()->GetNextRect(nWidth2,bNewline);
+	int id = ToolApp::Instance().GetLayout()->GetNextID();
+	pCtrl = new CComboBox;
+	pCtrl->Create(WS_CHILD|WS_VISIBLE|WS_VSCROLL|CBS_DROPDOWNLIST,rect,pParent,id);
 
-	lua_pushnil(pLua);
-	while(lua_next(pLua,-2) != 0)
-	{
-		SComboItem item;
-		item.Init(rLuaConfig);
-		vtItems.push_back(item);
-		lua_pop(pLua,1);
-	}
-	lua_pop(pLua,1);
-
-	pCtrl = new CComboBox();
-
-	for(size_t i = 0; i < vtItems.size(); ++i)
-	{
-		pCtrl->InsertString(i, vtItems[i].strName);
-	}
+	rLuaConfig.IterTable<SCombobox>("./Confs",this,&SCombobox::pfnAddComboItem,&rLuaConfig);
 
 	return 0;
+}
+
+void SCombobox::pfnAddComboItem(void* ctx)
+{
+	LuaConfig* pLuaConfig = (LuaConfig*)ctx;
+	ACCHECK(pLuaConfig);
+
+	SComboItem comboItem;
+	comboItem.Init(*pLuaConfig);
+
+	pCtrl->AddString(comboItem.strName);
+
+	vtItems.push_back(comboItem);
 }
 
 int SCheckCombo::Init( LuaConfig& rLuaConfig,CWnd* pParent )
@@ -112,29 +112,32 @@ int SCheckCombo::Init( LuaConfig& rLuaConfig,CWnd* pParent )
 	SCtrl::Init(rLuaConfig,pParent);
 	nWidth2 = rLuaConfig.GetInteger("./Width2");
 
-	rLuaConfig.PushTable("./Confs");
+	CreateStatic(pParent);
 
-	lua_State* pLua = rLuaConfig.GetLuaState();
-	ACCHECK(pLua);
+	CRect rect = ToolApp::Instance().GetLayout()->GetNextRect(nWidth2,bNewline);
+	int tableLen = rLuaConfig.GetTableLen("./Confs");
+	rect.bottom += tableLen * CTRL_HEIGHT;
 
-	lua_pushnil(pLua);
-	while(lua_next(pLua,-2) != 0)
-	{
-		SComboItem item;
-		item.Init(rLuaConfig);
-		vtItems.push_back(item);
-		lua_pop(pLua,1);
-	}
-	lua_pop(pLua,1);
+	int id = ToolApp::Instance().GetLayout()->GetNextID();
+	pCtrl = new CCheckComboBox;
+	pCtrl->Create(WS_CHILD|WS_VISIBLE|WS_VSCROLL|CBS_DROPDOWNLIST,rect,pParent,id);
 
-	pCtrl = new CCheckComboBox();
-
-	for(size_t i = 0; i < vtItems.size(); ++i)
-	{
-		pCtrl->InsertString(i, vtItems[i].strName);
-	}
+	rLuaConfig.IterTable<SCheckCombo>("./Confs",this,&SCheckCombo::pfnAddComboItem,&rLuaConfig);
 
 	return 0;
+}
+
+void SCheckCombo::pfnAddComboItem(void* ctx)
+{
+	LuaConfig* pLuaConfig = (LuaConfig*)ctx;
+	ACCHECK(pLuaConfig);
+
+	SComboItem comboItem;
+	comboItem.Init(*pLuaConfig);
+
+	((CCheckComboBox*)pCtrl)->AddString(comboItem.strName);
+
+	vtItems.push_back(comboItem);
 }
 
 END_NS_AC

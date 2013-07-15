@@ -109,7 +109,7 @@ BOOL CDataEditorDlg::OnInitDialog()
 	::SetTimer(m_hWnd,1,10,NULL);
 
 	// 初始化工具
-	InitTool(_T("DataEditor"));
+	InitializeTool(_T("DataEditor"));
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }

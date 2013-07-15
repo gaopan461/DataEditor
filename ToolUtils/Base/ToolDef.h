@@ -8,9 +8,13 @@
 
 #include "ACDef.h"
 #include "BasicExcel.h"
+#include "ToolCtrl.h"
 
 #define MAIN_TREE_WIDTH 180
 #define MAIN_LOG_HEIGHT 150
+
+#define CTRL_HEIGHT			25	//控件默认高度
+#define CTRL_HEIGHT_INTER	5	//控件纵向间隔
 
 #define IDC_MAIN_TAB	2000
 #define IDC_MAIN_TREE	2001
@@ -32,8 +36,6 @@ enum ECtrlType
 	CTRL_CHECKCOMBO,
 };
 
-struct SCtrl;
-
 struct SItemTab
 {
 	CString strName;
@@ -50,6 +52,14 @@ struct SItemTab
 		strDes = _T("");
 		vtCtrls.clear();
 	}
+
+	virtual ~SItemTab()
+	{
+		for(size_t i = 0; i < vtCtrls.size(); ++i)
+			_safe_delete(vtCtrls[i]);
+
+		vtCtrls.clear();
+	}
 };
 
 typedef std::map<CString,int> MapCNameToColumnT;
@@ -63,6 +73,11 @@ struct SItemExcelDB : public SItemDB
 {
 	BasicExcel* pExcel;
 	MapCNameToColumnT mapCNameToColumn;
+
+	virtual ~SItemExcelDB()
+	{
+		_safe_delete(pExcel);
+	}
 };
 
 typedef std::vector<SItemTab*> VectorItemTabsT;

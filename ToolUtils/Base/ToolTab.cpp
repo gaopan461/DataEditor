@@ -81,6 +81,11 @@ CWnd* ToolTab::AddTabItem(const CString& strName)
 		ExitProcess(-1);
 	}
 
+	if(GetItemCount() == m_nTabCurrent)
+		pWnd->ShowWindow(TRUE);
+	else
+		pWnd->ShowWindow(FALSE);
+
 	InsertItem(GetItemCount(),strName);
 	m_vtTabWnds.push_back(pWnd);
 	return pWnd;

@@ -30,7 +30,7 @@ END_MESSAGE_MAP()
 // ToolLog 消息处理程序
 
 
-void ToolLog::Initial(const CString& strAppName)
+void ToolLog::Create(const CString& strAppName)
 {
 	CWnd* pParent = m_pOwner->GetMainWnd();
 	ACCHECK(pParent);
@@ -42,7 +42,7 @@ void ToolLog::Initial(const CString& strAppName)
 	rect.right = prect.right - 10;
 	rect.bottom = prect.bottom - 10;
 
-	if(!Create(WS_CHILD|WS_VISIBLE|WS_BORDER, rect, pParent, IDC_MAIN_LOG))
+	if(!CListBox::Create(WS_CHILD|WS_VISIBLE|WS_BORDER, rect, pParent, IDC_MAIN_LOG))
 	{
 		AfxMessageBox(_T("Create log window failed!"));
 		ExitProcess(-1);

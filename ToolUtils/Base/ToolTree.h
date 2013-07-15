@@ -24,7 +24,7 @@ public:
 public:
 	BOOL Create(RECT rcRect, CWnd* pWnd, UINT nID);
 public:
-	int Initial();
+	int Create();
 };
 
 END_NS_AC

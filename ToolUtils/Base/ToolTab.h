@@ -21,12 +21,10 @@ public:
 	ToolTab(ToolApp* app);
 	virtual ~ToolTab();
 public:
-	int Initial();
-public:
-	void InitTabItems();
+	int Create();
 
-protected:
-	void AddTabItem(const CString& strName, const CString& strExcel);
+public:
+	CWnd* AddTabItem(const CString& strName);
 
 protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

@@ -22,11 +22,16 @@ struct SCtrl
 	CString strCName;
 	int nCtrl;
 	int nWidth1;
+	int bNewline;
 
-	virtual int Set(){}
-	virtual int Get(){}
+	CStatic* pStatic;
 
-	virtual int Init(LuaConfig& rLuaConfig);
+	virtual int Set(){return 0;}
+	virtual int Get(){return 0;}
+
+	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
+
+	void CreateStatic(CWnd* pParent);
 };
 
 struct SEdit : public SCtrl
@@ -37,7 +42,7 @@ struct SEdit : public SCtrl
 
 	CEdit* pCtrl;
 
-	virtual int Init(LuaConfig& rLuaConfig);
+	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
 };
 
 struct SCheck : public SCtrl
@@ -46,14 +51,12 @@ struct SCheck : public SCtrl
 
 	CButton* pCtrl;
 
-	virtual int Init(LuaConfig& rLuaConfig);
+	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
 };
 
 struct SStatic : public SCtrl
 {
-	CStatic* pCtrl;
-
-	virtual int Init(LuaConfig& rLuaConfig);
+	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
 };
 
 struct SCombobox : public SCtrl
@@ -63,7 +66,7 @@ struct SCombobox : public SCtrl
 
 	CComboBox* pCtrl;
 
-	virtual int Init(LuaConfig& rLuaConfig);
+	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
 };
 
 struct SCheckCombo : public SCtrl
@@ -73,7 +76,7 @@ struct SCheckCombo : public SCtrl
 
 	CCheckComboBox* pCtrl;
 
-	virtual int Init(LuaConfig& rLuaConfig);
+	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
 };
 
 END_NS_AC

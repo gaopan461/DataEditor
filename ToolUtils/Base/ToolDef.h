@@ -2,6 +2,7 @@
 #define _TOOL_DEF_H_
 
 #include <afxwin.h>
+#include <afxcmn.h>
 #include <map>
 #include <vector>
 
@@ -11,15 +12,25 @@
 #define MAIN_TREE_WIDTH 180
 #define MAIN_LOG_HEIGHT 150
 
-#define IDC_MAIN_TAB 2000
-#define IDC_MAIN_TREE 2001
-#define IDC_MAIN_LOG 2002
+#define IDC_MAIN_TAB	2000
+#define IDC_MAIN_TREE	2001
+#define IDC_MAIN_LOG	2002
 
-#define IDC_TAB_ITEM 2100
+#define IDC_TAB_ITEM	2100
+#define IDC_CTRL		2200
 
 using namespace YExcel;
 
 BEGIN_NS_AC
+
+enum ECtrlType
+{
+	CTRL_EDIT = 0,
+	CTRL_CHECK,
+	CTRL_STATIC,
+	CTRL_COMBOBOX,
+	CTRL_CHECKCOMBO,
+};
 
 struct SCtrl;
 
@@ -30,7 +41,6 @@ struct SItemTab
 	CString strKey;
 	CString strDes;
 	std::vector<SCtrl*> vtCtrls;
-	CWnd* pWnd;
 
 	SItemTab()
 	{
@@ -39,7 +49,6 @@ struct SItemTab
 		strKey = _T("");
 		strDes = _T("");
 		vtCtrls.clear();
-		pWnd = NULL;
 	}
 };
 

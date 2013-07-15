@@ -39,6 +39,9 @@ function Edit(t)
 	if type(t.Width2) ~= "nil" and type(t.Width2) ~= "number" then
 		error("Edit:Width2 must be number")
 	end
+	if type(t.Newline) ~= "nil" and type(t.Newline) ~= "boolean" then
+		error("Edit:Newline must be boolean")
+	end
 	
 	_Edit = {
 		Ctrl = SupportCtrl.Edit,
@@ -48,6 +51,7 @@ function Edit(t)
 		Default = t.Default or "",
 		Width1 = t.Width1 or 50,
 		Width2 = t.Width2 or 50,
+		Newline = t.Newline or false,
 	}
 	
 	return _Edit
@@ -66,6 +70,9 @@ function Check(t)
 	if type(t.Width1) ~= "nil" and type(t.Width1) ~= "number" then
 		error("Check:Width1 must be number")
 	end
+	if type(t.Newline) ~= "nil" and type(t.Newline) ~= "boolean" then
+		error("Check:Newline must be boolean")
+	end
 	
 	_Check = {
 		Ctrl = SupportCtrl.Check,
@@ -73,6 +80,7 @@ function Check(t)
 		CName = t.CName,
 		Checked = Checked or false,
 		Width1 = t.Width1 or 50,
+		Newline = t.Newline or false,
 	}
 	
 	return _Check
@@ -85,12 +93,16 @@ function Static(t)
 	if type(t.Width1) ~= "nil" and type(t.Width1) ~= "number" then
 		error("Static:Width1 must be number")
 	end
+	if type(t.Newline) ~= "nil" and type(t.Newline) ~= "boolean" then
+		error("Static:Newline must be boolean")
+	end
 	
 	_Static = {
 		Ctrl = SupportCtrl.Static,
 		Name = t.Name,
-		Column = -1,
+		CName = "",
 		Width1 = t.Width1 or 50,
+		Newline = t.Newline or false,
 	}
 	
 	return _Static
@@ -112,6 +124,9 @@ function Combobox(t)
 	if type(t.Width2) ~= "nil" and type(t.Width2) ~= "number" then
 		error("Combobox:Width2 must be number")
 	end
+	if type(t.Newline) ~= "nil" and type(t.Newline) ~= "boolean" then
+		error("Combobox:Newline must be boolean")
+	end
 	
 	_Combobox = {
 		Ctrl = SupportCtrl.Combobox,
@@ -120,6 +135,7 @@ function Combobox(t)
 		Confs = t.Confs,
 		Width1 = t.Width1 or 50,
 		Width2 = t.Width2 or 50,
+		Newline = t.Newline or false,
 	}
 	
 	return _Combobox
@@ -141,6 +157,9 @@ function CheckCombo(t)
 	if type(t.Width2) ~= "nil" and type(t.Width2) ~= "number" then
 		error("CheckCombo:Width2 must be number")
 	end
+	if type(t.Newline) ~= "nil" and type(t.Newline) ~= "boolean" then
+		error("CheckCombo:Newline must be boolean")
+	end
 	
 	_CheckCombo = {
 		Ctrl = SupportCtrl.CheckCombo,
@@ -149,6 +168,7 @@ function CheckCombo(t)
 		Confs = t.Confs,
 		Width1 = t.Width1 or 50,
 		Width2 = t.Width2 or 50,
+		Newline = t.Newline or false,
 	}
 	
 	return _CheckCombo

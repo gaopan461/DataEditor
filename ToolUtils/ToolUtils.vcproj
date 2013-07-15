@@ -259,6 +259,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Base\ToolLayout.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolLayout.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Base\ToolLog.cpp"
 				>
 			</File>

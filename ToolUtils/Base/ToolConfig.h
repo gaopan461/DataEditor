@@ -11,14 +11,14 @@ class ToolConfig : Module<ToolApp>
 public:
 	ToolConfig(ToolApp* app);
 public:
-	int Initial(const CString& strAppName);
+	int Load(const CString& strAppName);
 private:
 	void LoadPlatformConfig();
 	void LoadEditorConfig();
-	void LoadEditorCtrlConfig();
+	void LoadEditorCtrlConfig(CWnd* pCtrlParent);
 public:
-	void pfnLoadEditorItem();
-	void pfnLoadEditorCtrlItem();
+	void pfnLoadEditorItem(void* ctx);
+	void pfnLoadEditorCtrlItem(void* ctx);
 private:
 	LuaConfig m_objLua;
 };

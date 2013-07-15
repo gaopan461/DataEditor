@@ -30,7 +30,7 @@ public:
 	bool IsTopTable();
 public:
 	template <class T>
-	void IterTable(const std::string& strTableName, T* obj, void(T::*func)())
+	void IterTable(const std::string& strTableName, T* obj, void(T::*func)(void*), void* ctx = NULL)
 	{
 		PushTable(strTableName);
 
@@ -40,7 +40,7 @@ public:
 			lua_pushinteger(m_pLua, i);
 			lua_gettable(m_pLua, -2);
 
-			(obj->*func)();
+			(obj->*func)(ctx);
 
 			lua_pop(m_pLua, 1);
 		}

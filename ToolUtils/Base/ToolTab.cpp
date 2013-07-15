@@ -44,7 +44,7 @@ void ToolTab::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 }
 
-int ToolTab::Initial()
+int ToolTab::Create()
 {
 	CWnd* pParent = m_pOwner->GetMainWnd();
 	ACCHECK(pParent);
@@ -56,25 +56,16 @@ int ToolTab::Initial()
 	rect.right = prect.right - 10;
 	rect.bottom = prect.bottom - 20 - MAIN_LOG_HEIGHT;
 
-	if(!Create(WS_CHILD|WS_VISIBLE,rect,pParent,IDC_MAIN_TAB))
+	if(!CTabCtrl::Create(WS_CHILD|WS_VISIBLE,rect,pParent,IDC_MAIN_TAB))
 	{
 		AfxMessageBox(_T("Create main tab ctrl failed!"));
 		ExitProcess(-1);
 	}
 
-	InitTabItems();
-
 	return 0;
 }
 
-void ToolTab::InitTabItems()
-{
-	// 初始化tab选项卡
-	AddTabItem(_T("技能"), _T("技能.xls"));
-	AddTabItem(_T("Buff"), _T("Buff.xls"));
-}
-
-void ToolTab::AddTabItem(const CString& strName, const CString& strExcel)
+CWnd* ToolTab::AddTabItem(const CString& strName)
 {
 	CRect rect;
 	GetClientRect(&rect);
@@ -92,6 +83,7 @@ void ToolTab::AddTabItem(const CString& strName, const CString& strExcel)
 
 	InsertItem(GetItemCount(),strName);
 	m_vtTabWnds.push_back(pWnd);
+	return pWnd;
 }
 
 

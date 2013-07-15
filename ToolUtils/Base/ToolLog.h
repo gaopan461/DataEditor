@@ -24,7 +24,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	void Initial(const CString& strAppName);
+	void Create(const CString& strAppName);
 public:
 	int Update();
 public:

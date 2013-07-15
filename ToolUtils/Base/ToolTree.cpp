@@ -30,7 +30,7 @@ BOOL ToolTree::Create(RECT rcRect, CWnd* pWnd, UINT nID)
 	return ret;
 }
 
-int ToolTree::Initial()
+int ToolTree::Create()
 {
 	CWnd* pParent = m_pOwner->GetMainWnd();
 	ACCHECK(pParent);

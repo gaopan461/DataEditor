@@ -1,5 +1,8 @@
 #include "ToolConfig.h"
 #include "ACString.h"
+#include "ToolCtrl.h"
+#include "ToolTab.h"
+#include "ACLog.h"
 
 BEGIN_NS_AC
 
@@ -7,7 +10,7 @@ ToolConfig::ToolConfig(ToolApp* app)
 : Module<ToolApp>(app)
 {}
 
-int ToolConfig::Initial(const CString& strAppName)
+int ToolConfig::Load(const CString& strAppName)
 {
 	CString cstrFileName = strAppName + ".lua";
 	std::string stlstrFileName = CStringToStlString(cstrFileName);
@@ -31,32 +34,64 @@ void ToolConfig::LoadEditorConfig()
 	m_objLua.IterTable<ToolConfig>("/EditorConfig",this,&ToolConfig::pfnLoadEditorItem);
 }
 
-void ToolConfig::pfnLoadEditorItem()
+void ToolConfig::pfnLoadEditorItem(void* ctx)
 {
 	ACCHECK(m_objLua.IsTopTable());
 
 	std::string stlstr;
-	SItemTab itemTab;
+	SItemTab* pTab = new SItemTab;
 	stlstr = m_objLua.GetString("./Name");
-	itemTab.strName = StlStringToCString(stlstr);
+	pTab->strName = StlStringToCString(stlstr);
 	stlstr = m_objLua.GetString("./CName");
-	itemTab.strCName = StlStringToCString(stlstr);
+	pTab->strCName = StlStringToCString(stlstr);
 	stlstr = m_objLua.GetString("./Key");
-	itemTab.strKey = StlStringToCString(stlstr);
+	pTab->strKey = StlStringToCString(stlstr);
 	stlstr = m_objLua.GetString("./Des");
-	itemTab.strDes = StlStringToCString(stlstr);
+	pTab->strDes = StlStringToCString(stlstr);
 
-	LoadEditorCtrlConfig();
+	CWnd* pWnd = m_pOwner->GetMainTab()->AddTabItem(pTab->strName);
+
+	g_vtItemTabs.push_back(pTab);
+
+	LoadEditorCtrlConfig(pWnd);
 }
 
-void ToolConfig::LoadEditorCtrlConfig()
+void ToolConfig::LoadEditorCtrlConfig(CWnd* pCtrlParent)
 {
-	m_objLua.IterTable("./Items",this,&ToolConfig::pfnLoadEditorCtrlItem);
+	m_objLua.IterTable("./Items",this,&ToolConfig::pfnLoadEditorCtrlItem,pCtrlParent);
 }
 
-void ToolConfig::pfnLoadEditorCtrlItem()
+void ToolConfig::pfnLoadEditorCtrlItem(void* ctx)
 {
 	ACCHECK(m_objLua.IsTopTable());
+	CWnd* pParent = (CWnd*)ctx;
+	ACCHECK(pParent);
+
+	SCtrl* pCtrl = NULL;
+	int ctrl = m_objLua.GetInteger("./Ctrl");
+	switch(ctrl)
+	{
+	case CTRL_EDIT:
+		pCtrl = new SEdit;
+		break;
+	case CTRL_CHECK:
+		pCtrl = new SCheck;
+		break;
+	case CTRL_STATIC:
+		pCtrl = new SStatic;
+		break;
+	case CTRL_COMBOBOX:
+		pCtrl = new SCombobox;
+		break;
+	case CTRL_CHECKCOMBO:
+		pCtrl = new SCheckCombo;
+		break;
+	default:
+		ERROR_MSG("Unknown ctrl:%d",ctrl);
+		return;
+	}
+
+	pCtrl->Init(m_objLua,pParent);
 }
 
 END_NS_AC

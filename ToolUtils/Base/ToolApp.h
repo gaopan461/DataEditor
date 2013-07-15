@@ -10,6 +10,7 @@ class ToolConfig;
 class ToolTree;
 class ToolTab;
 class ToolLog;
+class ToolLayout;
 
 class ToolApp
 {
@@ -46,6 +47,10 @@ public:
 	{
 		return m_pLog;
 	}
+	ToolLayout* GetLayout()
+	{
+		return m_pLayout;
+	}
 private:
 	static ToolApp* m_pInstance;
 protected:
@@ -53,6 +58,7 @@ protected:
 	ToolTree* m_pTree;
 	ToolTab* m_pTab;
 	ToolLog* m_pLog;
+	ToolLayout* m_pLayout;
 };
 
 END_NS_AC

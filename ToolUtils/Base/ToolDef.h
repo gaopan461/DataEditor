@@ -27,6 +27,8 @@ using namespace YExcel;
 
 BEGIN_NS_AC
 
+class ToolTree;
+
 int GetCellContent(const BasicExcelCell* pCell, CString& strContent);
 int SetCellContent(BasicExcelCell* pCell, const CString& strContent);
 
@@ -45,8 +47,8 @@ struct SItemTab
 {
 	CString strName;
 	CString strCName;
-	CString strKey;
-	CString strDes;
+	CString strKeyCName;
+	CString strDesCName;
 	std::vector<SCtrl*> vtCtrls;
 
 	SItemTab();
@@ -55,12 +57,23 @@ struct SItemTab
 
 struct SItemDB
 {
+	CString strKeyCName;
+	CString strDesCName;
+
+	SItemDB()
+	{
+		strKeyCName = _T("");
+		strDesCName = _T("");
+	}
 	virtual ~SItemDB(){}
-	virtual int Save(SItemTab* pItemTab){return 0;}
-	virtual int Load(SItemTab* pItemTab){return 0;}
+
+	virtual int CtrlToDB(SItemTab* pItemTab){return 0;}
+	virtual int DBToCtrl(SItemTab* pItemTab){return 0;}
+
+	virtual int DBToTree(ToolTree* pTree){return 0;}
 };
 
-typedef std::map<CString,int> MapCNameToColumnT;
+typedef std::map<CString,size_t> MapCNameToColumnT;
 
 struct SItemExcelDB : public SItemDB
 {
@@ -70,6 +83,8 @@ struct SItemExcelDB : public SItemDB
 
 	SItemExcelDB(const char* filename);
 	virtual ~SItemExcelDB();
+
+	virtual int DBToTree(ToolTree* pTree);
 
 	int Init();
 };
@@ -92,6 +107,7 @@ enum EPlatformType
 struct SExcelPlatformConfig
 {
 	int nHeadRow;
+	int nDataStartRow;
 };
 
 struct SPlatformConfig

@@ -45,12 +45,17 @@ int ToolTab::ChangeTab(int nSel)
 	if(nSel < 0 || nSel >= GetItemCount())
 		return -1;
 
+	ToolTree* pTree = ToolApp::Instance().GetMainTree();
+	ACCHECK(pTree);
+
 	if(m_nTabCurrent != -1)
 		m_vtTabWnds[m_nTabCurrent]->ShowWindow(SW_HIDE);
 
 	m_nTabCurrent = nSel;
 	m_vtTabWnds[m_nTabCurrent]->ShowWindow(SW_SHOW);
 	m_vtTabWnds[m_nTabCurrent]->SetFocus();
+
+	g_vtItemDBs[m_nTabCurrent]->DBToTree(pTree);
 	return 0;
 }
 

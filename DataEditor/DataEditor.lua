@@ -4,6 +4,7 @@ PlatformConfig =
 {
 	PlatformType = SupportPlatform.Excel,
 	ExcelHead = 2,
+	ExcelData = 4,
 }
 
 EditorConfig = 

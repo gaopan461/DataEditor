@@ -52,6 +52,20 @@ int ToolTree::Create()
 	return 0;
 }
 
+int ToolTree::InsertItem(int id, const CString& strDes)
+{
+	CString strKey;
+	strKey.Format(_T("%d"), id);
+
+	COptionTreeItemStaticEx* pOptItem = new COptionTreeItemStaticEx();
+	ACCHECK(pOptItem);
+	pOptItem->SetInfoText(strKey);
+	pOptItem->SetStaticText(strDes);
+
+	COptionTree::InsertItem(pOptItem);
+	return 0;
+}
+
 void ToolTree::SelectID(int id)
 {
 	if(id == m_nLastSelID || id <= 0)

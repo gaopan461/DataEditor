@@ -27,7 +27,10 @@ void ToolConfig::LoadPlatformConfig()
 {
 	g_objPlatformConfig.nPlatformType = m_objLua.GetInteger("/PlatformConfig/PlatformType");
 	if(g_objPlatformConfig.nPlatformType == PLATFORM_TYPE_EXCEL)
+	{
 		g_objPlatformConfig.objExcelConfig.nHeadRow = m_objLua.GetInteger("/PlatformConfig/ExcelHead");
+		g_objPlatformConfig.objExcelConfig.nDataStartRow = m_objLua.GetInteger("/PlatformConfig/ExcelData");
+	}
 }
 
 void ToolConfig::LoadEditorConfig()
@@ -46,9 +49,9 @@ void ToolConfig::pfnLoadEditorItem(void* ctx)
 	stlstr = m_objLua.GetString("./CName");
 	pTab->strCName = StlStringToCString(stlstr);
 	stlstr = m_objLua.GetString("./Key");
-	pTab->strKey = StlStringToCString(stlstr);
+	pTab->strKeyCName = StlStringToCString(stlstr);
 	stlstr = m_objLua.GetString("./Des");
-	pTab->strDes = StlStringToCString(stlstr);
+	pTab->strDesCName = StlStringToCString(stlstr);
 
 	if(g_objPlatformConfig.nPlatformType == PLATFORM_TYPE_EXCEL)
 	{

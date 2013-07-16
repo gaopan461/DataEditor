@@ -13,6 +13,17 @@
 
 BEGIN_NS_AC
 
+class COptionTreeItemStaticEx : public COptionTreeItemStatic
+{
+public:
+	virtual void OnSelect()
+	{
+		ToolTree* pTree = (ToolTree*)m_otOption;
+		int nCurrSelID = atoi(GetInfoText().GetBuffer());
+		pTree->SelectID(nCurrSelID);
+	}
+};
+
 // 下面的多继承必须将CTabCtrl放前面，否则BEGIN_MESSAGE_MAP时
 // 会报警，运行时会出现指针转换导致出错
 
@@ -25,6 +36,10 @@ public:
 	BOOL Create(RECT rcRect, CWnd* pWnd, UINT nID);
 public:
 	int Create();
+public:
+	void SelectID(int id);
+private:
+	int m_nLastSelID;
 };
 
 END_NS_AC

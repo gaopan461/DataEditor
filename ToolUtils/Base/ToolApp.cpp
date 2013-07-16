@@ -47,10 +47,9 @@ int ToolApp::InitializeTool(const CString& strAppName)
 	m_pLog->Create(strAppName);
 	m_pTab->Create();
 	m_pTree->Create();
-
 	m_pLayout->Init();
-
 	m_pConfig->Load(strAppName);
+	m_pTab->ChangeTab(0);
 
 	INFO_MSG("--------------------------------------------");
 	INFO_MSG("               %s Start             ",CStringToStlString(strAppName).c_str());

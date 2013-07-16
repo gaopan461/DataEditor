@@ -255,6 +255,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Base\ToolDef.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Base\ToolDef.h"
 				>
 			</File>

@@ -5,6 +5,7 @@ BEGIN_NS_AC
 
 ToolTree::ToolTree(ToolApp* app)
 : Module<ToolApp>(app)
+, m_nLastSelID(-1)
 {
 }
 
@@ -49,6 +50,12 @@ int ToolTree::Create()
 	}
 
 	return 0;
+}
+
+void ToolTree::SelectID(int id)
+{
+	if(id == m_nLastSelID || id <= 0)
+		return;
 }
 
 END_NS_AC

@@ -34,14 +34,24 @@ END_MESSAGE_MAP()
 void ToolTab::OnLButtonDown(UINT nFlags, CPoint point) 
 {
 	CTabCtrl::OnLButtonDown(nFlags, point);
+	ChangeTab(GetCurFocus());
+}
 
-	if (m_nTabCurrent != GetCurFocus())
-	{
+int ToolTab::ChangeTab(int nSel)
+{
+	if(m_nTabCurrent == nSel)
+		return 0;
+
+	if(nSel < 0 || nSel >= GetItemCount())
+		return -1;
+
+	if(m_nTabCurrent != -1)
 		m_vtTabWnds[m_nTabCurrent]->ShowWindow(SW_HIDE);
-		m_nTabCurrent = GetCurFocus();
-		m_vtTabWnds[m_nTabCurrent]->ShowWindow(SW_SHOW);
-		m_vtTabWnds[m_nTabCurrent]->SetFocus();
-	}
+
+	m_nTabCurrent = nSel;
+	m_vtTabWnds[m_nTabCurrent]->ShowWindow(SW_SHOW);
+	m_vtTabWnds[m_nTabCurrent]->SetFocus();
+	return 0;
 }
 
 int ToolTab::Create()

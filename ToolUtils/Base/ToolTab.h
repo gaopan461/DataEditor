@@ -22,18 +22,15 @@ public:
 	virtual ~ToolTab();
 public:
 	int Create();
-
 public:
 	CWnd* AddTabItem(const CString& strName);
-
+	int ChangeTab(int nSel);
 protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
-
 protected:
 	std::vector<CWnd*> m_vtTabWnds;
-
 private:
 	int m_nTabCurrent;
 };

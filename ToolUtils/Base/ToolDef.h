@@ -27,6 +27,11 @@ using namespace YExcel;
 
 BEGIN_NS_AC
 
+int GetCellContent(const BasicExcelCell* pCell, CString& strContent);
+int SetCellContent(BasicExcelCell* pCell, const CString& strContent);
+
+//-----------------------------------------------------------
+
 enum ECtrlType
 {
 	CTRL_EDIT = 0,
@@ -44,40 +49,29 @@ struct SItemTab
 	CString strDes;
 	std::vector<SCtrl*> vtCtrls;
 
-	SItemTab()
-	{
-		strName = _T("");
-		strCName = _T("");
-		strKey = _T("");
-		strDes = _T("");
-		vtCtrls.clear();
-	}
+	SItemTab();
+	virtual ~SItemTab();
+};
 
-	virtual ~SItemTab()
-	{
-		for(size_t i = 0; i < vtCtrls.size(); ++i)
-			_safe_delete(vtCtrls[i]);
-
-		vtCtrls.clear();
-	}
+struct SItemDB
+{
+	virtual ~SItemDB(){}
+	virtual int Save(SItemTab* pItemTab){return 0;}
+	virtual int Load(SItemTab* pItemTab){return 0;}
 };
 
 typedef std::map<CString,int> MapCNameToColumnT;
 
-struct SItemDB
-{
-	virtual int Save(SItemTab* pItemTab){}
-	virtual int Load(SItemTab* pItemTab){}
-};
 struct SItemExcelDB : public SItemDB
 {
 	BasicExcel* pExcel;
 	MapCNameToColumnT mapCNameToColumn;
+	std::string strFileName;
 
-	virtual ~SItemExcelDB()
-	{
-		_safe_delete(pExcel);
-	}
+	SItemExcelDB(const char* filename);
+	virtual ~SItemExcelDB();
+
+	int Init();
 };
 
 typedef std::vector<SItemTab*> VectorItemTabsT;
@@ -97,7 +91,7 @@ enum EPlatformType
 
 struct SExcelPlatformConfig
 {
-	int nHeadColumn;
+	int nHeadRow;
 };
 
 struct SPlatformConfig

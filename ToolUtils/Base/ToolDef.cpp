@@ -116,6 +116,7 @@ int SItemExcelDB::Init()
 int SItemExcelDB::DBToTree(ToolTree* pTree)
 {
 	pTree->DeleteAllItems();
+	pTree->InsertUndefinedRoot();
 
 	MapCNameToColumnT::iterator iter = mapCNameToColumn.find(strKeyCName);
 	if(iter == mapCNameToColumn.end())
@@ -141,7 +142,7 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 		ACCHECK(pSheet);
 
 		size_t nDataStartRow = g_objPlatformConfig.objExcelConfig.nDataStartRow;
-		for(size_t nRow = nDataStartRow-1; nRow < pSheet->GetTotalRows(); ++nRow)
+		for(size_t nRow = nDataStartRow; nRow < pSheet->GetTotalRows(); ++nRow)
 		{
 			BasicExcelCell* pCellKey = pSheet->Cell(nRow,nKeyCol);
 			ACCHECK(pCellKey);
@@ -166,6 +167,7 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 		}
 	}
 
+	pTree->ExpandAllItems();
 	pTree->UpdatedItems();
 	return 0;
 }

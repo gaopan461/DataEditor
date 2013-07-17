@@ -57,6 +57,9 @@ void ToolConfig::pfnLoadEditorItem(void* ctx)
 	{
 		stlstr = m_objLua.GetString("./Excel");
 		SItemExcelDB* pDB = new SItemExcelDB(stlstr.c_str());
+
+		pDB->strKeyCName = pTab->strKeyCName;
+		pDB->strDesCName = pTab->strDesCName;
 		
 		g_vtItemDBs.push_back(pDB);
 	}

@@ -29,8 +29,11 @@ public:
 	int InsertItem(int id, const CString& strDes);
 public:
 	void SelectID(int id);
+public:
+	int InsertUndefinedRoot();
 private:
 	int m_nLastSelID;
+	COptionTreeItem* m_pUndefinedRoot;
 };
 
 class COptionTreeItemStaticEx : public COptionTreeItemStatic

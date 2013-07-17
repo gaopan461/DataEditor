@@ -14,7 +14,7 @@ IMPLEMENT_DYNAMIC(ToolTab, CTabCtrl)
 ToolTab::ToolTab(ToolApp* app)
 : Module<ToolApp>(app)
 {
-	m_nTabCurrent = 0;
+	m_nTabCurrent = -1;
 }
 
 ToolTab::~ToolTab()
@@ -95,11 +95,6 @@ CWnd* ToolTab::AddTabItem(const CString& strName)
 		AfxMessageBox(_T("AddTabItem,create tab item windown failed!"));
 		ExitProcess(-1);
 	}
-
-	if(GetItemCount() == m_nTabCurrent)
-		pWnd->ShowWindow(TRUE);
-	else
-		pWnd->ShowWindow(FALSE);
 
 	InsertItem(GetItemCount(),strName);
 	m_vtTabWnds.push_back(pWnd);

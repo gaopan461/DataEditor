@@ -6,6 +6,7 @@ BEGIN_NS_AC
 ToolTree::ToolTree(ToolApp* app)
 : Module<ToolApp>(app)
 , m_nLastSelID(-1)
+, m_pUndefinedRoot(NULL)
 {
 }
 
@@ -49,6 +50,8 @@ int ToolTree::Create()
 		ExitProcess(-1);
 	}
 
+	SetColumn(80);
+
 	return 0;
 }
 
@@ -57,12 +60,14 @@ int ToolTree::InsertItem(int id, const CString& strDes)
 	CString strKey;
 	strKey.Format(_T("%d"), id);
 
-	COptionTreeItemStaticEx* pOptItem = new COptionTreeItemStaticEx();
+	COptionTreeItemStaticEx* pOptItem = (COptionTreeItemStaticEx*)COptionTree::InsertItem(new COptionTreeItemStaticEx(),m_pUndefinedRoot);
 	ACCHECK(pOptItem);
+
+	pOptItem->SetLabelText(strKey);
 	pOptItem->SetInfoText(strKey);
 	pOptItem->SetStaticText(strDes);
+	pOptItem->CreateStaticItem(0);
 
-	COptionTree::InsertItem(pOptItem);
 	return 0;
 }
 
@@ -70,6 +75,16 @@ void ToolTree::SelectID(int id)
 {
 	if(id == m_nLastSelID || id <= 0)
 		return;
+}
+
+int ToolTree::InsertUndefinedRoot()
+{
+	m_pUndefinedRoot = COptionTree::InsertItem(new COptionTreeItem());
+	ACCHECK(m_pUndefinedRoot);
+
+	m_pUndefinedRoot->SetLabelText(_T("未分类"));
+	m_pUndefinedRoot->SetInfoText(_T("未分类"));
+	return 0;
 }
 
 END_NS_AC

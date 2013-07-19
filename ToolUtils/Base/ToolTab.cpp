@@ -57,6 +57,12 @@ int ToolTab::ChangeTab(int nSel)
 	return 0;
 }
 
+int ToolTab::DBToCtrl( int key )
+{
+	m_vtItemTabs[m_nTabCurrent]->DBToCtrl(key);
+	return 0;
+}
+
 int ToolTab::Create()
 {
 	CWnd* pParent = m_pOwner->GetMainWnd();
@@ -74,6 +80,8 @@ int ToolTab::Create()
 		AfxMessageBox(_T("Create main tab ctrl failed!"));
 		ExitProcess(-1);
 	}
+
+	SetFont(&ToolApp::Instance().m_objFont);
 
 	return 0;
 }

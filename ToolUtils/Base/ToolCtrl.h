@@ -38,9 +38,6 @@ struct SCtrl
 		_safe_delete(pStatic);
 	}
 
-	virtual int Set(){return 0;}
-	virtual int Get(){return 0;}
-
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
 
 	void CreateStatic(CWnd* pParent);

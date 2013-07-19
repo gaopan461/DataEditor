@@ -26,13 +26,13 @@ public:
 	BOOL Create(RECT rcRect, CWnd* pWnd, UINT nID);
 public:
 	int Create();
-	int InsertItem(int id, const CString& strDes);
+	int InsertItem(int key, const CString& strDes);
 public:
-	void SelectID(int id);
+	void SelectKey(int key);
 public:
 	int InsertUndefinedRoot();
 private:
-	int m_nLastSelID;
+	int m_nLastSelKey;
 	COptionTreeItem* m_pUndefinedRoot;
 };
 
@@ -42,9 +42,8 @@ public:
 	virtual void OnSelect()
 	{
 		ToolTree* pTree = (ToolTree*)m_otOption;
-		CString str = GetInfoText();
-		int nCurrSelID = atoi(CStringToStlString(str).c_str());
-		pTree->SelectID(nCurrSelID);
+		CString key = GetInfoText();
+		pTree->SelectKey(atoi(CStringToStlString(key).c_str()));
 	}
 };
 

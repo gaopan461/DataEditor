@@ -108,6 +108,149 @@ int SItemExcelDB::InitMapNameToColumn()
 	return 0;
 }
 
+int SItemExcelDB::DBToCtrl(SItemTab* pItemTab,int key)
+{
+	int nRow,nSheet;
+	if(Find(key,nRow,nSheet) != 0)
+	{
+		ERROR_MSG("DBToCtrl,can't find key:%d",key);
+		return -1;
+	}
+
+	for(size_t i = 0; i < pItemTab->vtCtrls.size(); ++i)
+	{
+		SCtrl* pCtrl = pItemTab->vtCtrls[i];
+		ACCHECK(pCtrl);
+
+		int nCtrlCol = mapCNameToColumn[pCtrl->strCName];
+		BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
+		ACCHECK(pSheet);
+		BasicExcelCell* pCell = pSheet->Cell(nRow,nCtrlCol);
+		ACCHECK(pCell);
+		CString strDBVal;
+		if(GetCellContent(pCell,strDBVal) != 0)
+			INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nCtrlCol);
+
+		switch(pCtrl->nCtrl)
+		{
+		case CTRL_EDIT:
+			DataToEdit((SEdit*)pCtrl,strDBVal);
+			break;
+		case CTRL_CHECK:
+			DataToCheck((SCheck*)pCtrl,strDBVal);
+			break;
+		case CTRL_COMBOBOX:
+			DataToCombobox((SCombobox*)pCtrl,strDBVal);
+			break;
+		case CTRL_CHECKCOMBO:
+			DataToCheckCombo((SCheckCombo*)pCtrl,strDBVal);
+			break;
+		}
+	}
+
+	return 0;
+}
+
+int SItemExcelDB::Find(int key,int& row,int& sheet)
+{
+	size_t nKeyCol = mapCNameToColumn[strKeyCName];
+	for(size_t nSheet = 0; nSheet < pExcel->GetTotalWorkSheets(); ++nSheet)
+	{
+		BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
+		ACCHECK(pSheet);
+
+		for(size_t nRow = nDataRow; nRow < pSheet->GetTotalRows(); ++nRow)
+		{
+			BasicExcelCell* pCell = pSheet->Cell(nRow,nKeyCol);
+			ACCHECK(pCell);
+
+			CString strValue;
+			if(GetCellContent(pCell,strValue) != 0)
+			{
+				INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nKeyCol);
+				continue;
+			}
+
+			int val = atoi(CStringToStlString(strValue).c_str());
+
+			if(val == key)
+			{
+				row = nRow;
+				sheet = nSheet;
+				return 0;
+			}
+		}
+	}
+	return -1;
+}
+
+int SItemExcelDB::DataToEdit(SEdit* pCtrl,CString data)
+{
+	if(pCtrl->nType == DATA_INT)
+	{
+		int nData = atoi(CStringToStlString(data).c_str());
+		data.Format(_T("%d"),nData);
+	}
+
+	pCtrl->pCtrl->SetWindowText(data);
+	return 0;
+}
+
+int SItemExcelDB::DataToCheck(SCheck* pCtrl,CString data)
+{
+	bool val = false;
+	if(stricmp(CStringToStlString(data).c_str(),"false") == 0)
+		val = false;
+	else if(stricmp(CStringToStlString(data).c_str(),"true") == 0)
+		val = true;
+
+	val = atoi(CStringToStlString(data).c_str());
+
+	pCtrl->pCtrl->SetCheck(val);
+	return 0;
+}
+
+int SItemExcelDB::DataToCombobox(SCombobox* pCtrl,CString data)
+{
+	int dbVal = atoi(CStringToStlString(data).c_str());
+	for(size_t ctlItem = 0; ctlItem < pCtrl->vtItems.size(); ++ctlItem)
+	{
+		if(dbVal == pCtrl->vtItems[ctlItem].nValue)
+		{
+			pCtrl->pCtrl->SetCurSel(ctlItem);
+			break;
+		}
+	}
+	return 0;
+}
+
+int SItemExcelDB::DataToCheckCombo(SCheckCombo* pCtrl,CString data)
+{
+	std::vector<CString> vtItems;
+	CString strItemText;
+	int nPos = 0;
+	//数组通过,隔开
+	strItemText = data.Tokenize(EXCEL_ARRAY_DELIMITER,nPos);
+	while (strItemText != _T(""))
+	{
+		vtItems.push_back(strItemText);
+		strItemText = data.Tokenize(EXCEL_ARRAY_DELIMITER, nPos);
+	};
+
+	pCtrl->pCtrl->SelectAll(FALSE);
+
+	for(size_t dbItem = 0; dbItem < vtItems.size(); ++dbItem)
+	{
+		int dbVal = atoi(CStringToStlString(vtItems[dbItem]).c_str());
+		for(size_t ctlItem = 0; ctlItem < pCtrl->vtItems.size(); ++ctlItem)
+		{
+			if(dbVal == pCtrl->vtItems[ctlItem].nValue)
+				pCtrl->pCtrl->SetCheck(ctlItem,true);
+		}
+	}
+	return 0;
+}
+
 int SItemExcelDB::DBToTree(ToolTree* pTree)
 {
 	pTree->DeleteAllItems();
@@ -184,6 +327,12 @@ SItemTab::~SItemTab()
 		_safe_delete(vtCtrls[i]);
 
 	vtCtrls.clear();
+}
+
+int SItemTab::DBToCtrl( int key )
+{
+	pDB->DBToCtrl(this,key);
+	return 0;
 }
 
 END_NS_AC

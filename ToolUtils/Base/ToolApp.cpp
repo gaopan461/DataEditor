@@ -35,6 +35,21 @@ ToolApp::~ToolApp()
 
 int ToolApp::InitializeTool(const CString& strAppName)
 {
+	m_objFont.CreateFont(20, // Height
+		0, // Width
+		0, // Escapement
+		0, // Orientation
+		FW_BLACK, // Weight
+		FALSE, // Italic
+		FALSE, // Underline
+		0, // StrikeOut
+		ANSI_CHARSET, // CharSet
+		OUT_DEFAULT_PRECIS, // OutPrecision
+		CLIP_DEFAULT_PRECIS, // ClipPrecision
+		DEFAULT_QUALITY, // Quality
+		DEFAULT_PITCH | FF_SWISS, // PitchAndFamily
+		_T("Î¢ÈíÑÅºÚ")); // Facename
+
 	m_pLog->Create(strAppName);
 	m_pTab->Create();
 	m_pTree->Create();
@@ -51,6 +66,7 @@ int ToolApp::InitializeTool(const CString& strAppName)
 
 int ToolApp::FinalizeTool()
 {
+	m_objFont.DeleteObject();
 	return 0;
 }
 

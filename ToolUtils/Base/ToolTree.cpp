@@ -1,11 +1,12 @@
 #include "ToolTree.h"
 #include "ToolApp.h"
+#include "ToolTab.h"
 
 BEGIN_NS_AC
 
 ToolTree::ToolTree(ToolApp* app)
 : Module<ToolApp>(app)
-, m_nLastSelID(-1)
+, m_nLastSelKey(-1)
 , m_pUndefinedRoot(NULL)
 {
 }
@@ -55,10 +56,10 @@ int ToolTree::Create()
 	return 0;
 }
 
-int ToolTree::InsertItem(int id, const CString& strDes)
+int ToolTree::InsertItem( int key, const CString& strDes )
 {
 	CString strKey;
-	strKey.Format(_T("%d"), id);
+	strKey.Format(_T("%d"), key);
 
 	COptionTreeItemStaticEx* pOptItem = (COptionTreeItemStaticEx*)COptionTree::InsertItem(new COptionTreeItemStaticEx(),m_pUndefinedRoot);
 	ACCHECK(pOptItem);
@@ -71,13 +72,14 @@ int ToolTree::InsertItem(int id, const CString& strDes)
 	return 0;
 }
 
-void ToolTree::SelectID(int id)
+void ToolTree::SelectKey( int key )
 {
-	if(id == m_nLastSelID || id <= 0)
+	if(key == m_nLastSelKey || key <= 0)
 		return;
 
-	m_nLastSelID = id;
+	m_nLastSelKey = key;
 
+	m_pOwner->GetMainTab()->DBToCtrl(key);
 }
 
 int ToolTree::InsertUndefinedRoot()

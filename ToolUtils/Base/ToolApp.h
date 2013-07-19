@@ -60,6 +60,8 @@ protected:
 	ToolTab* m_pTab;
 	ToolLog* m_pLog;
 	ToolLayout* m_pLayout;
+public:
+	CFont m_objFont;
 };
 
 END_NS_AC

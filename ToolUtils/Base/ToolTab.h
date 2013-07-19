@@ -25,6 +25,7 @@ public:
 public:
 	SItemTab* AddTabItem(const CString& strName);
 	int ChangeTab(int nSel);
+	int DBToCtrl(int key);
 protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 

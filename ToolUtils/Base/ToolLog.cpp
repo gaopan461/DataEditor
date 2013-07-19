@@ -48,6 +48,8 @@ void ToolLog::Create(const CString& strAppName)
 		ExitProcess(-1);
 	}
 
+	SetFont(&ToolApp::Instance().m_objFont);
+
 	CString cstrLogFileName = strAppName + _T(".txt");
 	std::string stlstrLogFileName = CStringToStlString(cstrLogFileName);
 	Log::Instance().AddFacility(new LogFacilityFile(stlstrLogFileName));

@@ -32,6 +32,7 @@ void SCtrl::CreateStatic(CWnd* pParent)
 	int id = ToolApp::Instance().GetLayout()->GetNextID();
 	pStatic = new CStatic;
 	pStatic->Create(strName,WS_CHILD|WS_VISIBLE|SS_CENTER,rect,pParent,id);
+	pStatic->SetFont(&ToolApp::Instance().m_objFont);
 }
 
 int SEdit::Init( LuaConfig& rLuaConfig,CWnd* pParent )
@@ -48,7 +49,7 @@ int SEdit::Init( LuaConfig& rLuaConfig,CWnd* pParent )
 	int id = ToolApp::Instance().GetLayout()->GetNextID();
 	pCtrl = new CEdit;
 	pCtrl->Create(WS_CHILD|WS_VISIBLE|WS_TABSTOP|WS_BORDER,rect,pParent,id);
-	//Set();
+	pCtrl->SetFont(&ToolApp::Instance().m_objFont);
 	return 0;
 }
 
@@ -61,7 +62,7 @@ int SCheck::Init( LuaConfig& rLuaConfig,CWnd* pParent )
 	int id = ToolApp::Instance().GetLayout()->GetNextID();
 	pCtrl = new CButton;
 	pCtrl->Create(strName,WS_CHILD|WS_VISIBLE|BS_AUTOCHECKBOX,rect,pParent,id);
-
+	pCtrl->SetFont(&ToolApp::Instance().m_objFont);
 	return 0;
 }
 
@@ -73,7 +74,7 @@ int SStatic::Init( LuaConfig& rLuaConfig,CWnd* pParent )
 	int id = ToolApp::Instance().GetLayout()->GetNextID();
 	pStatic = new CStatic;
 	pStatic->Create(strName,WS_CHILD|WS_VISIBLE,rect,pParent,id);
-
+	pStatic->SetFont(&ToolApp::Instance().m_objFont);
 	return 0;
 }
 
@@ -88,9 +89,9 @@ int SCombobox::Init( LuaConfig& rLuaConfig,CWnd* pParent )
 	int id = ToolApp::Instance().GetLayout()->GetNextID();
 	pCtrl = new CComboBox;
 	pCtrl->Create(WS_CHILD|WS_VISIBLE|WS_VSCROLL|CBS_DROPDOWNLIST,rect,pParent,id);
+	pCtrl->SetFont(&ToolApp::Instance().m_objFont);
 
 	rLuaConfig.IterTable<SCombobox>("./Confs",this,&SCombobox::pfnAddComboItem,&rLuaConfig);
-
 	return 0;
 }
 
@@ -121,6 +122,7 @@ int SCheckCombo::Init( LuaConfig& rLuaConfig,CWnd* pParent )
 	int id = ToolApp::Instance().GetLayout()->GetNextID();
 	pCtrl = new CCheckComboBox;
 	pCtrl->Create(WS_CHILD|WS_VISIBLE|WS_VSCROLL|CBS_DROPDOWNLIST,rect,pParent,id);
+	pCtrl->SetFont(&ToolApp::Instance().m_objFont);
 
 	rLuaConfig.IterTable<SCheckCombo>("./Confs",this,&SCheckCombo::pfnAddComboItem,&rLuaConfig);
 

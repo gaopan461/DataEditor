@@ -23,6 +23,8 @@
 #define IDC_TAB_ITEM	2100
 #define IDC_CTRL		2200
 
+#define EXCEL_ARRAY_DELIMITER _T(",")
+
 using namespace YExcel;
 
 BEGIN_NS_AC
@@ -71,8 +73,8 @@ struct SItemDB
 	SItemDB(int type,const CString& path,const CString& key,const CString& des);
 	virtual ~SItemDB(){}
 
-	virtual int CtrlToDB(SItemTab* pItemTab){return 0;}
-	virtual int DBToCtrl(SItemTab* pItemTab){return 0;}
+	virtual int CtrlToDB(SItemTab* pItemTab,int key){return 0;}
+	virtual int DBToCtrl(SItemTab* pItemTab,int key){return 0;}
 
 	virtual int DBToTree(ToolTree* pTree){return 0;}
 };
@@ -89,9 +91,17 @@ struct SItemExcelDB : public SItemDB
 	SItemExcelDB(const CString& path,const CString& key, const CString& des,int headRow,int dataRow);
 	virtual ~SItemExcelDB();
 
+	virtual int DBToCtrl(SItemTab* pItemTab,int key);
+
 	virtual int DBToTree(ToolTree* pTree);
 
 	int InitMapNameToColumn();
+
+	int Find(int key,int& row,int& sheet);
+	int DataToEdit(SEdit* pCtrl,CString data);
+	int DataToCheck(SCheck* pCtrl,CString data);
+	int DataToCombobox(SCombobox* pCtrl,CString data);
+	int DataToCheckCombo(SCheckCombo* pCtrl,CString data);
 };
 
 //-----------------------------------------------------------
@@ -106,6 +116,8 @@ struct SItemTab
 
 	SItemTab();
 	virtual ~SItemTab();
+
+	int DBToCtrl(int key);
 };
 
 //-----------------------------------------------------------

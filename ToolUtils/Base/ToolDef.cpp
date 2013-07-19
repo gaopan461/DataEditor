@@ -42,37 +42,33 @@ int SetCellContent(BasicExcelCell* pCell, const CString& strContent)
 	return 0;
 }
 
-SItemTab::SItemTab()
+//-----------------------------------------------------
+
+SItemDB::SItemDB(int type,const CString& path,const CString& key,const CString& des)
 {
-	strName = _T("");
-	strCName = _T("");
-	strKeyCName = _T("");
-	strDesCName = _T("");
-	vtCtrls.clear();
+	nDBType = type;
+	strFilePath = path;
+	strKeyCName = key;
+	strDesCName = des;
 }
 
-SItemTab::~SItemTab()
-{
-	for(size_t i = 0; i < vtCtrls.size(); ++i)
-		_safe_delete(vtCtrls[i]);
-
-	vtCtrls.clear();
-}
-
-SItemExcelDB::SItemExcelDB(const char* filename)
+SItemExcelDB::SItemExcelDB(const CString& path,const CString& key, const CString& des,int headRow,int dataRow)
+: SItemDB(DB_EXCEL,path,key,des)
 {
 	pExcel = new BasicExcel();
-	if(!pExcel->Load(filename))
+	if(!pExcel->Load(CStringToStlString(path).c_str()))
 	{
 		CString str;
-		str.Format(_T("Load excel faild! excel:%s"),filename);
+		str.Format(_T("Load excel faild! excel:%s"),path);
 		AfxMessageBox(str);
 		ExitProcess(-1);
 	}
 
-	strFileName = filename;
+	nHeadRow = headRow;
+	nDataRow = dataRow;
+
 	mapCNameToColumn.clear();
-	Init();
+	InitMapNameToColumn();
 }
 
 SItemExcelDB::~SItemExcelDB()
@@ -81,7 +77,7 @@ SItemExcelDB::~SItemExcelDB()
 	mapCNameToColumn.clear();
 }
 
-int SItemExcelDB::Init()
+int SItemExcelDB::InitMapNameToColumn()
 {
 	ACCHECK(pExcel->GetTotalWorkSheets() > 0);
 
@@ -89,10 +85,9 @@ int SItemExcelDB::Init()
 	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet1Index);
 	ACCHECK(pSheet);
 
-	size_t nHeadRow = g_objPlatformConfig.objExcelConfig.nHeadRow;
 	if(pSheet->GetTotalRows() < nHeadRow)
 	{
-		ERROR_MSG("Require head,excel:%s",strFileName.c_str());
+		ERROR_MSG("Require head,excel:%s",CStringToStlString(strFilePath).c_str());
 		return -1;
 	}
 
@@ -102,7 +97,7 @@ int SItemExcelDB::Init()
 		ACCHECK(pCell);
 		CString str;
 		if(GetCellContent(pCell,str) != 0)
-			INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",strFileName.c_str(),nHeadRow,nCol);
+			INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nHeadRow,nCol);
 
 		if(str.IsEmpty())
 			continue;
@@ -121,7 +116,7 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 	MapCNameToColumnT::iterator iter = mapCNameToColumn.find(strKeyCName);
 	if(iter == mapCNameToColumn.end())
 	{
-		ERROR_MSG("DBToTree failed,excel:%s,key:%s",strFileName.c_str(),CStringToStlString(strKeyCName).c_str());
+		ERROR_MSG("DBToTree failed,excel:%s,key:%s",CStringToStlString(strFilePath).c_str(),CStringToStlString(strKeyCName).c_str());
 		return -1;
 	}
 	size_t nKeyCol = iter->second;
@@ -130,7 +125,7 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 	iter = mapCNameToColumn.find(strDesCName);
 	if(iter == mapCNameToColumn.end())
 	{
-		WARN_MSG("DBToTree no des,excel:%s,des:%s",strFileName.c_str(),CStringToStlString(strDesCName).c_str());
+		WARN_MSG("DBToTree no des,excel:%s,des:%s",CStringToStlString(strFilePath).c_str(),CStringToStlString(strDesCName).c_str());
 	}
 	else
 		nDesCol = iter->second;
@@ -141,15 +136,14 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 		BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(sheet);
 		ACCHECK(pSheet);
 
-		size_t nDataStartRow = g_objPlatformConfig.objExcelConfig.nDataStartRow;
-		for(size_t nRow = nDataStartRow; nRow < pSheet->GetTotalRows(); ++nRow)
+		for(size_t nRow = nDataRow; nRow < pSheet->GetTotalRows(); ++nRow)
 		{
 			BasicExcelCell* pCellKey = pSheet->Cell(nRow,nKeyCol);
 			ACCHECK(pCellKey);
 			CString str;
 			if(GetCellContent(pCellKey,str) != 0)
 			{
-				INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",strFileName.c_str(),nRow,nKeyCol);
+				INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nKeyCol);
 				continue;
 			}
 
@@ -159,7 +153,7 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 			ACCHECK(pCellDes);
 			if(GetCellContent(pCellDes,str) != 0)
 			{
-				INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",strFileName.c_str(),nRow,nDesCol);
+				INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nDesCol);
 				str = _T("");
 			}
 
@@ -170,6 +164,25 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 	pTree->ExpandAllItems();
 	pTree->UpdatedItems();
 	return 0;
+}
+
+//-----------------------------------------------------
+
+SItemTab::SItemTab()
+{
+	strName = _T("");
+	strCName = _T("");
+	pDB = NULL;
+	vtCtrls.clear();
+}
+
+SItemTab::~SItemTab()
+{
+	_safe_delete(pDB);
+	for(size_t i = 0; i < vtCtrls.size(); ++i)
+		_safe_delete(vtCtrls[i]);
+
+	vtCtrls.clear();
 }
 
 END_NS_AC

@@ -1,3 +1,6 @@
+-- --------------------------------------------------------------------------
+-- 枚举值定义
+-- --------------------------------------------------------------------------
 
 SupportType = {
 	Int 	= 0,
@@ -13,12 +16,49 @@ SupportCtrl = {
 	CheckCombo 	= 4,
 }
 
-SupportPlatform = 
+SupportDB = 
 {
 	Excel 	= 0,
 	Lua 	= 1,
 	Python 	= 2,
 }
+
+-- --------------------------------------------------------------------------
+-- 支持的DB定义
+-- --------------------------------------------------------------------------
+
+function ExcelDB(t)
+	if type(t.Path) ~= "string" then
+		error("ExcelDB:Require Path or Path must be string")
+	end
+	if type(t.Key) ~= "string" then
+		error("ExcelDB:Require Key or Key must be string")
+	end
+	if type(Des) ~= "nil" and type(t.Des) ~= "string" then
+		error("ExcelDB:Des must be string")
+	end
+	if type(t.HeadRow) ~= "number" then
+		error("ExcelDB:Require HeadRow or HeadRow must be number")
+	end
+	if type(t.DataRow) ~= "number" then
+		error("ExcelDB:Require DataRow or DataRow must be number")
+	end
+	
+	_ExcelDB = {
+		DBType = SupportDB.Excel,
+		Path = t.Path,
+		Key = t.Key,
+		Des = t.Des or t.Key,
+		HeadRow = t.HeadRow,
+		DataRow = t.DataRow,
+	}
+	
+	return _ExcelDB
+end
+
+-- --------------------------------------------------------------------------
+-- 支持的控件定义
+-- --------------------------------------------------------------------------
 
 function Edit(t)
 	if type(t.Name) ~= "string" then

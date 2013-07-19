@@ -13,8 +13,8 @@ public:
 public:
 	int Load(const CString& strAppName);
 private:
-	void LoadPlatformConfig();
 	void LoadEditorConfig();
+	void LoadEditorDBConfig(SItemTab* pTab);
 	void LoadEditorCtrlConfig(CWnd* pCtrlParent);
 public:
 	void pfnLoadEditorItem(void* ctx);

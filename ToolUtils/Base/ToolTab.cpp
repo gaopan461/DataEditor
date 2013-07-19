@@ -55,7 +55,7 @@ int ToolTab::ChangeTab(int nSel)
 	m_vtTabWnds[m_nTabCurrent]->ShowWindow(SW_SHOW);
 	m_vtTabWnds[m_nTabCurrent]->SetFocus();
 
-	g_vtItemDBs[m_nTabCurrent]->DBToTree(pTree);
+	g_vtItemTabs[m_nTabCurrent]->pDB->DBToTree(pTree);
 	return 0;
 }
 

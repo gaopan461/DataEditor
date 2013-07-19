@@ -1,20 +1,11 @@
 require "./BaseCfg"
 
-PlatformConfig =
-{
-	PlatformType = SupportPlatform.Excel,
-	ExcelHead = 2,
-	ExcelData = 4,
-}
-
 EditorConfig = 
 {
 	{
 		Name = "ººƒ‹",
 		CName = "MagicType",
-		Excel = "./MagicTypeConfig.xls",
-		Key = "ID",
-		Des = "Des",
+		DB = ExcelDB{Path = "./MagicTypeConfig.xls", Key = "ID", Des = "Des", HeadRow = 2, DataRow = 4,},
 		Items = {
 			Edit{Name = "ID", CName = "ID", Type = "Int", Default = "-1",},
 			Edit{Name = "√Ë ˆ", CName = "Des", Type = "String", Default = "«ÎÃÓ“ª∂Œ√Ë ˆ", Newline = true,},
@@ -43,9 +34,7 @@ EditorConfig =
 	{
 		Name = "Buff",
 		CName = "AuraEffectType",
-		Excel = "./AuraEffectTypeConfig.xls",
-		Key = "ID",
-		Des = "Des",
+		DB = ExcelDB{Path = "./AuraEffectTypeConfig.xls", Key = "ID", Des = "Des", HeadRow = 2, DataRow = 4,},
 		Items = {
 			Edit{Name = "ID", CName = "ID", Type = "Int", Default = "-1",Newline = true,},
 			Edit{Name = "√Ë ˆ", CName = "Des", Type = "String", Default = "«ÎÃÓ“ª∂Œ√Ë ˆ",Newline = true,},

@@ -13,9 +13,6 @@ BEGIN_NS_AC
 //-----------------------------------------------------------
 
 VectorItemTabsT g_vtItemTabs;
-VectorItemDBsT g_vtItemDBs;
-
-SPlatformConfig g_objPlatformConfig;
 
 //-----------------------------------------------------------
 
@@ -64,11 +61,6 @@ int ToolApp::FinalizeTool()
 		_safe_delete(g_vtItemTabs[i]);
 
 	g_vtItemTabs.clear();
-
-	for(size_t i = 0; i < g_vtItemDBs.size(); ++i)
-		_safe_delete(g_vtItemDBs[i]);
-
-	g_vtItemDBs.clear();
 	return 0;
 }
 

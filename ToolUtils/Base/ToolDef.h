@@ -34,6 +34,13 @@ int SetCellContent(BasicExcelCell* pCell, const CString& strContent);
 
 //-----------------------------------------------------------
 
+enum EDataType
+{
+	DATA_INT = 0,
+	DATA_FLOAT,
+	DATA_STRING,
+};
+
 enum ECtrlType
 {
 	CTRL_EDIT = 0,
@@ -43,28 +50,25 @@ enum ECtrlType
 	CTRL_CHECKCOMBO,
 };
 
-struct SItemTab
+enum EDBType
 {
-	CString strName;
-	CString strCName;
-	CString strKeyCName;
-	CString strDesCName;
-	std::vector<SCtrl*> vtCtrls;
-
-	SItemTab();
-	virtual ~SItemTab();
+	DB_EXCEL = 0,
+	DB_LUA,
+	DB_PYTHON,
 };
+
+//-----------------------------------------------------------
+
+struct SItemTab;
 
 struct SItemDB
 {
+	int nDBType;
+	CString strFilePath;
 	CString strKeyCName;
 	CString strDesCName;
 
-	SItemDB()
-	{
-		strKeyCName = _T("");
-		strDesCName = _T("");
-	}
+	SItemDB(int type,const CString& path,const CString& key,const CString& des);
 	virtual ~SItemDB(){}
 
 	virtual int CtrlToDB(SItemTab* pItemTab){return 0;}
@@ -77,49 +81,35 @@ typedef std::map<CString,size_t> MapCNameToColumnT;
 
 struct SItemExcelDB : public SItemDB
 {
+	int nHeadRow;
+	int nDataRow;
 	BasicExcel* pExcel;
 	MapCNameToColumnT mapCNameToColumn;
-	std::string strFileName;
 
-	SItemExcelDB(const char* filename);
+	SItemExcelDB(const CString& path,const CString& key, const CString& des,int headRow,int dataRow);
 	virtual ~SItemExcelDB();
 
 	virtual int DBToTree(ToolTree* pTree);
 
-	int Init();
+	int InitMapNameToColumn();
 };
-
-typedef std::vector<SItemTab*> VectorItemTabsT;
-typedef std::vector<SItemDB*> VectorItemDBsT;
-
-extern VectorItemTabsT g_vtItemTabs;
-extern VectorItemDBsT g_vtItemDBs;
 
 //-----------------------------------------------------------
 
-enum EPlatformType
+struct SItemTab
 {
-	PLATFORM_TYPE_EXCEL = 0,
-	PLATFORM_TYPE_LUA,
-	PLATFORM_TYPE_PYTHON,
+	CString strName;
+	CString strCName;
+	SItemDB* pDB;
+	std::vector<SCtrl*> vtCtrls;
+
+	SItemTab();
+	virtual ~SItemTab();
 };
 
-struct SExcelPlatformConfig
-{
-	int nHeadRow;
-	int nDataStartRow;
-};
+typedef std::vector<SItemTab*> VectorItemTabsT;
 
-struct SPlatformConfig
-{
-	int nPlatformType;
-	union
-	{
-		SExcelPlatformConfig objExcelConfig;
-	};
-};
-
-extern SPlatformConfig g_objPlatformConfig;
+extern VectorItemTabsT g_vtItemTabs;
 
 //-----------------------------------------------------------
 

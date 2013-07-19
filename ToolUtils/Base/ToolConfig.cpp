@@ -17,20 +17,9 @@ int ToolConfig::Load(const CString& strAppName)
 	std::string stlstrFileName = CStringToStlString(cstrFileName);
 	m_objLua.Load(stlstrFileName);
 
-	LoadPlatformConfig();
 	LoadEditorConfig();
 
 	return 0;
-}
-
-void ToolConfig::LoadPlatformConfig()
-{
-	g_objPlatformConfig.nPlatformType = m_objLua.GetInteger("/PlatformConfig/PlatformType");
-	if(g_objPlatformConfig.nPlatformType == PLATFORM_TYPE_EXCEL)
-	{
-		g_objPlatformConfig.objExcelConfig.nHeadRow = m_objLua.GetInteger("/PlatformConfig/ExcelHead");
-		g_objPlatformConfig.objExcelConfig.nDataStartRow = m_objLua.GetInteger("/PlatformConfig/ExcelData");
-	}
 }
 
 void ToolConfig::LoadEditorConfig()
@@ -47,28 +36,35 @@ void ToolConfig::pfnLoadEditorItem(void* ctx)
 	stlstr = m_objLua.GetString("./Name");
 	pTab->strName = StlStringToCString(stlstr);
 	stlstr = m_objLua.GetString("./CName");
-	pTab->strCName = StlStringToCString(stlstr);
-	stlstr = m_objLua.GetString("./Key");
-	pTab->strKeyCName = StlStringToCString(stlstr);
-	stlstr = m_objLua.GetString("./Des");
-	pTab->strDesCName = StlStringToCString(stlstr);
-
-	if(g_objPlatformConfig.nPlatformType == PLATFORM_TYPE_EXCEL)
-	{
-		stlstr = m_objLua.GetString("./Excel");
-		SItemExcelDB* pDB = new SItemExcelDB(stlstr.c_str());
-
-		pDB->strKeyCName = pTab->strKeyCName;
-		pDB->strDesCName = pTab->strDesCName;
-		
-		g_vtItemDBs.push_back(pDB);
-	}
 
 	CWnd* pWnd = m_pOwner->GetMainTab()->AddTabItem(pTab->strName);
 
 	g_vtItemTabs.push_back(pTab);
 
+	LoadEditorDBConfig(pTab);
 	LoadEditorCtrlConfig(pWnd);
+}
+
+void ToolConfig::LoadEditorDBConfig(SItemTab* pTab)
+{
+	ACCHECK(pTab);
+	int type = m_objLua.GetInteger("./DB/DBType");
+	CString path = StlStringToCString(m_objLua.GetString("./DB/Path"));
+	CString key = StlStringToCString(m_objLua.GetString("./DB/Key"));
+	CString des = StlStringToCString(m_objLua.GetString("./DB/Des"));
+
+	switch(type)
+	{
+	case DB_EXCEL:
+		{
+			int headRow = m_objLua.GetInteger("./DB/HeadRow");
+			int dataRow = m_objLua.GetInteger("./DB/DataRow");
+			pTab->pDB = new SItemExcelDB(path,key,des,headRow,dataRow);
+		}
+		break;
+	default:
+		ERROR_MSG("LoadEditorDBConfig,unknown db type:%d",type);
+	}
 }
 
 void ToolConfig::LoadEditorCtrlConfig(CWnd* pCtrlParent)

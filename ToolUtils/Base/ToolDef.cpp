@@ -179,6 +179,7 @@ SItemTab::SItemTab()
 SItemTab::~SItemTab()
 {
 	_safe_delete(pDB);
+	_safe_delete(pWnd);
 	for(size_t i = 0; i < vtCtrls.size(); ++i)
 		_safe_delete(vtCtrls[i]);
 

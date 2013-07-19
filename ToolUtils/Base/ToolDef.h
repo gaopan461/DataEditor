@@ -102,6 +102,7 @@ struct SItemTab
 	CString strCName;
 	SItemDB* pDB;
 	std::vector<SCtrl*> vtCtrls;
+	CWnd* pWnd;
 
 	SItemTab();
 	virtual ~SItemTab();

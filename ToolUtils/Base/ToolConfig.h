@@ -15,7 +15,7 @@ public:
 private:
 	void LoadEditorConfig();
 	void LoadEditorDBConfig(SItemTab* pTab);
-	void LoadEditorCtrlConfig(CWnd* pCtrlParent);
+	void LoadEditorCtrlConfig(SItemTab* pTab);
 public:
 	void pfnLoadEditorItem(void* ctx);
 	void pfnLoadEditorCtrlItem(void* ctx);

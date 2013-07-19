@@ -10,12 +10,6 @@
 
 BEGIN_NS_AC
 
-//-----------------------------------------------------------
-
-VectorItemTabsT g_vtItemTabs;
-
-//-----------------------------------------------------------
-
 ToolApp* ToolApp::m_pInstance = NULL;
 
 ToolApp::ToolApp()
@@ -57,10 +51,6 @@ int ToolApp::InitializeTool(const CString& strAppName)
 
 int ToolApp::FinalizeTool()
 {
-	for(size_t i = 0; i < g_vtItemTabs.size(); ++i)
-		_safe_delete(g_vtItemTabs[i]);
-
-	g_vtItemTabs.clear();
 	return 0;
 }
 

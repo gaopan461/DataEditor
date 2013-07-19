@@ -19,12 +19,10 @@ ToolTab::ToolTab(ToolApp* app)
 
 ToolTab::~ToolTab()
 {
-	for(std::vector<CWnd*>::iterator it = m_vtTabWnds.begin(),ed = m_vtTabWnds.end(); it != ed; ++it)
-	{
-		delete *it;
-	}
+	for(size_t i = 0; i < m_vtItemTabs.size(); ++i)
+		_safe_delete(m_vtItemTabs[i]);
 
-	m_vtTabWnds.clear();
+	m_vtItemTabs.clear();
 }
 
 BEGIN_MESSAGE_MAP(ToolTab, CTabCtrl)
@@ -49,13 +47,13 @@ int ToolTab::ChangeTab(int nSel)
 	ACCHECK(pTree);
 
 	if(m_nTabCurrent != -1)
-		m_vtTabWnds[m_nTabCurrent]->ShowWindow(SW_HIDE);
+		m_vtItemTabs[m_nTabCurrent]->pWnd->ShowWindow(SW_HIDE);
 
 	m_nTabCurrent = nSel;
-	m_vtTabWnds[m_nTabCurrent]->ShowWindow(SW_SHOW);
-	m_vtTabWnds[m_nTabCurrent]->SetFocus();
+	m_vtItemTabs[m_nTabCurrent]->pWnd->ShowWindow(SW_SHOW);
+	m_vtItemTabs[m_nTabCurrent]->pWnd->SetFocus();
 
-	g_vtItemTabs[m_nTabCurrent]->pDB->DBToTree(pTree);
+	m_vtItemTabs[m_nTabCurrent]->pDB->DBToTree(pTree);
 	return 0;
 }
 
@@ -80,7 +78,7 @@ int ToolTab::Create()
 	return 0;
 }
 
-CWnd* ToolTab::AddTabItem(const CString& strName)
+SItemTab* ToolTab::AddTabItem(const CString& strName)
 {
 	CRect rect;
 	GetClientRect(&rect);
@@ -97,8 +95,12 @@ CWnd* ToolTab::AddTabItem(const CString& strName)
 	}
 
 	InsertItem(GetItemCount(),strName);
-	m_vtTabWnds.push_back(pWnd);
-	return pWnd;
+
+	SItemTab* pTab = new SItemTab;
+	pTab->pWnd = pWnd;
+
+	m_vtItemTabs.push_back(pTab);
+	return pTab;
 }
 
 

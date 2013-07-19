@@ -75,6 +75,9 @@ void ToolTree::SelectID(int id)
 {
 	if(id == m_nLastSelID || id <= 0)
 		return;
+
+	m_nLastSelID = id;
+
 }
 
 int ToolTree::InsertUndefinedRoot()

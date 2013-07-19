@@ -31,18 +31,15 @@ void ToolConfig::pfnLoadEditorItem(void* ctx)
 {
 	ACCHECK(m_objLua.IsTopTable());
 
-	std::string stlstr;
-	SItemTab* pTab = new SItemTab;
-	stlstr = m_objLua.GetString("./Name");
-	pTab->strName = StlStringToCString(stlstr);
-	stlstr = m_objLua.GetString("./CName");
+	CString strName = StlStringToCString(m_objLua.GetString("./Name"));
+	SItemTab* pTab = m_pOwner->GetMainTab()->AddTabItem(strName);
+	ACCHECK(pTab);
 
-	CWnd* pWnd = m_pOwner->GetMainTab()->AddTabItem(pTab->strName);
-
-	g_vtItemTabs.push_back(pTab);
+	pTab->strName = strName;
+	pTab->strCName = StlStringToCString(m_objLua.GetString("./CName"));
 
 	LoadEditorDBConfig(pTab);
-	LoadEditorCtrlConfig(pWnd);
+	LoadEditorCtrlConfig(pTab);
 }
 
 void ToolConfig::LoadEditorDBConfig(SItemTab* pTab)
@@ -67,17 +64,17 @@ void ToolConfig::LoadEditorDBConfig(SItemTab* pTab)
 	}
 }
 
-void ToolConfig::LoadEditorCtrlConfig(CWnd* pCtrlParent)
+void ToolConfig::LoadEditorCtrlConfig(SItemTab* pTab)
 {
 	m_pOwner->GetLayout()->Reset();
-	m_objLua.IterTable("./Items",this,&ToolConfig::pfnLoadEditorCtrlItem,pCtrlParent);
+	m_objLua.IterTable("./Items",this,&ToolConfig::pfnLoadEditorCtrlItem,pTab);
 }
 
 void ToolConfig::pfnLoadEditorCtrlItem(void* ctx)
 {
 	ACCHECK(m_objLua.IsTopTable());
-	CWnd* pParent = (CWnd*)ctx;
-	ACCHECK(pParent);
+	SItemTab* pTab = (SItemTab*)ctx;
+	ACCHECK(pTab && pTab->pWnd);
 
 	SCtrl* pCtrl = NULL;
 	int ctrl = m_objLua.GetInteger("./Ctrl");
@@ -103,10 +100,8 @@ void ToolConfig::pfnLoadEditorCtrlItem(void* ctx)
 		return;
 	}
 
-	pCtrl->Init(m_objLua,pParent);
-
-	SItemTab* pLastItem = g_vtItemTabs.back();
-	pLastItem->vtCtrls.push_back(pCtrl);
+	pCtrl->Init(m_objLua,pTab->pWnd);
+	pTab->vtCtrls.push_back(pCtrl);
 }
 
 END_NS_AC

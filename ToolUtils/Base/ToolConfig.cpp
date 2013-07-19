@@ -66,6 +66,7 @@ void ToolConfig::LoadEditorDBConfig(SItemTab* pTab)
 
 void ToolConfig::LoadEditorCtrlConfig(SItemTab* pTab)
 {
+	ACCHECK(pTab);
 	m_pOwner->GetLayout()->Reset();
 	m_objLua.IterTable("./Items",this,&ToolConfig::pfnLoadEditorCtrlItem,pTab);
 }

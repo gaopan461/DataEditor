@@ -108,10 +108,6 @@ struct SItemTab
 	virtual ~SItemTab();
 };
 
-typedef std::vector<SItemTab*> VectorItemTabsT;
-
-extern VectorItemTabsT g_vtItemTabs;
-
 //-----------------------------------------------------------
 
 template <class T>

@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "ToolTab.h"
 #include "ACString.h"
-#include "ToolTree.h"
 
 BEGIN_NS_AC
 
@@ -129,6 +128,11 @@ SItemTab* ToolTab::AddTabItem(const CString& strName)
 	return pTab;
 }
 
+SItemTab* ToolTab::GetCurrentItem()
+{
+	return m_vtItemTabs[m_nTabCurrent];
+}
+
 bool ToolTab::EnableKeyWindow(bool enable)
 {
 	CEdit* pCtrlKey = m_vtItemTabs[m_nTabCurrent]->GetKeyWnd();
@@ -137,31 +141,9 @@ bool ToolTab::EnableKeyWindow(bool enable)
 	return pCtrlKey->EnableWindow(enable);
 }
 
-int ToolTab::CtrlToDB()
+int ToolTab::LoadDefaultValues()
 {
-	SItemTab* pTabItem = m_vtItemTabs[m_nTabCurrent];
-	ACCHECK(pTabItem);
-
-	int nKey = -1;
-	if(m_pOwner->IsNewing())
-	{
-		CEdit* pCtrlKey = pTabItem->GetKeyWnd();
-		ACCHECK(pCtrlKey);
-
-		CString strKey;
-		pCtrlKey->GetWindowText(strKey);
-		nKey = atoi(CStringToStlString(strKey).c_str());
-		if(!pTabItem->GetDB()->ValidNewKey(nKey))
-		{
-			AfxMessageBox(_T("Key invalid"));
-			return -1;
-		}
-	}
-	else
-	{
-		nKey = m_pOwner->GetMainTree()->GetSelectKey();
-	}
-	return CtrlToDB(nKey);
+	return 0;
 }
 
 

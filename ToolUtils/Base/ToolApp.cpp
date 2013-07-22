@@ -92,21 +92,40 @@ int ToolApp::MenuNew()
 	m_bIsNewing = true;
 	m_pTree->EnableWindow(FALSE);
 	m_pTab->EnableKeyWindow(TRUE);
+	m_pTab->LoadDefaultValues();
 	return 0;
 }
 
 int ToolApp::MenuSave()
 {
-	m_pTab->CtrlToDB();
+	SItemTab* pTabItem = m_pTab->GetCurrentItem();
+	ACCHECK(pTabItem);
 
+	int nKey = -1;
 	if(m_bIsNewing)
 	{
 		m_bIsNewing = false;
 		m_pTree->EnableWindow(TRUE);
 		m_pTab->EnableKeyWindow(FALSE);
+
+		CEdit* pCtrlKey = pTabItem->GetKeyWnd();
+		ACCHECK(pCtrlKey);
+
+		CString strKey;
+		pCtrlKey->GetWindowText(strKey);
+		nKey = atoi(CStringToStlString(strKey).c_str());
+		if(!pTabItem->GetDB()->ValidNewKey(nKey))
+		{
+			AfxMessageBox(_T("Key invalid"));
+			return -1;
+		}
+	}
+	else
+	{
+		nKey = m_pTree->GetSelectKey();
 	}
 	
-	return 0;
+	return m_pTab->CtrlToDB(nKey);
 }
 
 END_NS_AC

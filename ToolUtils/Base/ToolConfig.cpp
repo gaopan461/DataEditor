@@ -108,6 +108,7 @@ void ToolConfig::pfnLoadEditorCtrlItem(void* ctx)
 	if(strCName == pTab->GetDB()->strKeyCName)
 	{
 		pTab->pKeyWnd = ((SEdit*)pCtrl)->pCtrl;
+		pTab->pKeyWnd->EnableWindow(FALSE);
 	}
 }
 

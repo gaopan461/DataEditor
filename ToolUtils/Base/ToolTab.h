@@ -24,12 +24,13 @@ public:
 	int Create();
 public:
 	SItemTab* AddTabItem(const CString& strName);
+	SItemTab* GetCurrentItem();
 	int ChangeTab(int nSel);
 	int DBToCtrl(int key);
 	int CtrlToDB(int key);
 public:
 	bool EnableKeyWindow(bool enable);
-	int CtrlToDB();
+	int LoadDefaultValues();
 protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 

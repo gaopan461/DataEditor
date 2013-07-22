@@ -11,6 +11,35 @@ USE_NS_AC
 class CDataEditorDlg : public CDialog, public ToolApp
 {
 // 构造
+	BOOL PreTranslateMessage(MSG* pMsg)
+	{
+		if(pMsg->message == WM_RBUTTONDOWN)
+		{
+			m_pMenu->TrackPopupMenu(TPM_LEFTALIGN,pMsg->pt.x,pMsg->pt.y,this);
+			return TRUE;
+		}
+		else if(pMsg->message == WM_COMMAND && pMsg->wParam == ID_MENU_NEW)
+		{
+			AfxMessageBox(_T("New"));
+			return TRUE;
+		}
+		else if(pMsg->message == WM_COMMAND && pMsg->wParam == ID_MENU_SAVE)
+		{
+			AfxMessageBox(_T("Save"));
+			return TRUE;
+		}
+		else if(pMsg->message == WM_COMMAND && pMsg->wParam == ID_MENU_DELETE)
+		{
+			AfxMessageBox(_T("Delete"));
+			return TRUE;
+		}
+		else if(pMsg->message == WM_COMMAND && pMsg->wParam == ID_MENU_COPY)
+		{
+			AfxMessageBox(_T("Copy"));
+			return TRUE;
+		}
+		return CDialog::PreTranslateMessage(pMsg);
+	}
 public:
 	CDataEditorDlg(CWnd* pParent = NULL);	// 标准构造函数
 	virtual ~CDataEditorDlg();

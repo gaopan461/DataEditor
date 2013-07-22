@@ -16,6 +16,11 @@
 #define CTRL_HEIGHT			25	//控件默认高度
 #define CTRL_HEIGHT_INTER	5	//控件纵向间隔
 
+#define ID_MENU_NEW		1900
+#define ID_MENU_SAVE	1901
+#define ID_MENU_DELETE	1902
+#define ID_MENU_COPY	1903
+
 #define IDC_MAIN_TAB	2000
 #define IDC_MAIN_TREE	2001
 #define IDC_MAIN_LOG	2002

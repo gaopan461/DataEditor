@@ -57,6 +57,14 @@ int ToolApp::InitializeTool(const CString& strAppName)
 	m_pConfig->Load(strAppName);
 	m_pTab->ChangeTab(0);
 
+	m_pMenu = new CMenu;
+	m_pMenu->CreatePopupMenu();
+	m_pMenu->AppendMenu(MF_STRING,ID_MENU_NEW,_T("新建"));
+	m_pMenu->AppendMenu(MF_STRING,ID_MENU_SAVE,_T("保存"));
+	m_pMenu->AppendMenu(MF_STRING,ID_MENU_DELETE,_T("删除"));
+	m_pMenu->AppendMenu(MF_STRING,ID_MENU_COPY,_T("复制"));
+	SetMenu(GetMainWnd()->GetSafeHwnd(),m_pMenu->GetSafeHmenu());
+
 	INFO_MSG("--------------------------------------------");
 	INFO_MSG("               %s Start             ",CStringToStlString(strAppName).c_str());
 	INFO_MSG("--------------------------------------------");
@@ -67,6 +75,8 @@ int ToolApp::InitializeTool(const CString& strAppName)
 int ToolApp::FinalizeTool()
 {
 	m_objFont.DeleteObject();
+	m_pMenu->DestroyMenu();
+	delete m_pMenu;
 	return 0;
 }
 

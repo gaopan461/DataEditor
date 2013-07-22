@@ -180,35 +180,3 @@ CWnd* CDataEditorDlg::GetMainWnd()
 {
 	return this;
 }
-
-/*void CDataEditorDlg::InitTab()
-{
-	//设置页面的位置在m_tab控件范围内 
-	CRect rect; 
-	m_objMainTab.GetClientRect(&rect); 
-	rect.top += 28; 
-	rect.bottom -= 4; 
-	rect.left += 4; 
-	rect.right -= 4; 
-
-	int index = 0;
-	std::string str;
-	CString cstr;
-
-	str = m_pLuaConfig->GetString("/Config/MagicType/Name");
-	cstr = StlStringToCString(str);
-	m_objMainTab.InsertItem(index,cstr);
-	m_objTabItem1.Create(IDD_TAB_DIALOG1,&m_objMainTab);
-	m_objTabItem1.MoveWindow(&rect);
-
-	index++;
-	str = m_pLuaConfig->GetString("/Config/AuraEffectType/Name");
-	cstr = StlStringToCString(str);
-	m_objMainTab.InsertItem(index,cstr);
-	m_objTabItem2.Create(IDD_TAB_DIALOG2,&m_objMainTab);
-	m_objTabItem2.MoveWindow(&rect);
-
-	m_objTabItem1.ShowWindow(TRUE);
-	m_objTabItem2.ShowWindow(FALSE);
-	m_objMainTab.SetCurSel(0);
-}*/

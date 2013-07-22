@@ -60,6 +60,7 @@ protected:
 	ToolTab* m_pTab;
 	ToolLog* m_pLog;
 	ToolLayout* m_pLayout;
+	CMenu* m_pMenu;
 public:
 	CFont m_objFont;
 };

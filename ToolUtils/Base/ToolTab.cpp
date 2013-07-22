@@ -143,6 +143,7 @@ bool ToolTab::EnableKeyWindow(bool enable)
 
 int ToolTab::LoadDefaultValues()
 {
+	m_vtItemTabs[m_nTabCurrent]->LoadDefaultValues();
 	return 0;
 }
 

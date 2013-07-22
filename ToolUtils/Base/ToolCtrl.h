@@ -14,7 +14,7 @@ struct SComboItem
 {
 	CString strName;
 	int nValue;
-	bool bChecked;
+	bool bDefault;
 
 	virtual int Init(LuaConfig& rLuaConfig);
 };
@@ -39,6 +39,7 @@ struct SCtrl
 	}
 
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
+	virtual int LoadDefaultValue(){return 0;}
 
 	void CreateStatic(CWnd* pParent);
 };
@@ -61,11 +62,12 @@ struct SEdit : public SCtrl
 	}
 
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
+	virtual int LoadDefaultValue();
 };
 
 struct SCheck : public SCtrl
 {
-	bool bChecked;
+	bool bDefault;
 
 	CButton* pCtrl;
 
@@ -79,6 +81,7 @@ struct SCheck : public SCtrl
 	}
 
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
+	virtual int LoadDefaultValue();
 };
 
 struct SStatic : public SCtrl
@@ -106,6 +109,7 @@ struct SCombobox : public SCtrl
 	}
 
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
+	virtual int LoadDefaultValue();
 
 	void pfnAddComboItem(void* ctx);
 };
@@ -127,6 +131,7 @@ struct SCheckCombo : public SCtrl
 	}
 
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
+	virtual int LoadDefaultValue();
 
 	void pfnAddComboItem(void* ctx);
 };

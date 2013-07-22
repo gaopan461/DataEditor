@@ -484,4 +484,14 @@ SItemTab::~SItemTab()
 	vtCtrls.clear();
 }
 
+int SItemTab::LoadDefaultValues()
+{
+	for(size_t i = 0; i < vtCtrls.size(); ++i)
+	{
+		SCtrl* pCtrl = vtCtrls[i];
+		pCtrl->LoadDefaultValue();
+	}
+	return 0;
+}
+
 END_NS_AC

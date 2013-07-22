@@ -10,7 +10,7 @@ int SComboItem::Init(LuaConfig& rLuaConfig)
 	std::string str = rLuaConfig.GetString("./Name");
 	strName = StlStringToCString(str);
 	nValue = rLuaConfig.GetInteger("./Value");
-	bChecked = rLuaConfig.GetBoolean("./Checked");
+	bDefault = rLuaConfig.GetBoolean("./Default");
 	return 0;
 }
 
@@ -53,16 +53,28 @@ int SEdit::Init( LuaConfig& rLuaConfig,CWnd* pParent )
 	return 0;
 }
 
+int SEdit::LoadDefaultValue()
+{
+	pCtrl->SetWindowText(strDefault);
+	return 0;
+}
+
 int SCheck::Init( LuaConfig& rLuaConfig,CWnd* pParent )
 {
 	SCtrl::Init(rLuaConfig,pParent);
-	bChecked = rLuaConfig.GetBoolean("./Checked");
+	bDefault = rLuaConfig.GetBoolean("./Default");
 
 	CRect rect = ToolApp::Instance().GetLayout()->GetNextRect(nWidth1,bNewline);
 	int id = ToolApp::Instance().GetLayout()->GetNextID();
 	pCtrl = new CButton;
 	pCtrl->Create(strName,WS_CHILD|WS_VISIBLE|BS_AUTOCHECKBOX,rect,pParent,id);
 	pCtrl->SetFont(&ToolApp::Instance().m_objFont);
+	return 0;
+}
+
+int SCheck::LoadDefaultValue()
+{
+	pCtrl->SetCheck(bDefault);
 	return 0;
 }
 
@@ -92,6 +104,19 @@ int SCombobox::Init( LuaConfig& rLuaConfig,CWnd* pParent )
 	pCtrl->SetFont(&ToolApp::Instance().m_objFont);
 
 	rLuaConfig.IterTable<SCombobox>("./Confs",this,&SCombobox::pfnAddComboItem,&rLuaConfig);
+	return 0;
+}
+
+int SCombobox::LoadDefaultValue()
+{
+	for(size_t i = 0; i < vtItems.size(); ++i)
+	{
+		if(vtItems[i].bDefault)
+		{
+			pCtrl->SetCurSel(TRUE);
+			break;
+		}
+	}
 	return 0;
 }
 
@@ -126,6 +151,15 @@ int SCheckCombo::Init( LuaConfig& rLuaConfig,CWnd* pParent )
 
 	rLuaConfig.IterTable<SCheckCombo>("./Confs",this,&SCheckCombo::pfnAddComboItem,&rLuaConfig);
 
+	return 0;
+}
+
+int SCheckCombo::LoadDefaultValue()
+{
+	for(int i = 0; i < vtItems.size(); ++i)
+	{
+		pCtrl->SetCheck(i,vtItems[i].bDefault);
+	}
 	return 0;
 }
 

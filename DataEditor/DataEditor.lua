@@ -15,7 +15,7 @@ EditorConfig =
 				CName = "AttackType",
 				Confs = {
 					ComboItem{Name = "近程", Value = 0,},
-					ComboItem{Name = "远程", Value = 1, Checked = true,},
+					ComboItem{Name = "远程", Value = 1, Default = true,},
 				},
 			},
 			CheckCombo{
@@ -23,12 +23,12 @@ EditorConfig =
 				CName = "Profession",
 				Confs = {
 					ComboItem{Name = "战士", Value = 0,},
-					ComboItem{Name = "弓箭手", Value = 1, Checked = true,},
-					ComboItem{Name = "法师", Value = 2, Checked = true,},
+					ComboItem{Name = "弓箭手", Value = 1, Default = true,},
+					ComboItem{Name = "法师", Value = 2, Default = true,},
 				},
 				Newline = true,
 			},
-			Check{Name = "受伤时打断", CName = "HitedBreak", Checked = true, Width1 = 200, Newline = true,},
+			Check{Name = "受伤时打断", CName = "HitedBreak", Default = true, Width1 = 200, Newline = true,},
 		}
 	},
 	{

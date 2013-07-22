@@ -104,8 +104,8 @@ function Check(t)
 	if type(t.CName) ~= "string" then
 		error("Check:Require CName or CName must be string")
 	end
-	if type(t.Checked) ~= "nil" and type(t.Checked) ~= "boolean" then
-		error("Check:Checked must be boolean")
+	if type(t.Default) ~= "nil" and type(t.Default) ~= "boolean" then
+		error("Check:Default must be boolean")
 	end
 	if type(t.Width1) ~= "nil" and type(t.Width1) ~= "number" then
 		error("Check:Width1 must be number")
@@ -118,7 +118,7 @@ function Check(t)
 		Ctrl = SupportCtrl.Check,
 		Name = t.Name,
 		CName = t.CName,
-		Checked = Checked or false,
+		Default = t.Default or false,
 		Width1 = t.Width1 or 100,
 		Newline = t.Newline or false,
 	}
@@ -221,14 +221,14 @@ function ComboItem(t)
 	if type(t.Value) ~= "number" then
 		error("ComboItem:Require Value or Value must be number")
 	end
-	if type(t.Checked) ~= "nil" and type(t.Checked) ~= "boolean" then
-		error("ComboItem:Checked  must be boolean")
+	if type(t.Default) ~= "nil" and type(t.Default) ~= "boolean" then
+		error("ComboItem:Default  must be boolean")
 	end
 	
 	_ComboItem = {
 		Name = t.Name,
 		Value = t.Value,
-		Checked = t.Checked or false,
+		Default = t.Default or false,
 	}
 	
 	return _ComboItem

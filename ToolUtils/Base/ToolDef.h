@@ -136,6 +136,7 @@ struct SItemTab
 
 	SItemDB* GetDB(){return pDB;}
 	CEdit* GetKeyWnd(){return pKeyWnd;}
+	int LoadDefaultValues();
 };
 
 //-----------------------------------------------------------

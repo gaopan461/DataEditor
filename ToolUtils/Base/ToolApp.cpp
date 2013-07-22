@@ -20,6 +20,7 @@ ToolApp::ToolApp()
 	m_pTab = new ToolTab(this);
 	m_pLog = new ToolLog(this);
 	m_pLayout = new ToolLayout(this);
+	m_bIsNewing = false;
 }
 
 ToolApp::~ToolApp()
@@ -83,6 +84,28 @@ int ToolApp::FinalizeTool()
 int ToolApp::Update()
 {
 	m_pLog->Update();
+	return 0;
+}
+
+int ToolApp::MenuNew()
+{
+	m_bIsNewing = true;
+	m_pTree->EnableWindow(FALSE);
+	m_pTab->EnableKeyWindow(TRUE);
+	return 0;
+}
+
+int ToolApp::MenuSave()
+{
+	m_pTab->CtrlToDB();
+
+	if(m_bIsNewing)
+	{
+		m_bIsNewing = false;
+		m_pTree->EnableWindow(TRUE);
+		m_pTab->EnableKeyWindow(FALSE);
+	}
+	
 	return 0;
 }
 

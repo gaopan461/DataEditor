@@ -103,6 +103,12 @@ void ToolConfig::pfnLoadEditorCtrlItem(void* ctx)
 
 	pCtrl->Init(m_objLua,pTab->pWnd);
 	pTab->vtCtrls.push_back(pCtrl);
+
+	CString strCName = StlStringToCString(m_objLua.GetString("./CName"));
+	if(strCName == pTab->GetDB()->strKeyCName)
+	{
+		pTab->pKeyWnd = ((SEdit*)pCtrl)->pCtrl;
+	}
 }
 
 END_NS_AC

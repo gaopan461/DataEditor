@@ -40,6 +40,44 @@ int SetCellContent(BasicExcelCell* pCell, const CString& strContent)
 	ACCHECK(pCell);
 	pCell->Set(strContent);
 	return 0;
+	switch(pCell->Type())
+	{
+	case BasicExcelCell::UNDEFINED:
+		return -1;
+		break;
+	case BasicExcelCell::INT:
+		{
+			int nVal = 0;
+			if(stricmp(CStringToStlString(strContent).c_str(),"false") == 0)
+				nVal = 0;
+			else if(stricmp(CStringToStlString(strContent).c_str(),"true") == 0)
+				nVal = 1;
+			else
+				nVal = atoi(CStringToStlString(strContent).c_str());
+			pCell->Set(nVal);
+		}
+		break;
+	case BasicExcelCell::DOUBLE:
+		{
+			float fVal = 0;
+			if(stricmp(CStringToStlString(strContent).c_str(),"false") == 0)
+				fVal = 0;
+			else if(stricmp(CStringToStlString(strContent).c_str(),"true") == 0)
+				fVal = 1;
+			else
+				fVal = atof(CStringToStlString(strContent).c_str());
+			pCell->Set(fVal);
+		}
+		break;
+	case BasicExcelCell::STRING:
+		pCell->Set(CStringToStlString(strContent).c_str());
+		break;
+	case BasicExcelCell::WSTRING:
+		pCell->Set(strContent);
+		break;
+	}
+	
+	return 0;
 }
 
 //-----------------------------------------------------
@@ -97,7 +135,7 @@ int SItemExcelDB::InitMapNameToColumn()
 		ACCHECK(pCell);
 		CString str;
 		if(GetCellContent(pCell,str) != 0)
-			INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nHeadRow,nCol);
+			INFO_MSG("Read cell failed,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nHeadRow,nCol);
 
 		if(str.IsEmpty())
 			continue;
@@ -105,6 +143,54 @@ int SItemExcelDB::InitMapNameToColumn()
 		mapCNameToColumn.insert(std::make_pair(str,nCol));
 	}
 
+	return 0;
+}
+
+int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
+{
+	int nRow,nSheet;
+	if(Find(key,nRow,nSheet) != 0)
+	{
+		ERROR_MSG("DBToCtrl,can't find key:%d",key);
+		return -1;
+	}
+
+	for(size_t i = 0; i < pItemTab->vtCtrls.size(); ++i)
+	{
+		SCtrl* pCtrl = pItemTab->vtCtrls[i];
+		ACCHECK(pCtrl);
+
+		int nCtrlCol = mapCNameToColumn[pCtrl->strCName];
+		BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
+		ACCHECK(pSheet);
+		BasicExcelCell* pCell = pSheet->Cell(nRow,nCtrlCol);
+		ACCHECK(pCell);
+
+		CString strDBVal;
+		switch(pCtrl->nCtrl)
+		{
+		case CTRL_EDIT:
+			EditToData((SEdit*)pCtrl,strDBVal);
+			break;
+		case CTRL_CHECK:
+			CheckToData((SCheck*)pCtrl,strDBVal);
+			break;
+		case CTRL_COMBOBOX:
+			ComboboxToData((SCombobox*)pCtrl,strDBVal);
+			break;
+		case CTRL_CHECKCOMBO:
+			CheckComboToData((SCheckCombo*)pCtrl,strDBVal);
+			break;
+		default:
+			continue;
+		}
+
+		if(SetCellContent(pCell,strDBVal) != 0)
+			INFO_MSG("Write cell failed,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nCtrlCol);
+	}
+
+	if(!pExcel->Save())
+		ERROR_MSG("Save excel failed,excel:%s",CStringToStlString(strFilePath));
 	return 0;
 }
 
@@ -145,6 +231,8 @@ int SItemExcelDB::DBToCtrl(SItemTab* pItemTab,int key)
 		case CTRL_CHECKCOMBO:
 			DataToCheckCombo((SCheckCombo*)pCtrl,strDBVal);
 			break;
+		default:
+			continue;
 		}
 	}
 
@@ -196,6 +284,26 @@ int SItemExcelDB::DataToEdit(SEdit* pCtrl,CString data)
 	return 0;
 }
 
+int SItemExcelDB::EditToData(SEdit* pCtrl,CString& data)
+{
+	CString strCtrlVal;
+	pCtrl->pCtrl->GetWindowText(strCtrlVal);
+	if(pCtrl->nType == DATA_INT)
+	{
+		int nData = atoi(CStringToStlString(strCtrlVal).c_str());
+		data.Format(_T("%d"),nData);
+	}
+	else if(pCtrl->nType == DATA_FLOAT)
+	{
+		float fData = atof(CStringToStlString(strCtrlVal).c_str());
+		data.Format(_T("%.6lf"),fData);
+	}
+	else
+		data = strCtrlVal;
+
+	return 0;
+}
+
 int SItemExcelDB::DataToCheck(SCheck* pCtrl,CString data)
 {
 	bool val = false;
@@ -203,10 +311,17 @@ int SItemExcelDB::DataToCheck(SCheck* pCtrl,CString data)
 		val = false;
 	else if(stricmp(CStringToStlString(data).c_str(),"true") == 0)
 		val = true;
-
-	val = atoi(CStringToStlString(data).c_str());
+	else
+		val = atoi(CStringToStlString(data).c_str());
 
 	pCtrl->pCtrl->SetCheck(val);
+	return 0;
+}
+
+int SItemExcelDB::CheckToData(SCheck* pCtrl,CString& data)
+{
+	bool val = pCtrl->pCtrl->GetCheck();
+	data = val ? _T("true") : _T("false");
 	return 0;
 }
 
@@ -221,6 +336,13 @@ int SItemExcelDB::DataToCombobox(SCombobox* pCtrl,CString data)
 			break;
 		}
 	}
+	return 0;
+}
+
+int SItemExcelDB::ComboboxToData(SCombobox* pCtrl,CString& data)
+{
+	int curSel = pCtrl->pCtrl->GetCurSel();
+	data.Format(_T("%d"),pCtrl->vtItems[curSel].nValue);
 	return 0;
 }
 
@@ -246,6 +368,24 @@ int SItemExcelDB::DataToCheckCombo(SCheckCombo* pCtrl,CString data)
 		{
 			if(dbVal == pCtrl->vtItems[ctlItem].nValue)
 				pCtrl->pCtrl->SetCheck(ctlItem,true);
+		}
+	}
+	return 0;
+}
+
+int SItemExcelDB::CheckComboToData(SCheckCombo* pCtrl,CString& data)
+{
+	bool bFirst = true;
+	for(size_t ctrlItem = 0; ctrlItem < pCtrl->vtItems.size(); ++ctrlItem)
+	{
+		if(pCtrl->pCtrl->GetCheck(ctrlItem))
+		{
+			if(bFirst)
+				bFirst = false;
+			else
+				data.Append(EXCEL_ARRAY_DELIMITER);
+
+			data.AppendFormat(_T("%d"),pCtrl->vtItems[ctrlItem].nValue);
 		}
 	}
 	return 0;
@@ -306,7 +446,20 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 
 	pTree->ExpandAllItems();
 	pTree->UpdatedItems();
+	pTree->ResetSelectKey();
 	return 0;
+}
+
+bool SItemExcelDB::ValidNewKey(int key)
+{
+	if(key <= 0)
+		return false;
+
+	int nRow,nSheet;
+	if(Find(key,nRow,nSheet) == 0)
+		return false;
+
+	return true;
 }
 
 //-----------------------------------------------------
@@ -317,6 +470,8 @@ SItemTab::SItemTab()
 	strCName = _T("");
 	pDB = NULL;
 	vtCtrls.clear();
+	pWnd = NULL;
+	pKeyWnd = NULL;
 }
 
 SItemTab::~SItemTab()
@@ -327,12 +482,6 @@ SItemTab::~SItemTab()
 		_safe_delete(vtCtrls[i]);
 
 	vtCtrls.clear();
-}
-
-int SItemTab::DBToCtrl( int key )
-{
-	pDB->DBToCtrl(this,key);
-	return 0;
 }
 
 END_NS_AC

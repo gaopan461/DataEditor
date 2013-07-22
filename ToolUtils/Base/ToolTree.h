@@ -30,6 +30,9 @@ public:
 public:
 	void SelectKey(int key);
 public:
+	void ResetSelectKey();
+	int GetSelectKey();
+public:
 	int InsertUndefinedRoot();
 private:
 	int m_nLastSelKey;

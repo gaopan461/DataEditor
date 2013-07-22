@@ -26,6 +26,10 @@ public:
 	SItemTab* AddTabItem(const CString& strName);
 	int ChangeTab(int nSel);
 	int DBToCtrl(int key);
+	int CtrlToDB(int key);
+public:
+	bool EnableKeyWindow(bool enable);
+	int CtrlToDB();
 protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 

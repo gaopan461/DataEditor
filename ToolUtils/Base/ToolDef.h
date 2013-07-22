@@ -82,6 +82,8 @@ struct SItemDB
 	virtual int DBToCtrl(SItemTab* pItemTab,int key){return 0;}
 
 	virtual int DBToTree(ToolTree* pTree){return 0;}
+
+	virtual bool ValidNewKey(int key){return false;}
 };
 
 typedef std::map<CString,size_t> MapCNameToColumnT;
@@ -96,17 +98,26 @@ struct SItemExcelDB : public SItemDB
 	SItemExcelDB(const CString& path,const CString& key, const CString& des,int headRow,int dataRow);
 	virtual ~SItemExcelDB();
 
+	virtual int CtrlToDB(SItemTab* pItemTab,int key);
 	virtual int DBToCtrl(SItemTab* pItemTab,int key);
 
 	virtual int DBToTree(ToolTree* pTree);
 
+	virtual bool ValidNewKey(int key);
+
 	int InitMapNameToColumn();
 
 	int Find(int key,int& row,int& sheet);
+
 	int DataToEdit(SEdit* pCtrl,CString data);
 	int DataToCheck(SCheck* pCtrl,CString data);
 	int DataToCombobox(SCombobox* pCtrl,CString data);
 	int DataToCheckCombo(SCheckCombo* pCtrl,CString data);
+
+	int EditToData(SEdit* pCtrl,CString& data);
+	int CheckToData(SCheck* pCtrl,CString& data);
+	int ComboboxToData(SCombobox* pCtrl,CString& data);
+	int CheckComboToData(SCheckCombo* pCtrl,CString& data);
 };
 
 //-----------------------------------------------------------
@@ -117,12 +128,14 @@ struct SItemTab
 	CString strCName;
 	SItemDB* pDB;
 	std::vector<SCtrl*> vtCtrls;
-	CWnd* pWnd;
+	CWnd* pWnd;		// tab项window，每个tab项是一个window
+	CEdit* pKeyWnd;	// key对应控件的window
 
 	SItemTab();
 	virtual ~SItemTab();
 
-	int DBToCtrl(int key);
+	SItemDB* GetDB(){return pDB;}
+	CEdit* GetKeyWnd(){return pKeyWnd;}
 };
 
 //-----------------------------------------------------------

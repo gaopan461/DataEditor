@@ -22,6 +22,9 @@ public:
 	virtual int Update();
 	virtual int FinalizeTool();
 public:
+	int MenuNew();
+	int MenuSave();
+public:
 	virtual CWnd* GetMainWnd()
 	{
 		return NULL;
@@ -52,6 +55,10 @@ public:
 	{
 		return m_pLayout;
 	}
+	bool IsNewing()
+	{
+		return m_bIsNewing;
+	}
 private:
 	static ToolApp* m_pInstance;
 protected:
@@ -63,6 +70,8 @@ protected:
 	CMenu* m_pMenu;
 public:
 	CFont m_objFont;
+private:
+	bool m_bIsNewing;	// 正在新建一项数据
 };
 
 END_NS_AC

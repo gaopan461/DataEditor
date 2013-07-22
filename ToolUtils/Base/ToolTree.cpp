@@ -82,6 +82,16 @@ void ToolTree::SelectKey( int key )
 	m_pOwner->GetMainTab()->DBToCtrl(key);
 }
 
+void ToolTree::ResetSelectKey()
+{
+	m_nLastSelKey = -1;
+}
+
+int ToolTree::GetSelectKey()
+{
+	return m_nLastSelKey;
+}
+
 int ToolTree::InsertUndefinedRoot()
 {
 	m_pUndefinedRoot = COptionTree::InsertItem(new COptionTreeItem());

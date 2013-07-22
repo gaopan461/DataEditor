@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "ToolTab.h"
 #include "ACString.h"
+#include "ToolTree.h"
 
 BEGIN_NS_AC
 
@@ -31,6 +32,11 @@ END_MESSAGE_MAP()
 
 void ToolTab::OnLButtonDown(UINT nFlags, CPoint point) 
 {
+	if(m_pOwner->IsNewing())
+	{
+		AfxMessageBox(_T("当前不可切换"));
+		return;
+	}
 	CTabCtrl::OnLButtonDown(nFlags, point);
 	ChangeTab(GetCurFocus());
 }
@@ -59,7 +65,19 @@ int ToolTab::ChangeTab(int nSel)
 
 int ToolTab::DBToCtrl( int key )
 {
-	m_vtItemTabs[m_nTabCurrent]->DBToCtrl(key);
+	SItemTab* pTabItem = m_vtItemTabs[m_nTabCurrent];
+	ACCHECK(pTabItem && pTabItem->pDB);
+	
+	pTabItem->GetDB()->DBToCtrl(pTabItem,key);
+	return 0;
+}
+
+int ToolTab::CtrlToDB(int key)
+{
+	SItemTab* pTabItem = m_vtItemTabs[m_nTabCurrent];
+	ACCHECK(pTabItem && pTabItem->pDB);
+
+	pTabItem->GetDB()->CtrlToDB(pTabItem,key);
 	return 0;
 }
 
@@ -109,6 +127,41 @@ SItemTab* ToolTab::AddTabItem(const CString& strName)
 
 	m_vtItemTabs.push_back(pTab);
 	return pTab;
+}
+
+bool ToolTab::EnableKeyWindow(bool enable)
+{
+	CEdit* pCtrlKey = m_vtItemTabs[m_nTabCurrent]->GetKeyWnd();
+	ACCHECK(pCtrlKey);
+
+	return pCtrlKey->EnableWindow(enable);
+}
+
+int ToolTab::CtrlToDB()
+{
+	SItemTab* pTabItem = m_vtItemTabs[m_nTabCurrent];
+	ACCHECK(pTabItem);
+
+	int nKey = -1;
+	if(m_pOwner->IsNewing())
+	{
+		CEdit* pCtrlKey = pTabItem->GetKeyWnd();
+		ACCHECK(pCtrlKey);
+
+		CString strKey;
+		pCtrlKey->GetWindowText(strKey);
+		nKey = atoi(CStringToStlString(strKey).c_str());
+		if(!pTabItem->GetDB()->ValidNewKey(nKey))
+		{
+			AfxMessageBox(_T("Key invalid"));
+			return -1;
+		}
+	}
+	else
+	{
+		nKey = m_pOwner->GetMainTree()->GetSelectKey();
+	}
+	return CtrlToDB(nKey);
 }
 
 

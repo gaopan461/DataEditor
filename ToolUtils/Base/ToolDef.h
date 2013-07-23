@@ -84,7 +84,8 @@ struct SItemDB
 
 	virtual int DBToTree(ToolTree* pTree){return 0;}
 
-	virtual bool InsertNewKey(int key){return false;}
+	virtual int InsertNewKey(int key){return -1;}
+	virtual int DeleteByKey(int key){return -1;}
 };
 
 typedef std::map<CString,size_t> MapCNameToColumnT;
@@ -124,7 +125,8 @@ struct SItemExcelDB : public SItemDB
 
 	virtual int DBToTree(ToolTree* pTree);
 
-	virtual bool InsertNewKey(int key);
+	virtual int InsertNewKey(int key);
+	virtual int DeleteByKey(int key);
 
 	int InitMapNameToColumn();
 	int InitMapKeyToTreeInfo();

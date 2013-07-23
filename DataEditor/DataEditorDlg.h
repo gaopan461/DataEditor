@@ -30,12 +30,12 @@ class CDataEditorDlg : public CDialog, public ToolApp
 		}
 		else if(pMsg->message == WM_COMMAND && pMsg->wParam == ID_MENU_DELETE)
 		{
-			AfxMessageBox(_T("Delete"));
+			MenuDelete();
 			return TRUE;
 		}
 		else if(pMsg->message == WM_COMMAND && pMsg->wParam == ID_MENU_COPY)
 		{
-			AfxMessageBox(_T("Copy"));
+			MenuCopy();
 			return TRUE;
 		}
 		else if(pMsg->message == WM_COMMAND && pMsg->wParam == ID_MENU_CANCEL)

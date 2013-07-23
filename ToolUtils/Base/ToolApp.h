@@ -24,6 +24,8 @@ public:
 public:
 	int MenuNew();
 	int MenuSave();
+	int MenuDelete();
+	int MenuCopy();
 	int MenuCancel();
 public:
 	virtual CWnd* GetMainWnd()

@@ -66,6 +66,7 @@ int ToolApp::InitializeTool(const CString& strAppName)
 	m_pMenu->AppendMenu(MF_STRING,ID_MENU_COPY,_T("¸´ÖÆ"));
 	m_pMenu->AppendMenu(MF_STRING,ID_MENU_CANCEL,_T("È¡Ïû"));
 	SetMenu(GetMainWnd()->GetSafeHwnd(),m_pMenu->GetSafeHmenu());
+	m_pMenu->EnableMenuItem(ID_MENU_CANCEL,TRUE);
 
 	INFO_MSG("--------------------------------------------");
 	INFO_MSG("               %s Start             ",CStringToStlString(strAppName).c_str());
@@ -90,10 +91,24 @@ int ToolApp::Update()
 
 int ToolApp::MenuNew()
 {
+	if(m_bIsNewing)
+		return -1;
+
+	m_pMenu->EnableMenuItem(ID_MENU_COPY,TRUE);
+	m_pMenu->EnableMenuItem(ID_MENU_NEW,TRUE);
+	m_pMenu->EnableMenuItem(ID_MENU_DELETE,TRUE);
+	m_pMenu->EnableMenuItem(ID_MENU_CANCEL,FALSE);
+
 	m_bIsNewing = true;
 	m_pTree->EnableWindow(FALSE);
 	m_pTab->EnableKeyWindow(TRUE);
 	m_pTab->LoadDefaultValues();
+
+	CEdit* pKeyWnd = m_pTab->GetCurrentItem()->GetKeyWnd();
+	ACCHECK(pKeyWnd);
+
+	pKeyWnd->SetWindowText(_T(""));
+	pKeyWnd->SetFocus();
 	return 0;
 }
 
@@ -134,15 +149,65 @@ int ToolApp::MenuSave()
 	return 0;
 }
 
-int ToolApp::MenuCancel()
+int ToolApp::MenuDelete()
 {
 	if(m_bIsNewing)
-	{
-		m_bIsNewing = false;
-		m_pTree->EnableWindow(TRUE);
-		m_pTab->EnableKeyWindow(FALSE);
-		m_pTab->RestoreLastSelect();
-	}
+		return -1;
+
+	SItemTab* pItemTab = m_pTab->GetCurrentItem();
+	ACCHECK(pItemTab);
+
+	CEdit* pKeyWnd = pItemTab->GetKeyWnd();
+	ACCHECK(pKeyWnd);
+
+	CString strKey;
+	pKeyWnd->GetWindowText(strKey);
+
+	int nKey = atoi(CStringToStlString(strKey).c_str());
+	int nNextKey = pItemTab->GetDB()->DeleteByKey(nKey);
+
+	m_pTab->DBToTree();
+	m_pTree->SelectKey(nNextKey);
+	return 0;
+}
+
+int ToolApp::MenuCopy()
+{
+	if(m_bIsNewing)
+		return -1;
+
+	m_pMenu->EnableMenuItem(ID_MENU_COPY,TRUE);
+	m_pMenu->EnableMenuItem(ID_MENU_NEW,TRUE);
+	m_pMenu->EnableMenuItem(ID_MENU_DELETE,TRUE);
+	m_pMenu->EnableMenuItem(ID_MENU_CANCEL,FALSE);
+
+	m_bIsNewing = true;
+	m_pTree->EnableWindow(FALSE);
+	m_pTab->EnableKeyWindow(TRUE);
+
+	CEdit* pKeyWnd = m_pTab->GetCurrentItem()->GetKeyWnd();
+	ACCHECK(pKeyWnd);
+
+	pKeyWnd->SetWindowText(_T(""));
+	pKeyWnd->SetFocus();
+	return 0;
+}
+
+int ToolApp::MenuCancel()
+{
+	if(!m_bIsNewing)
+		return -1;
+
+	m_pMenu->EnableMenuItem(ID_MENU_COPY,FALSE);
+	m_pMenu->EnableMenuItem(ID_MENU_NEW,FALSE);
+	m_pMenu->EnableMenuItem(ID_MENU_DELETE,FALSE);
+	m_pMenu->EnableMenuItem(ID_MENU_CANCEL,TRUE);
+
+	m_bIsNewing = false;
+	m_pTree->EnableWindow(TRUE);
+	m_pTab->EnableKeyWindow(FALSE);
+	m_pTab->RestoreLastSelect();
+
 	return 0;
 }
 

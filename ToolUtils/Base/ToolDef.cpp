@@ -444,13 +444,13 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 	return 0;
 }
 
-bool SItemExcelDB::InsertNewKey(int key)
+int SItemExcelDB::InsertNewKey(int key)
 {
 	if(key <= 0)
-		return false;
+		return -1;
 
 	if(mapKeyToTreeInfo.find(key) != mapKeyToTreeInfo.end())
-		return false;
+		return -1;
 
 	int nSheet = 0;
 	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
@@ -467,7 +467,24 @@ bool SItemExcelDB::InsertNewKey(int key)
 
 	mapKeyToTreeInfo.insert(std::make_pair(key,STreeItemInfo(key,_T(""),nSheet,nRow)));
 
-	return true;
+	return key;
+}
+
+int SItemExcelDB::DeleteByKey(int key)
+{
+	if(key <= 0)
+		return -1;
+
+	MapKeyToTreeInfoT::iterator iter = mapKeyToTreeInfo.find(key);
+	if(iter == mapKeyToTreeInfo.end())
+		return -1;
+
+	int nKey = -1;
+	MapKeyToTreeInfoT::iterator iterNext = mapKeyToTreeInfo.erase(iter);
+	if(iterNext != mapKeyToTreeInfo.end())
+		nKey = iterNext->first;
+
+	return nKey;
 }
 
 //-----------------------------------------------------

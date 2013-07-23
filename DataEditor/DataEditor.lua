@@ -7,7 +7,7 @@ EditorConfig =
 		CName = "MagicType",
 		DB = ExcelDB{Path = "./MagicTypeConfig.xls", Key = "ID", Des = "Des", HeadRow = 2, DataRow = 4,},
 		Items = {
-			Edit{Name = "ID", CName = "ID", Type = "Int", Default = "-1",},
+			Edit{Name = "ID", CName = "ID", Type = "Int",},
 			Edit{Name = "√Ë ˆ", CName = "Des", Type = "String", Default = "«ÎÃÓ“ª∂Œ√Ë ˆ", Newline = true,},
 			Static{Name = string.rep("-",100), Newline = true,},
 			Combobox{
@@ -36,7 +36,7 @@ EditorConfig =
 		CName = "AuraEffectType",
 		DB = ExcelDB{Path = "./AuraEffectTypeConfig.xls", Key = "ID", Des = "Des", HeadRow = 2, DataRow = 4,},
 		Items = {
-			Edit{Name = "ID", CName = "ID", Type = "Int", Default = "-1",Newline = true,},
+			Edit{Name = "ID", CName = "ID", Type = "Int", Newline = true,},
 			Edit{Name = "√Ë ˆ", CName = "Des", Type = "String", Default = "«ÎÃÓ“ª∂Œ√Ë ˆ",Newline = true,},
 		},
 	},

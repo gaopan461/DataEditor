@@ -485,6 +485,7 @@ SItemTab::SItemTab()
 	vtCtrls.clear();
 	pWnd = NULL;
 	pKeyWnd = NULL;
+	nLastSelKey = -1;
 }
 
 SItemTab::~SItemTab()

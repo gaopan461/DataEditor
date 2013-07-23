@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "ToolTab.h"
 #include "ACString.h"
+#include "ToolTree.h"
 
 BEGIN_NS_AC
 
@@ -52,13 +53,17 @@ int ToolTab::ChangeTab(int nSel)
 	ACCHECK(pTree);
 
 	if(m_nTabCurrent != -1)
-		m_vtItemTabs[m_nTabCurrent]->pWnd->ShowWindow(SW_HIDE);
+	{
+		GetCurrentItem()->pWnd->ShowWindow(SW_HIDE);
+		GetCurrentItem()->nLastSelKey = m_pOwner->GetMainTree()->GetSelectKey();
+	}
 
 	m_nTabCurrent = nSel;
-	m_vtItemTabs[m_nTabCurrent]->pWnd->ShowWindow(SW_SHOW);
-	m_vtItemTabs[m_nTabCurrent]->pWnd->SetFocus();
+	GetCurrentItem()->pWnd->ShowWindow(SW_SHOW);
+	GetCurrentItem()->pWnd->SetFocus();
 
 	DBToTree();
+	m_pOwner->GetMainTree()->SelectKey(GetCurrentItem()->nLastSelKey);
 	return 0;
 }
 
@@ -153,6 +158,15 @@ bool ToolTab::EnableKeyWindow(bool enable)
 int ToolTab::LoadDefaultValues()
 {
 	m_vtItemTabs[m_nTabCurrent]->LoadDefaultValues();
+	return 0;
+}
+
+int ToolTab::RestoreLastSelect()
+{
+	int nLastSelKey = m_pOwner->GetMainTree()->GetSelectKey();
+	if(nLastSelKey > 0)
+		DBToCtrl(nLastSelKey);
+
 	return 0;
 }
 

@@ -28,11 +28,11 @@ public:
 	int Create();
 	int InsertItem(int key, const CString& strDes);
 public:
-	void SelectKey(int key,bool bForceReload = false);
+	void OnSelect(int key);
 public:
 	void ResetSelectKey();
 	int GetSelectKey();
-	void SetFocusedKey(int key);
+	void SelectKey(int key);
 public:
 	int InsertUndefinedRoot();
 public:
@@ -51,7 +51,7 @@ public:
 	{
 		ToolTree* pTree = (ToolTree*)m_otOption;
 		CString key = GetInfoText();
-		pTree->SelectKey(atoi(CStringToStlString(key).c_str()));
+		pTree->OnSelect(atoi(CStringToStlString(key).c_str()));
 	}
 };
 

@@ -118,7 +118,7 @@ int ToolApp::MenuSave()
 
 		if(!pTabItem->GetDB()->InsertNewKey(nKey))
 		{
-			m_pTree->SelectKey(m_pTree->GetSelectKey(),true);
+			m_pTab->RestoreLastSelect();
 			AfxMessageBox(_T("Key invalid"));
 			return -1;
 		}
@@ -130,7 +130,7 @@ int ToolApp::MenuSave()
 	
 	m_pTab->CtrlToDB(nKey);
 	m_pTab->DBToTree();
-	m_pTree->SetFocusedKey(nKey);
+	m_pTree->SelectKey(nKey);
 	return 0;
 }
 
@@ -141,7 +141,7 @@ int ToolApp::MenuCancel()
 		m_bIsNewing = false;
 		m_pTree->EnableWindow(TRUE);
 		m_pTab->EnableKeyWindow(FALSE);
-		m_pTree->SelectKey(m_pTree->GetSelectKey(),true);
+		m_pTab->RestoreLastSelect();
 	}
 	return 0;
 }

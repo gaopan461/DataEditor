@@ -129,8 +129,10 @@ struct SItemTab
 	CString strCName;
 	SItemDB* pDB;
 	std::vector<SCtrl*> vtCtrls;
+
 	CWnd* pWnd;		// tab项window，每个tab项是一个window
 	CEdit* pKeyWnd;	// key对应控件的window
+	int nLastSelKey;
 
 	SItemTab();
 	virtual ~SItemTab();

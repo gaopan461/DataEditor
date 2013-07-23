@@ -32,6 +32,7 @@ public:
 public:
 	bool EnableKeyWindow(bool enable);
 	int LoadDefaultValues();
+	int RestoreLastSelect();
 protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 

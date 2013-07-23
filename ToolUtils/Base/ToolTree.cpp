@@ -72,12 +72,9 @@ int ToolTree::InsertItem( int key, const CString& strDes )
 	return 0;
 }
 
-void ToolTree::SelectKey(int key,bool bForceReload /* = false */)
+void ToolTree::OnSelect(int key)
 {
-	if(key <= 0)
-		return;
-
-	if( (key == m_nLastSelKey) && (!bForceReload) )
+	if(key <= 0 || key == m_nLastSelKey)
 		return;
 
 	m_nLastSelKey = key;
@@ -95,8 +92,11 @@ int ToolTree::GetSelectKey()
 	return m_nLastSelKey;
 }
 
-void ToolTree::SetFocusedKey(int key)
+void ToolTree::SelectKey(int key)
 {
+	if(key <= 0)
+		return;
+
 	COptionTreeItem* pTreeItem = FindItemByKey(key);
 	if(!pTreeItem)
 		return;

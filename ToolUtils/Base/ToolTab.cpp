@@ -58,7 +58,7 @@ int ToolTab::ChangeTab(int nSel)
 	m_vtItemTabs[m_nTabCurrent]->pWnd->ShowWindow(SW_SHOW);
 	m_vtItemTabs[m_nTabCurrent]->pWnd->SetFocus();
 
-	m_vtItemTabs[m_nTabCurrent]->pDB->DBToTree(pTree);
+	DBToTree();
 	return 0;
 }
 
@@ -77,6 +77,15 @@ int ToolTab::CtrlToDB(int key)
 	ACCHECK(pTabItem && pTabItem->pDB);
 
 	pTabItem->GetDB()->CtrlToDB(pTabItem,key);
+	return 0;
+}
+
+int ToolTab::DBToTree()
+{
+	SItemTab* pTabItem = m_vtItemTabs[m_nTabCurrent];
+	ACCHECK(pTabItem && pTabItem->pDB);
+
+	pTabItem->GetDB()->DBToTree(m_pOwner->GetMainTree());
 	return 0;
 }
 

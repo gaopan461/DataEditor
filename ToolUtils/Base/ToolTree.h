@@ -28,12 +28,17 @@ public:
 	int Create();
 	int InsertItem(int key, const CString& strDes);
 public:
-	void SelectKey(int key);
+	void SelectKey(int key,bool bForceReload = false);
 public:
 	void ResetSelectKey();
 	int GetSelectKey();
+	void SetFocusedKey(int key);
 public:
 	int InsertUndefinedRoot();
+public:
+	COptionTreeItem* FindItemByKey(int key);
+protected:
+	static BOOL CALLBACK EnumFindItemByKey(COptionTree* otProp, COptionTreeItem* otiItem, LPARAM lParam);
 private:
 	int m_nLastSelKey;
 	COptionTreeItem* m_pUndefinedRoot;

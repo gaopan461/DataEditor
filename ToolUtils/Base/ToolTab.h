@@ -28,6 +28,7 @@ public:
 	int ChangeTab(int nSel);
 	int DBToCtrl(int key);
 	int CtrlToDB(int key);
+	int DBToTree();
 public:
 	bool EnableKeyWindow(bool enable);
 	int LoadDefaultValues();

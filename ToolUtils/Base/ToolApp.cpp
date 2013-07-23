@@ -64,6 +64,7 @@ int ToolApp::InitializeTool(const CString& strAppName)
 	m_pMenu->AppendMenu(MF_STRING,ID_MENU_SAVE,_T("保存"));
 	m_pMenu->AppendMenu(MF_STRING,ID_MENU_DELETE,_T("删除"));
 	m_pMenu->AppendMenu(MF_STRING,ID_MENU_COPY,_T("复制"));
+	m_pMenu->AppendMenu(MF_STRING,ID_MENU_CANCEL,_T("取消"));
 	SetMenu(GetMainWnd()->GetSafeHwnd(),m_pMenu->GetSafeHmenu());
 
 	INFO_MSG("--------------------------------------------");
@@ -114,8 +115,10 @@ int ToolApp::MenuSave()
 		CString strKey;
 		pCtrlKey->GetWindowText(strKey);
 		nKey = atoi(CStringToStlString(strKey).c_str());
-		if(!pTabItem->GetDB()->ValidNewKey(nKey))
+
+		if(!pTabItem->GetDB()->InsertNewKey(nKey))
 		{
+			m_pTree->SelectKey(m_pTree->GetSelectKey(),true);
 			AfxMessageBox(_T("Key invalid"));
 			return -1;
 		}
@@ -125,7 +128,22 @@ int ToolApp::MenuSave()
 		nKey = m_pTree->GetSelectKey();
 	}
 	
-	return m_pTab->CtrlToDB(nKey);
+	m_pTab->CtrlToDB(nKey);
+	m_pTab->DBToTree();
+	m_pTree->SetFocusedKey(nKey);
+	return 0;
+}
+
+int ToolApp::MenuCancel()
+{
+	if(m_bIsNewing)
+	{
+		m_bIsNewing = false;
+		m_pTree->EnableWindow(TRUE);
+		m_pTab->EnableKeyWindow(FALSE);
+		m_pTree->SelectKey(m_pTree->GetSelectKey(),true);
+	}
+	return 0;
 }
 
 END_NS_AC

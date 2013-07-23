@@ -38,6 +38,11 @@ class CDataEditorDlg : public CDialog, public ToolApp
 			AfxMessageBox(_T("Copy"));
 			return TRUE;
 		}
+		else if(pMsg->message == WM_COMMAND && pMsg->wParam == ID_MENU_CANCEL)
+		{
+			MenuCancel();
+			return TRUE;
+		}
 		return CDialog::PreTranslateMessage(pMsg);
 	}
 public:

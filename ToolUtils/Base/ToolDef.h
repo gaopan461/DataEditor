@@ -20,6 +20,7 @@
 #define ID_MENU_SAVE	1901
 #define ID_MENU_DELETE	1902
 #define ID_MENU_COPY	1903
+#define ID_MENU_CANCEL	1904
 
 #define IDC_MAIN_TAB	2000
 #define IDC_MAIN_TREE	2001
@@ -83,7 +84,7 @@ struct SItemDB
 
 	virtual int DBToTree(ToolTree* pTree){return 0;}
 
-	virtual bool ValidNewKey(int key){return false;}
+	virtual bool InsertNewKey(int key){return false;}
 };
 
 typedef std::map<CString,size_t> MapCNameToColumnT;
@@ -103,7 +104,7 @@ struct SItemExcelDB : public SItemDB
 
 	virtual int DBToTree(ToolTree* pTree);
 
-	virtual bool ValidNewKey(int key);
+	virtual bool InsertNewKey(int key);
 
 	int InitMapNameToColumn();
 

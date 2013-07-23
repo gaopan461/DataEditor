@@ -155,14 +155,15 @@ int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
 		return -1;
 	}
 
+	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
+	ACCHECK(pSheet);
+
 	for(size_t i = 0; i < pItemTab->vtCtrls.size(); ++i)
 	{
 		SCtrl* pCtrl = pItemTab->vtCtrls[i];
 		ACCHECK(pCtrl);
 
 		int nCtrlCol = mapCNameToColumn[pCtrl->strCName];
-		BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
-		ACCHECK(pSheet);
 		BasicExcelCell* pCell = pSheet->Cell(nRow,nCtrlCol);
 		ACCHECK(pCell);
 
@@ -203,14 +204,15 @@ int SItemExcelDB::DBToCtrl(SItemTab* pItemTab,int key)
 		return -1;
 	}
 
+	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
+	ACCHECK(pSheet);
+
 	for(size_t i = 0; i < pItemTab->vtCtrls.size(); ++i)
 	{
 		SCtrl* pCtrl = pItemTab->vtCtrls[i];
 		ACCHECK(pCtrl);
 
 		int nCtrlCol = mapCNameToColumn[pCtrl->strCName];
-		BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
-		ACCHECK(pSheet);
 		BasicExcelCell* pCell = pSheet->Cell(nRow,nCtrlCol);
 		ACCHECK(pCell);
 		CString strDBVal;
@@ -450,7 +452,7 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 	return 0;
 }
 
-bool SItemExcelDB::ValidNewKey(int key)
+bool SItemExcelDB::InsertNewKey(int key)
 {
 	if(key <= 0)
 		return false;
@@ -458,6 +460,17 @@ bool SItemExcelDB::ValidNewKey(int key)
 	int nRow,nSheet;
 	if(Find(key,nRow,nSheet) == 0)
 		return false;
+
+	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet((size_t)0);
+	ACCHECK(pSheet);
+
+	int nKeyCol = mapCNameToColumn[strKeyCName];
+	BasicExcelCell* pCell = pSheet->Cell(pSheet->GetTotalRows(),nKeyCol);
+	ACCHECK(pCell);
+
+	CString strKey;
+	strKey.Format(_T("%d"),key);
+	SetCellContent(pCell,strKey);
 
 	return true;
 }

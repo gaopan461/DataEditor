@@ -83,6 +83,7 @@ struct SItemDB
 	virtual int DBToCtrl(SItemTab* pItemTab,int key){return 0;}
 
 	virtual int DBToTree(ToolTree* pTree){return 0;}
+	virtual int SaveDB(){return 0;}
 
 	virtual int InsertNewKey(int key){return -1;}
 	virtual int DeleteByKey(int key){return -1;}
@@ -124,6 +125,7 @@ struct SItemExcelDB : public SItemDB
 	virtual int DBToCtrl(SItemTab* pItemTab,int key);
 
 	virtual int DBToTree(ToolTree* pTree);
+	virtual int SaveDB();
 
 	virtual int InsertNewKey(int key);
 	virtual int DeleteByKey(int key);

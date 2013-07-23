@@ -444,6 +444,21 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 	return 0;
 }
 
+int SItemExcelDB::SaveDB()
+{
+	int nRow = nDataRow;
+	for(MapKeyToTreeInfoT::iterator iter = mapKeyToTreeInfo.begin(); iter != mapKeyToTreeInfo.end(); ++iter)
+	{
+		/*
+		STreeItemInfo& rTreeItemInfo1 = iter->second;
+		STreeItemInfo& rTreeItemInfo2;
+		SwapExcelRow(rTreeItemInfo1,rTreeItemInfo2);*/
+
+		//todo
+	}
+	return 0;
+}
+
 int SItemExcelDB::InsertNewKey(int key)
 {
 	if(key <= 0)
@@ -457,13 +472,6 @@ int SItemExcelDB::InsertNewKey(int key)
 	ACCHECK(pSheet);
 
 	int nRow = pSheet->GetTotalRows();
-	int nKeyCol = mapCNameToColumn[strKeyCName];
-	BasicExcelCell* pCell = pSheet->Cell(nRow,nKeyCol);
-	ACCHECK(pCell);
-
-	CString strKey;
-	strKey.Format(_T("%d"),key);
-	SetCellContent(pCell,strKey);
 
 	mapKeyToTreeInfo.insert(std::make_pair(key,STreeItemInfo(key,_T(""),nSheet,nRow)));
 

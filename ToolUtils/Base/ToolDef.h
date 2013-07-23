@@ -89,12 +89,30 @@ struct SItemDB
 
 typedef std::map<CString,size_t> MapCNameToColumnT;
 
+struct STreeItemInfo
+{
+	int nKey;
+	CString strDes;
+	int nRow;
+
+	STreeItemInfo(int key,const CString& des,int row)
+	{
+		nKey = key;
+		strDes = des;
+		nRow = row;
+	}
+};
+
+typedef std::map<int,STreeItemInfo> MapKeyToTreeInfoT;
+
 struct SItemExcelDB : public SItemDB
 {
 	int nHeadRow;
 	int nDataRow;
 	BasicExcel* pExcel;
 	MapCNameToColumnT mapCNameToColumn;
+
+	MapKeyToTreeInfoT mapKeyToTreeInfo;
 
 	SItemExcelDB(const CString& path,const CString& key, const CString& des,int headRow,int dataRow);
 	virtual ~SItemExcelDB();
@@ -107,6 +125,7 @@ struct SItemExcelDB : public SItemDB
 	virtual bool InsertNewKey(int key);
 
 	int InitMapNameToColumn();
+	int InitMapKeyToTreeInfo();
 
 	int Find(int key,int& row,int& sheet);
 

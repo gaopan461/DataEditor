@@ -93,12 +93,14 @@ struct STreeItemInfo
 {
 	int nKey;
 	CString strDes;
+	int nSheet;
 	int nRow;
 
-	STreeItemInfo(int key,const CString& des,int row)
+	STreeItemInfo(int key,const CString& des,int sheet,int row)
 	{
 		nKey = key;
 		strDes = des;
+		nSheet = sheet;
 		nRow = row;
 	}
 };
@@ -126,8 +128,6 @@ struct SItemExcelDB : public SItemDB
 
 	int InitMapNameToColumn();
 	int InitMapKeyToTreeInfo();
-
-	int Find(int key,int& row,int& sheet);
 
 	int DataToEdit(SEdit* pCtrl,CString data);
 	int DataToCheck(SCheck* pCtrl,CString data);

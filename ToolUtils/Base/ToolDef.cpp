@@ -194,7 +194,7 @@ int SItemExcelDB::InitMapKeyToTreeInfo()
 				str = _T("");
 			}
 
-			mapKeyToTreeInfo.insert(std::make_pair(nKey,STreeItemInfo(nKey,str,nRow)));
+			mapKeyToTreeInfo.insert(std::make_pair(nKey,STreeItemInfo(nKey,str,sheet,nRow)));
 		}
 	}
 	return 0;
@@ -202,12 +202,16 @@ int SItemExcelDB::InitMapKeyToTreeInfo()
 
 int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
 {
-	int nRow,nSheet;
-	if(Find(key,nRow,nSheet) != 0)
+	MapKeyToTreeInfoT::iterator iter = mapKeyToTreeInfo.find(key);
+	if(iter == mapKeyToTreeInfo.end())
 	{
-		ERROR_MSG("DBToCtrl,can't find key:%d",key);
+		ERROR_MSG("CtrlToDB,can't find key:%d",key);
 		return -1;
 	}
+
+	STreeItemInfo& rTreeItemInfo = iter->second;
+	int nSheet = rTreeItemInfo.nSheet;
+	int nRow = rTreeItemInfo.nRow;
 
 	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
 	ACCHECK(pSheet);
@@ -242,6 +246,11 @@ int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
 
 		if(SetCellContent(pCell,strDBVal) != 0)
 			INFO_MSG("Write cell failed,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nCtrlCol);
+
+		if(pCtrl->strCName == strDesCName)
+		{
+			rTreeItemInfo.strDes = strDBVal;
+		}
 	}
 
 	if(!pExcel->Save())
@@ -251,12 +260,15 @@ int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
 
 int SItemExcelDB::DBToCtrl(SItemTab* pItemTab,int key)
 {
-	int nRow,nSheet;
-	if(Find(key,nRow,nSheet) != 0)
+	MapKeyToTreeInfoT::iterator iter = mapKeyToTreeInfo.find(key);
+	if(iter == mapKeyToTreeInfo.end())
 	{
 		ERROR_MSG("DBToCtrl,can't find key:%d",key);
 		return -1;
 	}
+
+	int nSheet = iter->second.nSheet;
+	int nRow = iter->second.nRow;
 
 	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
 	ACCHECK(pSheet);
@@ -293,39 +305,6 @@ int SItemExcelDB::DBToCtrl(SItemTab* pItemTab,int key)
 	}
 
 	return 0;
-}
-
-int SItemExcelDB::Find(int key,int& row,int& sheet)
-{
-	size_t nKeyCol = mapCNameToColumn[strKeyCName];
-	for(size_t nSheet = 0; nSheet < pExcel->GetTotalWorkSheets(); ++nSheet)
-	{
-		BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
-		ACCHECK(pSheet);
-
-		for(size_t nRow = nDataRow; nRow < pSheet->GetTotalRows(); ++nRow)
-		{
-			BasicExcelCell* pCell = pSheet->Cell(nRow,nKeyCol);
-			ACCHECK(pCell);
-
-			CString strValue;
-			if(GetCellContent(pCell,strValue) != 0)
-			{
-				INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nKeyCol);
-				continue;
-			}
-
-			int val = atoi(CStringToStlString(strValue).c_str());
-
-			if(val == key)
-			{
-				row = nRow;
-				sheet = nSheet;
-				return 0;
-			}
-		}
-	}
-	return -1;
 }
 
 int SItemExcelDB::DataToEdit(SEdit* pCtrl,CString data)
@@ -470,20 +449,23 @@ bool SItemExcelDB::InsertNewKey(int key)
 	if(key <= 0)
 		return false;
 
-	int nRow,nSheet;
-	if(Find(key,nRow,nSheet) == 0)
+	if(mapKeyToTreeInfo.find(key) != mapKeyToTreeInfo.end())
 		return false;
 
-	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet((size_t)0);
+	int nSheet = 0;
+	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
 	ACCHECK(pSheet);
 
+	int nRow = pSheet->GetTotalRows();
 	int nKeyCol = mapCNameToColumn[strKeyCName];
-	BasicExcelCell* pCell = pSheet->Cell(pSheet->GetTotalRows(),nKeyCol);
+	BasicExcelCell* pCell = pSheet->Cell(nRow,nKeyCol);
 	ACCHECK(pCell);
 
 	CString strKey;
 	strKey.Format(_T("%d"),key);
 	SetCellContent(pCell,strKey);
+
+	mapKeyToTreeInfo.insert(std::make_pair(key,STreeItemInfo(key,_T(""),nSheet,nRow)));
 
 	return true;
 }

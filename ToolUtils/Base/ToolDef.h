@@ -83,6 +83,7 @@ struct SItemDB
 	virtual int DBToCtrl(SItemTab* pItemTab,int key){return 0;}
 
 	virtual int DBToTree(ToolTree* pTree){return 0;}
+	virtual int SortDB(){return 0;}
 	virtual int SaveDB(){return 0;}
 
 	virtual int InsertNewKey(int key){return -1;}
@@ -125,6 +126,7 @@ struct SItemExcelDB : public SItemDB
 	virtual int DBToCtrl(SItemTab* pItemTab,int key);
 
 	virtual int DBToTree(ToolTree* pTree);
+	virtual int SortDB();
 	virtual int SaveDB();
 
 	virtual int InsertNewKey(int key);
@@ -132,6 +134,8 @@ struct SItemExcelDB : public SItemDB
 
 	int InitMapNameToColumn();
 	int InitMapKeyToTreeInfo();
+	int GetKeyInExcel(int sheet,int row);
+	int SwapExcelRow(int sheet,int row1,int row2);
 
 	int DataToEdit(SEdit* pCtrl,CString data);
 	int DataToCheck(SCheck* pCtrl,CString data);

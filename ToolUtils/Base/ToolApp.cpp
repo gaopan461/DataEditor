@@ -120,6 +120,11 @@ int ToolApp::MenuSave()
 	int nKey = -1;
 	if(m_bIsNewing)
 	{
+		m_pMenu->EnableMenuItem(ID_MENU_COPY,FALSE);
+		m_pMenu->EnableMenuItem(ID_MENU_NEW,FALSE);
+		m_pMenu->EnableMenuItem(ID_MENU_DELETE,FALSE);
+		m_pMenu->EnableMenuItem(ID_MENU_CANCEL,TRUE);
+
 		m_bIsNewing = false;
 		m_pTree->EnableWindow(TRUE);
 		m_pTab->EnableKeyWindow(FALSE);

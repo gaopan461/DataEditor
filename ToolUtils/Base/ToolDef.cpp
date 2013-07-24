@@ -113,6 +113,8 @@ SItemExcelDB::SItemExcelDB(const CString& path,const CString& key, const CString
 
 SItemExcelDB::~SItemExcelDB()
 {
+	SortDB();
+	SaveDB();
 	_safe_delete(pExcel);
 	mapCNameToColumn.clear();
 }
@@ -253,9 +255,7 @@ int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
 		}
 	}
 
-	if(!pExcel->Save())
-		ERROR_MSG("Save excel failed,excel:%s",CStringToStlString(strFilePath));
-	return 0;
+	return SaveDB();
 }
 
 int SItemExcelDB::DBToCtrl(SItemTab* pItemTab,int key)
@@ -444,17 +444,85 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 	return 0;
 }
 
+int SItemExcelDB::SortDB()
+{
+	std::vector<int> vtRowIdx;
+	for(size_t i = 0; i < pExcel->GetTotalWorkSheets(); ++i)
+	{
+		vtRowIdx.push_back(nDataRow);
+	}
+
+	for(MapKeyToTreeInfoT::iterator iter1 = mapKeyToTreeInfo.begin(); iter1 != mapKeyToTreeInfo.end(); ++iter1)
+	{
+		STreeItemInfo& rTreeItemInfo1 = iter1->second;
+		int nRow1 = rTreeItemInfo1.nRow;
+		int nSheet = rTreeItemInfo1.nSheet;
+		int nRow2 = vtRowIdx[nSheet];
+		int nKey2 = GetKeyInExcel(nSheet,nRow2);
+
+		SwapExcelRow(nSheet,nRow1,nRow2);
+		rTreeItemInfo1.nRow = nRow2;
+
+		MapKeyToTreeInfoT::iterator iter2 = mapKeyToTreeInfo.find(nKey2);
+		if(iter2 != mapKeyToTreeInfo.end())
+		{
+			STreeItemInfo& rTreeItemInfo2 = iter2->second;
+			ACCHECK(rTreeItemInfo2.nSheet == nSheet);
+			rTreeItemInfo2.nRow = nRow1;
+		}
+
+		vtRowIdx[nSheet]++;
+	}
+
+	return 0;
+}
+
 int SItemExcelDB::SaveDB()
 {
-	int nRow = nDataRow;
-	for(MapKeyToTreeInfoT::iterator iter = mapKeyToTreeInfo.begin(); iter != mapKeyToTreeInfo.end(); ++iter)
+	if(!pExcel->Save())
 	{
-		/*
-		STreeItemInfo& rTreeItemInfo1 = iter->second;
-		STreeItemInfo& rTreeItemInfo2;
-		SwapExcelRow(rTreeItemInfo1,rTreeItemInfo2);*/
+		ERROR_MSG("Save excel failed,excel:%s",CStringToStlString(strFilePath));
+		return -1;
+	}
 
-		//todo
+	return 0;
+}
+
+int SItemExcelDB::GetKeyInExcel(int sheet,int row)
+{
+	int nKeyCol = mapCNameToColumn[strKeyCName];
+	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(sheet);
+	ACCHECK(pSheet);
+
+	BasicExcelCell* pCell = pSheet->Cell(row,nKeyCol);
+	ACCHECK(pSheet);
+
+	CString strKey;
+	GetCellContent(pCell,strKey);
+	return atoi(CStringToStlString(strKey).c_str());
+}
+
+int SItemExcelDB::SwapExcelRow(int sheet,int row1,int row2)
+{
+	if(row1 == row2)
+		return 0;
+
+	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(sheet);
+	ACCHECK(pSheet);
+
+	CString strTmp1,strTmp2;
+	for(size_t nCol = 0; nCol < pSheet->GetTotalCols(); ++nCol)
+	{
+		BasicExcelCell* pCell1 = pSheet->Cell(row1,nCol);
+		ACCHECK(pCell1);
+		BasicExcelCell* pCell2 = pSheet->Cell(row2,nCol);
+		ACCHECK(pCell2);
+
+		GetCellContent(pCell1,strTmp1);
+		GetCellContent(pCell2,strTmp2);
+		SetCellContent(pCell1,strTmp2);
+		SetCellContent(pCell2,strTmp1);
+
 	}
 	return 0;
 }

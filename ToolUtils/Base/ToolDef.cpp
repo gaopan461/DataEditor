@@ -555,6 +555,21 @@ int SItemExcelDB::DeleteByKey(int key)
 	if(iter == mapKeyToTreeInfo.end())
 		return -1;
 
+	STreeItemInfo& rTreeItemInfo = iter->second;
+	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(rTreeItemInfo.nSheet);
+	ACCHECK(pSheet);
+
+	for(int nCol = 0; nCol < pSheet->GetTotalCols(); ++nCol)
+	{
+		BasicExcelCell* pCell = pSheet->Cell(rTreeItemInfo.nRow,nCol);
+		ACCHECK(pCell);
+
+		CString strEmpty = _T("");
+		SetCellContent(pCell,strEmpty);
+	}
+
+	SaveDB();
+
 	int nKey = -1;
 	MapKeyToTreeInfoT::iterator iterNext = mapKeyToTreeInfo.erase(iter);
 	if(iterNext != mapKeyToTreeInfo.end())

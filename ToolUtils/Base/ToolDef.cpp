@@ -38,7 +38,10 @@ int GetCellContent(const BasicExcelCell* pCell, CString& strContent)
 int SetCellContent(BasicExcelCell* pCell, const CString& strContent)
 {
 	ACCHECK(pCell);
-	pCell->Set(strContent);
+	if(strContent.IsEmpty())
+		pCell->EraseContents();
+	else
+		pCell->Set(strContent);
 	return 0;
 	switch(pCell->Type())
 	{
@@ -182,7 +185,7 @@ int SItemExcelDB::InitMapKeyToTreeInfo()
 			CString str;
 			if(GetCellContent(pCellKey,str) != 0)
 			{
-				INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nKeyCol);
+				//INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nKeyCol);
 				continue;
 			}
 
@@ -192,7 +195,7 @@ int SItemExcelDB::InitMapKeyToTreeInfo()
 			ACCHECK(pCellDes);
 			if(GetCellContent(pCellDes,str) != 0)
 			{
-				INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nDesCol);
+				//INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nDesCol);
 				str = _T("");
 			}
 
@@ -282,8 +285,7 @@ int SItemExcelDB::DBToCtrl(SItemTab* pItemTab,int key)
 		BasicExcelCell* pCell = pSheet->Cell(nRow,nCtrlCol);
 		ACCHECK(pCell);
 		CString strDBVal;
-		if(GetCellContent(pCell,strDBVal) != 0)
-			INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nCtrlCol);
+		GetCellContent(pCell,strDBVal);
 
 		switch(pCtrl->nCtrl)
 		{
@@ -539,7 +541,7 @@ int SItemExcelDB::InsertNewKey(int key)
 	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
 	ACCHECK(pSheet);
 
-	int nRow = pSheet->GetTotalRows();
+	int nRow = mapKeyToTreeInfo.size() + nDataRow;
 
 	mapKeyToTreeInfo.insert(std::make_pair(key,STreeItemInfo(key,_T(""),nSheet,nRow)));
 
@@ -564,8 +566,7 @@ int SItemExcelDB::DeleteByKey(int key)
 		BasicExcelCell* pCell = pSheet->Cell(rTreeItemInfo.nRow,nCol);
 		ACCHECK(pCell);
 
-		CString strEmpty = _T("");
-		SetCellContent(pCell,strEmpty);
+		pCell->EraseContents();
 	}
 
 	SaveDB();

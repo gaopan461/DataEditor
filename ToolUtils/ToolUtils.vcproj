@@ -161,6 +161,30 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\CApplication.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CRange.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CWorkbook.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CWorkbooks.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CWorksheet.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CWorksheets.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
@@ -260,6 +284,14 @@
 			</File>
 			<File
 				RelativePath=".\Base\ToolDef.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolExcel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolExcel.h"
 				>
 			</File>
 			<File

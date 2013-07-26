@@ -17,7 +17,7 @@ BEGIN_NS_AC
 class ExcelWorkbook
 {
 public:
-	ExcelWorkbook(CString strName,CWorkbook workbook);
+	ExcelWorkbook(CString strPath,CWorkbook workbook);
 	virtual ~ExcelWorkbook();
 private:
 	CString m_strPath;

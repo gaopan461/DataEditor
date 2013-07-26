@@ -1,6 +1,6 @@
 // 从类型库向导中用“添加类”创建的计算机生成的 IDispatch 包装类
 
-//#import "C:\\Program Files (x86)\\Microsoft Office\\Office14\\EXCEL.EXE" no_namespace
+//#import "C:\\Program Files (x86)\\Microsoft Office\\OFFICE11\\EXCEL.EXE" no_namespace
 // CWorkbooks 包装类
 
 class CWorkbooks : public COleDispatchDriver

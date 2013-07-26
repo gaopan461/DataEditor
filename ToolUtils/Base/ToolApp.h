@@ -11,6 +11,7 @@ class ToolTree;
 class ToolTab;
 class ToolLog;
 class ToolLayout;
+class ToolExcel;
 
 class ToolApp
 {
@@ -58,6 +59,10 @@ public:
 	{
 		return m_pLayout;
 	}
+	ToolExcel* GetExcelTool()
+	{
+		return m_pExcel;
+	}
 	bool IsNewing()
 	{
 		return m_bIsNewing;
@@ -70,6 +75,7 @@ protected:
 	ToolTab* m_pTab;
 	ToolLog* m_pLog;
 	ToolLayout* m_pLayout;
+	ToolExcel* m_pExcel;
 	CMenu* m_pMenu;
 public:
 	CFont m_objFont;

@@ -1,6 +1,6 @@
 // 从类型库向导中用“添加类”创建的计算机生成的 IDispatch 包装类
 
-//#import "C:\\Program Files (x86)\\Microsoft Office\\Office14\\EXCEL.EXE" no_namespace
+//#import "C:\\Program Files (x86)\\Microsoft Office\\OFFICE11\\EXCEL.EXE" no_namespace
 // CRange 包装类
 
 class CRange : public COleDispatchDriver
@@ -134,7 +134,7 @@ public:
 		InvokeHelper(0x40c, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
 		return result;
 	}
-	VARIANT _BorderAround(VARIANT& LineStyle, long Weight, long ColorIndex, VARIANT& Color)
+	VARIANT BorderAround(VARIANT& LineStyle, long Weight, long ColorIndex, VARIANT& Color)
 	{
 		VARIANT result;
 		static BYTE parms[] = VTS_VARIANT VTS_I4 VTS_I4 VTS_VARIANT ;
@@ -821,7 +821,7 @@ public:
 		InvokeHelper(0x1f7, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
 		return result;
 	}
-	VARIANT __PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate)
+	VARIANT _PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate)
 	{
 		VARIANT result;
 		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
@@ -1201,7 +1201,7 @@ public:
 		static BYTE parms[] = VTS_BSTR ;
 		InvokeHelper(0x715, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, newValue);
 	}
-	VARIANT _PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate, VARIANT& PrToFileName)
+	VARIANT PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate, VARIANT& PrToFileName)
 	{
 		VARIANT result;
 		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
@@ -1259,78 +1259,6 @@ public:
 		LPDISPATCH result;
 		InvokeHelper(0x8d2, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
 		return result;
-	}
-	LPDISPATCH get_ServerActions()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x9bb, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	void RemoveDuplicates(VARIANT& Columns, long Header)
-	{
-		static BYTE parms[] = VTS_VARIANT VTS_I4 ;
-		InvokeHelper(0x9bc, DISPATCH_METHOD, VT_EMPTY, NULL, parms, &Columns, Header);
-	}
-	VARIANT PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate, VARIANT& PrToFileName)
-	{
-		VARIANT result;
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
-		InvokeHelper(0x939, DISPATCH_METHOD, VT_VARIANT, (void*)&result, parms, &From, &To, &Copies, &Preview, &ActivePrinter, &PrintToFile, &Collate, &PrToFileName);
-		return result;
-	}
-	CString get_MDX()
-	{
-		CString result;
-		InvokeHelper(0x84b, DISPATCH_PROPERTYGET, VT_BSTR, (void*)&result, NULL);
-		return result;
-	}
-	void ExportAsFixedFormat(long Type, VARIANT& Filename, VARIANT& Quality, VARIANT& IncludeDocProperties, VARIANT& IgnorePrintAreas, VARIANT& From, VARIANT& To, VARIANT& OpenAfterPublish, VARIANT& FixedFormatExtClassPtr)
-	{
-		static BYTE parms[] = VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
-		InvokeHelper(0x9bd, DISPATCH_METHOD, VT_EMPTY, NULL, parms, Type, &Filename, &Quality, &IncludeDocProperties, &IgnorePrintAreas, &From, &To, &OpenAfterPublish, &FixedFormatExtClassPtr);
-	}
-	VARIANT get_CountLarge()
-	{
-		VARIANT result;
-		InvokeHelper(0x9c3, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
-		return result;
-	}
-	VARIANT CalculateRowMajorOrder()
-	{
-		VARIANT result;
-		InvokeHelper(0x93c, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
-		return result;
-	}
-	LPDISPATCH get_SparklineGroups()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0xb25, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	void ClearHyperlinks()
-	{
-		InvokeHelper(0xb26, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
-	}
-	LPDISPATCH get_DisplayFormat()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x29a, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	VARIANT BorderAround(VARIANT& LineStyle, long Weight, long ColorIndex, VARIANT& Color, VARIANT& ThemeColor)
-	{
-		VARIANT result;
-		static BYTE parms[] = VTS_VARIANT VTS_I4 VTS_I4 VTS_VARIANT VTS_VARIANT ;
-		InvokeHelper(0xad3, DISPATCH_METHOD, VT_VARIANT, (void*)&result, parms, &LineStyle, Weight, ColorIndex, &Color, &ThemeColor);
-		return result;
-	}
-	void AllocateChanges()
-	{
-		InvokeHelper(0xb27, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
-	}
-	void DiscardChanges()
-	{
-		InvokeHelper(0xb28, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
 	}
 
 	// Range 属性

@@ -7,6 +7,7 @@
 #include "ToolTab.h"
 #include "ToolLog.h"
 #include "ToolLayout.h"
+#include "ToolExcel.h"
 
 BEGIN_NS_AC
 
@@ -20,6 +21,7 @@ ToolApp::ToolApp()
 	m_pTab = new ToolTab(this);
 	m_pLog = new ToolLog(this);
 	m_pLayout = new ToolLayout(this);
+	m_pExcel = new ToolExcel(this);
 	m_bIsNewing = false;
 }
 
@@ -31,6 +33,7 @@ ToolApp::~ToolApp()
 	_safe_delete(m_pTab);
 	_safe_delete(m_pLog);
 	_safe_delete(m_pLayout);
+	_safe_delete(m_pExcel);
 	m_pInstance = NULL;
 }
 
@@ -55,6 +58,7 @@ int ToolApp::InitializeTool(const CString& strAppName)
 	m_pTab->Create();
 	m_pTree->Create();
 	m_pLayout->Init();
+	m_pExcel->Initialize();
 	m_pConfig->Load(strAppName);
 	m_pTab->ChangeTab(0);
 
@@ -77,6 +81,7 @@ int ToolApp::InitializeTool(const CString& strAppName)
 
 int ToolApp::FinalizeTool()
 {
+	m_pExcel->Finalize();
 	m_objFont.DeleteObject();
 	m_pMenu->DestroyMenu();
 	delete m_pMenu;

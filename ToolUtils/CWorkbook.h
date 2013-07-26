@@ -1,6 +1,6 @@
 // 从类型库向导中用“添加类”创建的计算机生成的 IDispatch 包装类
 
-//#import "C:\\Program Files (x86)\\Microsoft Office\\Office14\\EXCEL.EXE" no_namespace
+//#import "C:\\Program Files (x86)\\Microsoft Office\\OFFICE11\\EXCEL.EXE" no_namespace
 // CWorkbook 包装类
 
 class CWorkbook : public COleDispatchDriver
@@ -458,7 +458,7 @@ public:
 		static BYTE parms[] = VTS_BOOL ;
 		InvokeHelper(0x195, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, newValue);
 	}
-	void __PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate)
+	void _PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate)
 	{
 		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
 		InvokeHelper(0x389, DISPATCH_METHOD, VT_EMPTY, NULL, parms, &From, &To, &Copies, &Preview, &ActivePrinter, &PrintToFile, &Collate);
@@ -473,7 +473,7 @@ public:
 		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
 		InvokeHelper(0x11a, DISPATCH_METHOD, VT_EMPTY, NULL, parms, &Password, &Structure, &Windows);
 	}
-	void _ProtectSharing(VARIANT& Filename, VARIANT& Password, VARIANT& WriteResPassword, VARIANT& ReadOnlyRecommended, VARIANT& CreateBackup, VARIANT& SharingPassword)
+	void ProtectSharing(VARIANT& Filename, VARIANT& Password, VARIANT& WriteResPassword, VARIANT& ReadOnlyRecommended, VARIANT& CreateBackup, VARIANT& SharingPassword)
 	{
 		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
 		InvokeHelper(0x5aa, DISPATCH_METHOD, VT_EMPTY, NULL, parms, &Filename, &Password, &WriteResPassword, &ReadOnlyRecommended, &CreateBackup, &SharingPassword);
@@ -825,7 +825,7 @@ public:
 		InvokeHelper(0x6e9, DISPATCH_PROPERTYGET, VT_BOOL, (void*)&result, NULL);
 		return result;
 	}
-	void _PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate, VARIANT& PrToFileName)
+	void PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate, VARIANT& PrToFileName)
 	{
 		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
 		InvokeHelper(0x6ec, DISPATCH_METHOD, VT_EMPTY, NULL, parms, &From, &To, &Copies, &Preview, &ActivePrinter, &PrintToFile, &Collate, &PrToFileName);
@@ -1147,270 +1147,6 @@ public:
 	void ToggleFormsDesign()
 	{
 		InvokeHelper(0x8e7, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
-	}
-	LPDISPATCH get_ContentTypeProperties()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x9d0, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	LPDISPATCH get_Connections()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x9d1, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	void RemoveDocumentInformation(long RemoveDocInfoType)
-	{
-		static BYTE parms[] = VTS_I4 ;
-		InvokeHelper(0x9d2, DISPATCH_METHOD, VT_EMPTY, NULL, parms, RemoveDocInfoType);
-	}
-	LPDISPATCH get_Signatures()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x9d4, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	void CheckInWithVersion(VARIANT& SaveChanges, VARIANT& Comments, VARIANT& MakePublic, VARIANT& VersionType)
-	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
-		InvokeHelper(0x9d5, DISPATCH_METHOD, VT_EMPTY, NULL, parms, &SaveChanges, &Comments, &MakePublic, &VersionType);
-	}
-	LPDISPATCH get_ServerPolicy()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x9d7, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	void LockServerFile()
-	{
-		InvokeHelper(0x9d8, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
-	}
-	LPDISPATCH get_DocumentInspectors()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x9d9, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	LPDISPATCH GetWorkflowTasks()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x9da, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	LPDISPATCH GetWorkflowTemplates()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x9db, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	void PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate, VARIANT& PrToFileName, VARIANT& IgnorePrintAreas)
-	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
-		InvokeHelper(0x939, DISPATCH_METHOD, VT_EMPTY, NULL, parms, &From, &To, &Copies, &Preview, &ActivePrinter, &PrintToFile, &Collate, &PrToFileName, &IgnorePrintAreas);
-	}
-	LPDISPATCH get_ServerViewableItems()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x9dc, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	LPDISPATCH get_TableStyles()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x9dd, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	VARIANT get_DefaultTableStyle()
-	{
-		VARIANT result;
-		InvokeHelper(0x9de, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
-		return result;
-	}
-	void put_DefaultTableStyle(VARIANT& newValue)
-	{
-		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x9de, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
-	}
-	VARIANT get_DefaultPivotTableStyle()
-	{
-		VARIANT result;
-		InvokeHelper(0x9df, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
-		return result;
-	}
-	void put_DefaultPivotTableStyle(VARIANT& newValue)
-	{
-		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x9df, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
-	}
-	BOOL get_CheckCompatibility()
-	{
-		BOOL result;
-		InvokeHelper(0x9e0, DISPATCH_PROPERTYGET, VT_BOOL, (void*)&result, NULL);
-		return result;
-	}
-	void put_CheckCompatibility(BOOL newValue)
-	{
-		static BYTE parms[] = VTS_BOOL ;
-		InvokeHelper(0x9e0, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, newValue);
-	}
-	BOOL get_HasVBProject()
-	{
-		BOOL result;
-		InvokeHelper(0x9e1, DISPATCH_PROPERTYGET, VT_BOOL, (void*)&result, NULL);
-		return result;
-	}
-	LPDISPATCH get_CustomXMLParts()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x9e2, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	BOOL get_Final()
-	{
-		BOOL result;
-		InvokeHelper(0x9e3, DISPATCH_PROPERTYGET, VT_BOOL, (void*)&result, NULL);
-		return result;
-	}
-	void put_Final(BOOL newValue)
-	{
-		static BYTE parms[] = VTS_BOOL ;
-		InvokeHelper(0x9e3, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, newValue);
-	}
-	LPDISPATCH get_Research()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x9e4, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	LPDISPATCH get_Theme()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x9e5, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	void ApplyTheme(LPCTSTR Filename)
-	{
-		static BYTE parms[] = VTS_BSTR ;
-		InvokeHelper(0x9e6, DISPATCH_METHOD, VT_EMPTY, NULL, parms, Filename);
-	}
-	BOOL get_Excel8CompatibilityMode()
-	{
-		BOOL result;
-		InvokeHelper(0x9e7, DISPATCH_PROPERTYGET, VT_BOOL, (void*)&result, NULL);
-		return result;
-	}
-	BOOL get_ConnectionsDisabled()
-	{
-		BOOL result;
-		InvokeHelper(0x9e8, DISPATCH_PROPERTYGET, VT_BOOL, (void*)&result, NULL);
-		return result;
-	}
-	void EnableConnections()
-	{
-		InvokeHelper(0x9e9, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
-	}
-	BOOL get_ShowPivotChartActiveFields()
-	{
-		BOOL result;
-		InvokeHelper(0x9ea, DISPATCH_PROPERTYGET, VT_BOOL, (void*)&result, NULL);
-		return result;
-	}
-	void put_ShowPivotChartActiveFields(BOOL newValue)
-	{
-		static BYTE parms[] = VTS_BOOL ;
-		InvokeHelper(0x9ea, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, newValue);
-	}
-	void ExportAsFixedFormat(long Type, VARIANT& Filename, VARIANT& Quality, VARIANT& IncludeDocProperties, VARIANT& IgnorePrintAreas, VARIANT& From, VARIANT& To, VARIANT& OpenAfterPublish, VARIANT& FixedFormatExtClassPtr)
-	{
-		static BYTE parms[] = VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
-		InvokeHelper(0x9bd, DISPATCH_METHOD, VT_EMPTY, NULL, parms, Type, &Filename, &Quality, &IncludeDocProperties, &IgnorePrintAreas, &From, &To, &OpenAfterPublish, &FixedFormatExtClassPtr);
-	}
-	LPDISPATCH get_IconSets()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0x9eb, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	CString get_EncryptionProvider()
-	{
-		CString result;
-		InvokeHelper(0x9ec, DISPATCH_PROPERTYGET, VT_BSTR, (void*)&result, NULL);
-		return result;
-	}
-	void put_EncryptionProvider(LPCTSTR newValue)
-	{
-		static BYTE parms[] = VTS_BSTR ;
-		InvokeHelper(0x9ec, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, newValue);
-	}
-	BOOL get_DoNotPromptForConvert()
-	{
-		BOOL result;
-		InvokeHelper(0x9ed, DISPATCH_PROPERTYGET, VT_BOOL, (void*)&result, NULL);
-		return result;
-	}
-	void put_DoNotPromptForConvert(BOOL newValue)
-	{
-		static BYTE parms[] = VTS_BOOL ;
-		InvokeHelper(0x9ed, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, newValue);
-	}
-	BOOL get_ForceFullCalculation()
-	{
-		BOOL result;
-		InvokeHelper(0x9ee, DISPATCH_PROPERTYGET, VT_BOOL, (void*)&result, NULL);
-		return result;
-	}
-	void put_ForceFullCalculation(BOOL newValue)
-	{
-		static BYTE parms[] = VTS_BOOL ;
-		InvokeHelper(0x9ee, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, newValue);
-	}
-	void ProtectSharing(VARIANT& Filename, VARIANT& Password, VARIANT& WriteResPassword, VARIANT& ReadOnlyRecommended, VARIANT& CreateBackup, VARIANT& SharingPassword, VARIANT& FileFormat)
-	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
-		InvokeHelper(0x9ef, DISPATCH_METHOD, VT_EMPTY, NULL, parms, &Filename, &Password, &WriteResPassword, &ReadOnlyRecommended, &CreateBackup, &SharingPassword, &FileFormat);
-	}
-	LPDISPATCH get_SlicerCaches()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0xb32, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	LPDISPATCH get_ActiveSlicer()
-	{
-		LPDISPATCH result;
-		InvokeHelper(0xb33, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
-		return result;
-	}
-	VARIANT get_DefaultSlicerStyle()
-	{
-		VARIANT result;
-		InvokeHelper(0xb34, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
-		return result;
-	}
-	void put_DefaultSlicerStyle(VARIANT& newValue)
-	{
-		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0xb34, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
-	}
-	void Dummy26()
-	{
-		InvokeHelper(0xb35, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
-	}
-	void Dummy27()
-	{
-		InvokeHelper(0xb36, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
-	}
-	long get_AccuracyVersion()
-	{
-		long result;
-		InvokeHelper(0xb37, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
-		return result;
-	}
-	void put_AccuracyVersion(long newValue)
-	{
-		static BYTE parms[] = VTS_I4 ;
-		InvokeHelper(0xb37, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, newValue);
 	}
 
 	// _Workbook 属性

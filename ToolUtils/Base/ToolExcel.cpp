@@ -24,6 +24,12 @@ ToolExcel::~ToolExcel()
 
 int ToolExcel::Initialize()
 {
+	if(!AfxOleInit())
+	{
+		AfxMessageBox(_T("Error! Ole initial failed!"));
+		ExitProcess(-1);
+	}
+
 	if(!m_objApplication.CreateDispatch(_T("Excel.Application")))
 	{
 		AfxMessageBox(_T("Error! Creat excel application server failed!"));
@@ -58,7 +64,7 @@ ExcelWorkbook* ToolExcel::OpenWorkbook(CString strPath)
 		covOptional,covOptional,covOptional,covOptional,covOptional,covOptional,
 		covOptional,covOptional,covOptional,covOptional,covOptional);
 
-	iter = m_mapWorkbooks.insert(std::make_pair(strFileName,ExcelWorkbook(strFileName,workbook))).first;
+	iter = m_mapWorkbooks.insert(std::make_pair(strFileName,ExcelWorkbook(strPath,workbook))).first;
 	return &iter->second;
 }
 

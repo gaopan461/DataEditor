@@ -239,14 +239,6 @@
 			Name="Base"
 			>
 			<File
-				RelativePath=".\Base\BasicExcel.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\BasicExcel.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Base\CheckComboBox.cpp"
 				>
 			</File>

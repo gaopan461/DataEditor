@@ -25,7 +25,7 @@ struct SCtrl
 	CString strCName;
 	int nCtrl;
 	int nWidth1;
-	int bNewline;
+	bool bNewline;
 
 	CStatic* pStatic;
 

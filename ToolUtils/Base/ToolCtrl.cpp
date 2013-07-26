@@ -156,7 +156,7 @@ int SCheckCombo::Init( LuaConfig& rLuaConfig,CWnd* pParent )
 
 int SCheckCombo::LoadDefaultValue()
 {
-	for(int i = 0; i < vtItems.size(); ++i)
+	for(size_t i = 0; i < vtItems.size(); ++i)
 	{
 		pCtrl->SetCheck(i,vtItems[i].bDefault);
 	}

@@ -54,23 +54,23 @@ int ToolTab::ChangeTab(int nSel)
 
 	if(m_nTabCurrent != -1)
 	{
-		GetCurrentItem()->pWnd->ShowWindow(SW_HIDE);
-		GetCurrentItem()->nLastSelKey = m_pOwner->GetMainTree()->GetSelectKey();
+		GetCurrentItem()->m_pWnd->ShowWindow(SW_HIDE);
+		GetCurrentItem()->m_nLastSelKey = m_pOwner->GetMainTree()->GetSelectKey();
 	}
 
 	m_nTabCurrent = nSel;
-	GetCurrentItem()->pWnd->ShowWindow(SW_SHOW);
-	GetCurrentItem()->pWnd->SetFocus();
+	GetCurrentItem()->m_pWnd->ShowWindow(SW_SHOW);
+	GetCurrentItem()->m_pWnd->SetFocus();
 
 	DBToTree();
-	m_pOwner->GetMainTree()->SelectKey(GetCurrentItem()->nLastSelKey);
+	m_pOwner->GetMainTree()->SelectKey(GetCurrentItem()->m_nLastSelKey);
 	return 0;
 }
 
 int ToolTab::DBToCtrl( int key )
 {
 	SItemTab* pTabItem = m_vtItemTabs[m_nTabCurrent];
-	ACCHECK(pTabItem && pTabItem->pDB);
+	ACCHECK(pTabItem && pTabItem->m_pDB);
 	
 	pTabItem->GetDB()->DBToCtrl(pTabItem,key);
 	return 0;
@@ -79,7 +79,7 @@ int ToolTab::DBToCtrl( int key )
 int ToolTab::CtrlToDB(int key)
 {
 	SItemTab* pTabItem = m_vtItemTabs[m_nTabCurrent];
-	ACCHECK(pTabItem && pTabItem->pDB);
+	ACCHECK(pTabItem && pTabItem->m_pDB);
 
 	pTabItem->GetDB()->CtrlToDB(pTabItem,key);
 	return 0;
@@ -88,7 +88,7 @@ int ToolTab::CtrlToDB(int key)
 int ToolTab::DBToTree()
 {
 	SItemTab* pTabItem = m_vtItemTabs[m_nTabCurrent];
-	ACCHECK(pTabItem && pTabItem->pDB);
+	ACCHECK(pTabItem && pTabItem->m_pDB);
 
 	pTabItem->GetDB()->DBToTree(m_pOwner->GetMainTree());
 	return 0;
@@ -136,7 +136,7 @@ SItemTab* ToolTab::AddTabItem(const CString& strName)
 	InsertItem(GetItemCount(),strName);
 
 	SItemTab* pTab = new SItemTab;
-	pTab->pWnd = pWnd;
+	pTab->m_pWnd = pWnd;
 
 	m_vtItemTabs.push_back(pTab);
 	return pTab;

@@ -81,7 +81,6 @@ int ToolApp::InitializeTool(const CString& strAppName)
 
 int ToolApp::FinalizeTool()
 {
-	m_pExcel->Finalize();
 	m_objFont.DeleteObject();
 	m_pMenu->DestroyMenu();
 	delete m_pMenu;

@@ -4,8 +4,6 @@
 #include "ToolDef.h"
 #include "ToolApp.h"
 
-using namespace YExcel;
-
 BEGIN_NS_AC
 
 // ToolTab

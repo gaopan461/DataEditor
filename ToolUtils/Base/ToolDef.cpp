@@ -2,115 +2,32 @@
 #include "ACLog.h"
 #include "ACString.h"
 #include "ToolTree.h"
+#include "ToolExcel.h"
 
 BEGIN_NS_AC
-
-int GetCellContent(const BasicExcelCell* pCell, CString& strContent)
-{
-	ACCHECK(pCell);
-	switch(pCell->Type())
-	{
-	case BasicExcelCell::UNDEFINED:
-		strContent = _T("");
-		return -1;
-		break;
-	case BasicExcelCell::INT:
-		strContent.Format(_T("%d"),pCell->GetInteger());
-		break;
-	case BasicExcelCell::DOUBLE:
-		strContent.Format(_T("%.6lf"),pCell->GetDouble());
-		break;
-	case BasicExcelCell::STRING:
-		{
-			std::string stlstr = pCell->GetString();
-			strContent = StlStringToCString(stlstr);
-		}
-		break;
-	case BasicExcelCell::WSTRING:
-		strContent = pCell->GetWString();
-		break;
-	}
-
-	strContent.Trim();
-	return 0;
-}
-
-int SetCellContent(BasicExcelCell* pCell, const CString& strContent)
-{
-	ACCHECK(pCell);
-	if(strContent.IsEmpty())
-		pCell->EraseContents();
-	else
-		pCell->Set(strContent);
-	return 0;
-	switch(pCell->Type())
-	{
-	case BasicExcelCell::UNDEFINED:
-		return -1;
-		break;
-	case BasicExcelCell::INT:
-		{
-			int nVal = 0;
-			if(stricmp(CStringToStlString(strContent).c_str(),"false") == 0)
-				nVal = 0;
-			else if(stricmp(CStringToStlString(strContent).c_str(),"true") == 0)
-				nVal = 1;
-			else
-				nVal = atoi(CStringToStlString(strContent).c_str());
-			pCell->Set(nVal);
-		}
-		break;
-	case BasicExcelCell::DOUBLE:
-		{
-			float fVal = 0;
-			if(stricmp(CStringToStlString(strContent).c_str(),"false") == 0)
-				fVal = 0;
-			else if(stricmp(CStringToStlString(strContent).c_str(),"true") == 0)
-				fVal = 1;
-			else
-				fVal = atof(CStringToStlString(strContent).c_str());
-			pCell->Set(fVal);
-		}
-		break;
-	case BasicExcelCell::STRING:
-		pCell->Set(CStringToStlString(strContent).c_str());
-		break;
-	case BasicExcelCell::WSTRING:
-		pCell->Set(strContent);
-		break;
-	}
-	
-	return 0;
-}
 
 //-----------------------------------------------------
 
 SItemDB::SItemDB(int type,const CString& path,const CString& key,const CString& des)
 {
-	nDBType = type;
-	strFilePath = path;
-	strKeyCName = key;
-	strDesCName = des;
+	m_nDBType = type;
+	m_strFilePath = path;
+	m_strKeyCName = key;
+	m_strDesCName = des;
 }
 
 SItemExcelDB::SItemExcelDB(const CString& path,const CString& key, const CString& des,int headRow,int dataRow)
 : SItemDB(DB_EXCEL,path,key,des)
 {
-	pExcel = new BasicExcel();
-	if(!pExcel->Load(CStringToStlString(path).c_str()))
-	{
-		CString str;
-		str.Format(_T("Load excel faild! excel:%s"),path);
-		AfxMessageBox(str);
-		ExitProcess(-1);
-	}
+	m_pExcel = ToolApp::Instance().GetExcelTool()->OpenWorkbook(path);
+	ACCHECK(m_pExcel);
 
-	nHeadRow = headRow;
-	nDataRow = dataRow;
+	m_nHeadRow = headRow-1;
+	m_nDataRow = dataRow-1;
 
-	mapCNameToColumn.clear();
+	m_mapCNameToColumn.clear();
 	InitMapNameToColumn();
-	mapKeyToTreeInfo.clear();
+	m_mapKeyToTreeInfo.clear();
 	InitMapKeyToTreeInfo();
 }
 
@@ -118,36 +35,28 @@ SItemExcelDB::~SItemExcelDB()
 {
 	SortDB();
 	SaveDB();
-	_safe_delete(pExcel);
-	mapCNameToColumn.clear();
+	m_mapCNameToColumn.clear();
 }
 
 int SItemExcelDB::InitMapNameToColumn()
 {
-	ACCHECK(pExcel->GetTotalWorkSheets() > 0);
+	ACCHECK(m_pExcel->GetSheetCount() > 0);
 
-	size_t nSheet1Index = 0;
-	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet1Index);
-	ACCHECK(pSheet);
-
-	if(pSheet->GetTotalRows() < nHeadRow)
+	int nFirstSheet = 0;
+	if(m_pExcel->GetRowCount(nFirstSheet) < m_nHeadRow)
 	{
-		ERROR_MSG("Require head,excel:%s",CStringToStlString(strFilePath).c_str());
+		ERROR_MSG("Require head,excel:%s",CStringToStlString(m_strFilePath).c_str());
 		return -1;
 	}
 
-	for(size_t nCol = 0; nCol < pSheet->GetTotalCols(); ++nCol)
+	int nColTotal = m_pExcel->GetColumnCount(nFirstSheet);
+	for(int nCol = 0; nCol < nColTotal; ++nCol)
 	{
-		BasicExcelCell* pCell = pSheet->Cell(nHeadRow-1,nCol);
-		ACCHECK(pCell);
-		CString str;
-		if(GetCellContent(pCell,str) != 0)
-			INFO_MSG("Read cell failed,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nHeadRow,nCol);
-
+		CString str = m_pExcel->GetCell(nFirstSheet,m_nHeadRow,nCol);
 		if(str.IsEmpty())
 			continue;
 
-		mapCNameToColumn.insert(std::make_pair(str,nCol));
+		m_mapCNameToColumn.insert(std::make_pair(str,nCol));
 	}
 
 	return 0;
@@ -155,51 +64,33 @@ int SItemExcelDB::InitMapNameToColumn()
 
 int SItemExcelDB::InitMapKeyToTreeInfo()
 {
-	MapCNameToColumnT::iterator iter = mapCNameToColumn.find(strKeyCName);
-	if(iter == mapCNameToColumn.end())
+	MapCNameToColumnT::iterator iter = m_mapCNameToColumn.find(m_strKeyCName);
+	if(iter == m_mapCNameToColumn.end())
 	{
-		ERROR_MSG("DBToTree failed,excel:%s,key:%s",CStringToStlString(strFilePath).c_str(),CStringToStlString(strKeyCName).c_str());
+		ERROR_MSG("DBToTree failed,excel:%s,key:%s",CStringToStlString(m_strFilePath).c_str(),CStringToStlString(m_strKeyCName).c_str());
 		return -1;
 	}
-	size_t nKeyCol = iter->second;
+	int nKeyCol = iter->second;
 
-	size_t nDesCol = 1;
-	iter = mapCNameToColumn.find(strDesCName);
-	if(iter == mapCNameToColumn.end())
+	int nDesCol = 1;
+	iter = m_mapCNameToColumn.find(m_strDesCName);
+	if(iter == m_mapCNameToColumn.end())
 	{
-		WARN_MSG("DBToTree no des,excel:%s,des:%s",CStringToStlString(strFilePath).c_str(),CStringToStlString(strDesCName).c_str());
+		WARN_MSG("DBToTree no des,excel:%s,des:%s",CStringToStlString(m_strFilePath).c_str(),CStringToStlString(m_strDesCName).c_str());
 	}
 	else
 		nDesCol = iter->second;
 
-
-	for(size_t sheet = 0; sheet < pExcel->GetTotalWorkSheets(); ++sheet)
+	int nSheetTotal = m_pExcel->GetSheetCount();
+	for(int nSheet = 0; nSheet < nSheetTotal; ++nSheet)
 	{
-		BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(sheet);
-		ACCHECK(pSheet);
-
-		for(size_t nRow = nDataRow; nRow < pSheet->GetTotalRows(); ++nRow)
+		int nRowTotal = m_pExcel->GetRowCount(nSheet);
+		for(int nRow = m_nDataRow; nRow < nRowTotal; ++nRow)
 		{
-			BasicExcelCell* pCellKey = pSheet->Cell(nRow,nKeyCol);
-			ACCHECK(pCellKey);
-			CString str;
-			if(GetCellContent(pCellKey,str) != 0)
-			{
-				//INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nKeyCol);
-				continue;
-			}
-
+			CString str = m_pExcel->GetCell(nSheet,nRow,nKeyCol);
 			int nKey = atoi(CStringToStlString(str).c_str());
-
-			BasicExcelCell* pCellDes = pSheet->Cell(nRow,nDesCol);
-			ACCHECK(pCellDes);
-			if(GetCellContent(pCellDes,str) != 0)
-			{
-				//INFO_MSG("Unknown cell type,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nDesCol);
-				str = _T("");
-			}
-
-			mapKeyToTreeInfo.insert(std::make_pair(nKey,STreeItemInfo(nKey,str,sheet,nRow)));
+			str = m_pExcel->GetCell(nSheet,nRow,nDesCol);
+			m_mapKeyToTreeInfo.insert(std::make_pair(nKey,STreeItemInfo(nKey,str,nSheet,nRow)));
 		}
 	}
 	return 0;
@@ -207,28 +98,23 @@ int SItemExcelDB::InitMapKeyToTreeInfo()
 
 int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
 {
-	MapKeyToTreeInfoT::iterator iter = mapKeyToTreeInfo.find(key);
-	if(iter == mapKeyToTreeInfo.end())
+	MapKeyToTreeInfoT::iterator iter = m_mapKeyToTreeInfo.find(key);
+	if(iter == m_mapKeyToTreeInfo.end())
 	{
 		ERROR_MSG("CtrlToDB,can't find key:%d",key);
 		return -1;
 	}
 
 	STreeItemInfo& rTreeItemInfo = iter->second;
-	int nSheet = rTreeItemInfo.nSheet;
-	int nRow = rTreeItemInfo.nRow;
+	int nSheet = rTreeItemInfo.m_nSheet;
+	int nRow = rTreeItemInfo.m_nRow;
 
-	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
-	ACCHECK(pSheet);
-
-	for(size_t i = 0; i < pItemTab->vtCtrls.size(); ++i)
+	for(size_t i = 0; i < pItemTab->m_vtCtrls.size(); ++i)
 	{
-		SCtrl* pCtrl = pItemTab->vtCtrls[i];
+		SCtrl* pCtrl = pItemTab->m_vtCtrls[i];
 		ACCHECK(pCtrl);
 
-		int nCtrlCol = mapCNameToColumn[pCtrl->strCName];
-		BasicExcelCell* pCell = pSheet->Cell(nRow,nCtrlCol);
-		ACCHECK(pCell);
+		int nCtrlCol = m_mapCNameToColumn[pCtrl->strCName];
 
 		CString strDBVal;
 		switch(pCtrl->nCtrl)
@@ -249,12 +135,11 @@ int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
 			continue;
 		}
 
-		if(SetCellContent(pCell,strDBVal) != 0)
-			INFO_MSG("Write cell failed,excel:%s,row:%d,col:%d",CStringToStlString(strFilePath).c_str(),nRow,nCtrlCol);
+		m_pExcel->SetCell(nSheet,nRow,nCtrlCol,strDBVal);
 
-		if(pCtrl->strCName == strDesCName)
+		if(pCtrl->strCName == m_strDesCName)
 		{
-			rTreeItemInfo.strDes = strDBVal;
+			rTreeItemInfo.m_strDes = strDBVal;
 		}
 	}
 
@@ -263,29 +148,23 @@ int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
 
 int SItemExcelDB::DBToCtrl(SItemTab* pItemTab,int key)
 {
-	MapKeyToTreeInfoT::iterator iter = mapKeyToTreeInfo.find(key);
-	if(iter == mapKeyToTreeInfo.end())
+	MapKeyToTreeInfoT::iterator iter = m_mapKeyToTreeInfo.find(key);
+	if(iter == m_mapKeyToTreeInfo.end())
 	{
 		ERROR_MSG("DBToCtrl,can't find key:%d",key);
 		return -1;
 	}
 
-	int nSheet = iter->second.nSheet;
-	int nRow = iter->second.nRow;
+	int nSheet = iter->second.m_nSheet;
+	int nRow = iter->second.m_nRow;
 
-	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
-	ACCHECK(pSheet);
-
-	for(size_t i = 0; i < pItemTab->vtCtrls.size(); ++i)
+	for(size_t i = 0; i < pItemTab->m_vtCtrls.size(); ++i)
 	{
-		SCtrl* pCtrl = pItemTab->vtCtrls[i];
+		SCtrl* pCtrl = pItemTab->m_vtCtrls[i];
 		ACCHECK(pCtrl);
 
-		int nCtrlCol = mapCNameToColumn[pCtrl->strCName];
-		BasicExcelCell* pCell = pSheet->Cell(nRow,nCtrlCol);
-		ACCHECK(pCell);
-		CString strDBVal;
-		GetCellContent(pCell,strDBVal);
+		int nCtrlCol = m_mapCNameToColumn[pCtrl->strCName];
+		CString strDBVal = m_pExcel->GetCell(nSheet,nRow,nCtrlCol);
 
 		switch(pCtrl->nCtrl)
 		{
@@ -332,7 +211,7 @@ int SItemExcelDB::EditToData(SEdit* pCtrl,CString& data)
 	}
 	else if(pCtrl->nType == DATA_FLOAT)
 	{
-		float fData = atof(CStringToStlString(strCtrlVal).c_str());
+		double fData = atof(CStringToStlString(strCtrlVal).c_str());
 		data.Format(_T("%.6lf"),fData);
 	}
 	else
@@ -434,10 +313,10 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 	pTree->InsertUndefinedRoot();
 
 	MapKeyToTreeInfoT::iterator it,ed;
-	for(it = mapKeyToTreeInfo.begin(),ed = mapKeyToTreeInfo.end(); it != ed; ++it)
+	for(it = m_mapKeyToTreeInfo.begin(),ed = m_mapKeyToTreeInfo.end(); it != ed; ++it)
 	{
 		STreeItemInfo& rTreeItemInfo = it->second;
-		pTree->InsertItem(rTreeItemInfo.nKey,rTreeItemInfo.strDes);
+		pTree->InsertItem(rTreeItemInfo.m_nKey,rTreeItemInfo.m_strDes);
 	}
 
 	pTree->ExpandAllItems();
@@ -448,85 +327,22 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 
 int SItemExcelDB::SortDB()
 {
-	std::vector<int> vtRowIdx;
-	for(size_t i = 0; i < pExcel->GetTotalWorkSheets(); ++i)
-	{
-		vtRowIdx.push_back(nDataRow);
-	}
-
-	for(MapKeyToTreeInfoT::iterator iter1 = mapKeyToTreeInfo.begin(); iter1 != mapKeyToTreeInfo.end(); ++iter1)
-	{
-		STreeItemInfo& rTreeItemInfo1 = iter1->second;
-		int nRow1 = rTreeItemInfo1.nRow;
-		int nSheet = rTreeItemInfo1.nSheet;
-		int nRow2 = vtRowIdx[nSheet];
-		int nKey2 = GetKeyInExcel(nSheet,nRow2);
-
-		SwapExcelRow(nSheet,nRow1,nRow2);
-		rTreeItemInfo1.nRow = nRow2;
-
-		MapKeyToTreeInfoT::iterator iter2 = mapKeyToTreeInfo.find(nKey2);
-		if(iter2 != mapKeyToTreeInfo.end())
-		{
-			STreeItemInfo& rTreeItemInfo2 = iter2->second;
-			ACCHECK(rTreeItemInfo2.nSheet == nSheet);
-			rTreeItemInfo2.nRow = nRow1;
-		}
-
-		vtRowIdx[nSheet]++;
-	}
-
+	int nKeyCol = m_mapCNameToColumn[m_strKeyCName];
+	m_pExcel->SortAllSheetByColumn(nKeyCol,m_nDataRow);
 	return 0;
 }
 
 int SItemExcelDB::SaveDB()
 {
-	if(!pExcel->Save())
-	{
-		ERROR_MSG("Save excel failed,excel:%s",CStringToStlString(strFilePath));
-		return -1;
-	}
-
+	m_pExcel->SaveAllSheet();
 	return 0;
 }
 
 int SItemExcelDB::GetKeyInExcel(int sheet,int row)
 {
-	int nKeyCol = mapCNameToColumn[strKeyCName];
-	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(sheet);
-	ACCHECK(pSheet);
-
-	BasicExcelCell* pCell = pSheet->Cell(row,nKeyCol);
-	ACCHECK(pSheet);
-
-	CString strKey;
-	GetCellContent(pCell,strKey);
+	int nKeyCol = m_mapCNameToColumn[m_strKeyCName];
+	CString strKey = m_pExcel->GetCell(sheet,row,nKeyCol);
 	return atoi(CStringToStlString(strKey).c_str());
-}
-
-int SItemExcelDB::SwapExcelRow(int sheet,int row1,int row2)
-{
-	if(row1 == row2)
-		return 0;
-
-	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(sheet);
-	ACCHECK(pSheet);
-
-	CString strTmp1,strTmp2;
-	for(size_t nCol = 0; nCol < pSheet->GetTotalCols(); ++nCol)
-	{
-		BasicExcelCell* pCell1 = pSheet->Cell(row1,nCol);
-		ACCHECK(pCell1);
-		BasicExcelCell* pCell2 = pSheet->Cell(row2,nCol);
-		ACCHECK(pCell2);
-
-		GetCellContent(pCell1,strTmp1);
-		GetCellContent(pCell2,strTmp2);
-		SetCellContent(pCell1,strTmp2);
-		SetCellContent(pCell2,strTmp1);
-
-	}
-	return 0;
 }
 
 int SItemExcelDB::InsertNewKey(int key)
@@ -534,16 +350,13 @@ int SItemExcelDB::InsertNewKey(int key)
 	if(key <= 0)
 		return -1;
 
-	if(mapKeyToTreeInfo.find(key) != mapKeyToTreeInfo.end())
+	if(m_mapKeyToTreeInfo.find(key) != m_mapKeyToTreeInfo.end())
 		return -1;
 
 	int nSheet = 0;
-	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(nSheet);
-	ACCHECK(pSheet);
+	int nRow = m_pExcel->AddRow(nSheet);
 
-	int nRow = mapKeyToTreeInfo.size() + nDataRow;
-
-	mapKeyToTreeInfo.insert(std::make_pair(key,STreeItemInfo(key,_T(""),nSheet,nRow)));
+	m_mapKeyToTreeInfo.insert(std::make_pair(key,STreeItemInfo(key,_T(""),nSheet,nRow)));
 
 	return key;
 }
@@ -553,27 +366,18 @@ int SItemExcelDB::DeleteByKey(int key)
 	if(key <= 0)
 		return -1;
 
-	MapKeyToTreeInfoT::iterator iter = mapKeyToTreeInfo.find(key);
-	if(iter == mapKeyToTreeInfo.end())
+	MapKeyToTreeInfoT::iterator iter = m_mapKeyToTreeInfo.find(key);
+	if(iter == m_mapKeyToTreeInfo.end())
 		return -1;
 
 	STreeItemInfo& rTreeItemInfo = iter->second;
-	BasicExcelWorksheet* pSheet = pExcel->GetWorksheet(rTreeItemInfo.nSheet);
-	ACCHECK(pSheet);
-
-	for(int nCol = 0; nCol < pSheet->GetTotalCols(); ++nCol)
-	{
-		BasicExcelCell* pCell = pSheet->Cell(rTreeItemInfo.nRow,nCol);
-		ACCHECK(pCell);
-
-		pCell->EraseContents();
-	}
+	m_pExcel->DeleteRow(rTreeItemInfo.m_nSheet,rTreeItemInfo.m_nRow);
 
 	SaveDB();
 
 	int nKey = -1;
-	MapKeyToTreeInfoT::iterator iterNext = mapKeyToTreeInfo.erase(iter);
-	if(iterNext != mapKeyToTreeInfo.end())
+	MapKeyToTreeInfoT::iterator iterNext = m_mapKeyToTreeInfo.erase(iter);
+	if(iterNext != m_mapKeyToTreeInfo.end())
 		nKey = iterNext->first;
 
 	return nKey;
@@ -583,30 +387,30 @@ int SItemExcelDB::DeleteByKey(int key)
 
 SItemTab::SItemTab()
 {
-	strName = _T("");
-	strCName = _T("");
-	pDB = NULL;
-	vtCtrls.clear();
-	pWnd = NULL;
-	pKeyWnd = NULL;
-	nLastSelKey = -1;
+	m_strName = _T("");
+	m_strCName = _T("");
+	m_pDB = NULL;
+	m_vtCtrls.clear();
+	m_pWnd = NULL;
+	m_pKeyWnd = NULL;
+	m_nLastSelKey = -1;
 }
 
 SItemTab::~SItemTab()
 {
-	_safe_delete(pDB);
-	_safe_delete(pWnd);
-	for(size_t i = 0; i < vtCtrls.size(); ++i)
-		_safe_delete(vtCtrls[i]);
+	_safe_delete(m_pDB);
+	_safe_delete(m_pWnd);
+	for(size_t i = 0; i < m_vtCtrls.size(); ++i)
+		_safe_delete(m_vtCtrls[i]);
 
-	vtCtrls.clear();
+	m_vtCtrls.clear();
 }
 
 int SItemTab::LoadDefaultValues()
 {
-	for(size_t i = 0; i < vtCtrls.size(); ++i)
+	for(size_t i = 0; i < m_vtCtrls.size(); ++i)
 	{
-		SCtrl* pCtrl = vtCtrls[i];
+		SCtrl* pCtrl = m_vtCtrls[i];
 		pCtrl->LoadDefaultValue();
 	}
 	return 0;

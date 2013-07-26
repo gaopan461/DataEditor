@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "ACDef.h"
-#include "BasicExcel.h"
 #include "ToolCtrl.h"
 
 #define MAIN_TREE_WIDTH 180
@@ -31,14 +30,11 @@
 
 #define EXCEL_ARRAY_DELIMITER _T(",")
 
-using namespace YExcel;
-
 BEGIN_NS_AC
 
 class ToolTree;
-
-int GetCellContent(const BasicExcelCell* pCell, CString& strContent);
-int SetCellContent(BasicExcelCell* pCell, const CString& strContent);
+class ExcelWorkbook;
+class ToolExcel;
 
 //-----------------------------------------------------------
 
@@ -71,10 +67,10 @@ struct SItemTab;
 
 struct SItemDB
 {
-	int nDBType;
-	CString strFilePath;
-	CString strKeyCName;
-	CString strDesCName;
+	int m_nDBType;
+	CString m_strFilePath;
+	CString m_strKeyCName;
+	CString m_strDesCName;
 
 	SItemDB(int type,const CString& path,const CString& key,const CString& des);
 	virtual ~SItemDB(){}
@@ -94,17 +90,17 @@ typedef std::map<CString,size_t> MapCNameToColumnT;
 
 struct STreeItemInfo
 {
-	int nKey;
-	CString strDes;
-	int nSheet;
-	int nRow;
+	int m_nKey;
+	CString m_strDes;
+	int m_nSheet;
+	int m_nRow;
 
 	STreeItemInfo(int key,const CString& des,int sheet,int row)
 	{
-		nKey = key;
-		strDes = des;
-		nSheet = sheet;
-		nRow = row;
+		m_nKey = key;
+		m_strDes = des;
+		m_nSheet = sheet;
+		m_nRow = row;
 	}
 };
 
@@ -112,12 +108,12 @@ typedef std::map<int,STreeItemInfo> MapKeyToTreeInfoT;
 
 struct SItemExcelDB : public SItemDB
 {
-	int nHeadRow;
-	int nDataRow;
-	BasicExcel* pExcel;
-	MapCNameToColumnT mapCNameToColumn;
+	int m_nHeadRow;
+	int m_nDataRow;
+	ExcelWorkbook* m_pExcel;
+	MapCNameToColumnT m_mapCNameToColumn;
 
-	MapKeyToTreeInfoT mapKeyToTreeInfo;
+	MapKeyToTreeInfoT m_mapKeyToTreeInfo;
 
 	SItemExcelDB(const CString& path,const CString& key, const CString& des,int headRow,int dataRow);
 	virtual ~SItemExcelDB();
@@ -135,7 +131,6 @@ struct SItemExcelDB : public SItemDB
 	int InitMapNameToColumn();
 	int InitMapKeyToTreeInfo();
 	int GetKeyInExcel(int sheet,int row);
-	int SwapExcelRow(int sheet,int row1,int row2);
 
 	int DataToEdit(SEdit* pCtrl,CString data);
 	int DataToCheck(SCheck* pCtrl,CString data);
@@ -152,20 +147,20 @@ struct SItemExcelDB : public SItemDB
 
 struct SItemTab
 {
-	CString strName;
-	CString strCName;
-	SItemDB* pDB;
-	std::vector<SCtrl*> vtCtrls;
+	CString m_strName;
+	CString m_strCName;
+	SItemDB* m_pDB;
+	std::vector<SCtrl*> m_vtCtrls;
 
-	CWnd* pWnd;		// tab项window，每个tab项是一个window
-	CEdit* pKeyWnd;	// key对应控件的window
-	int nLastSelKey;
+	CWnd* m_pWnd;		// tab项window，每个tab项是一个window
+	CEdit* m_pKeyWnd;	// key对应控件的window
+	int m_nLastSelKey;
 
 	SItemTab();
 	virtual ~SItemTab();
 
-	SItemDB* GetDB(){return pDB;}
-	CEdit* GetKeyWnd(){return pKeyWnd;}
+	SItemDB* GetDB(){return m_pDB;}
+	CEdit* GetKeyWnd(){return m_pKeyWnd;}
 	int LoadDefaultValues();
 };
 

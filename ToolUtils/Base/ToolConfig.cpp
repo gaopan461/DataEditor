@@ -35,8 +35,8 @@ void ToolConfig::pfnLoadEditorItem(void* ctx)
 	SItemTab* pTab = m_pOwner->GetMainTab()->AddTabItem(strName);
 	ACCHECK(pTab);
 
-	pTab->strName = strName;
-	pTab->strCName = StlStringToCString(m_objLua.GetString("./CName"));
+	pTab->m_strName = strName;
+	pTab->m_strCName = StlStringToCString(m_objLua.GetString("./CName"));
 
 	LoadEditorDBConfig(pTab);
 	LoadEditorCtrlConfig(pTab);
@@ -56,7 +56,7 @@ void ToolConfig::LoadEditorDBConfig(SItemTab* pTab)
 		{
 			int headRow = m_objLua.GetInteger("./DB/HeadRow");
 			int dataRow = m_objLua.GetInteger("./DB/DataRow");
-			pTab->pDB = new SItemExcelDB(path,key,des,headRow,dataRow);
+			pTab->m_pDB = new SItemExcelDB(path,key,des,headRow,dataRow);
 		}
 		break;
 	default:
@@ -75,7 +75,7 @@ void ToolConfig::pfnLoadEditorCtrlItem(void* ctx)
 {
 	ACCHECK(m_objLua.IsTopTable());
 	SItemTab* pTab = (SItemTab*)ctx;
-	ACCHECK(pTab && pTab->pWnd);
+	ACCHECK(pTab && pTab->m_pWnd);
 
 	SCtrl* pCtrl = NULL;
 	int ctrl = m_objLua.GetInteger("./Ctrl");
@@ -101,14 +101,14 @@ void ToolConfig::pfnLoadEditorCtrlItem(void* ctx)
 		return;
 	}
 
-	pCtrl->Init(m_objLua,pTab->pWnd);
-	pTab->vtCtrls.push_back(pCtrl);
+	pCtrl->Init(m_objLua,pTab->m_pWnd);
+	pTab->m_vtCtrls.push_back(pCtrl);
 
 	CString strCName = StlStringToCString(m_objLua.GetString("./CName"));
-	if(strCName == pTab->GetDB()->strKeyCName)
+	if(strCName == pTab->GetDB()->m_strKeyCName)
 	{
-		pTab->pKeyWnd = ((SEdit*)pCtrl)->pCtrl;
-		pTab->pKeyWnd->EnableWindow(FALSE);
+		pTab->m_pKeyWnd = ((SEdit*)pCtrl)->pCtrl;
+		pTab->m_pKeyWnd->EnableWindow(FALSE);
 	}
 }
 

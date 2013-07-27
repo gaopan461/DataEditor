@@ -2,6 +2,7 @@
 #define _AC_THREAD_GUARD_H_
 
 #include "ACDef.h"
+#include <afxwin.h>
 
 BEGIN_NS_AC
 

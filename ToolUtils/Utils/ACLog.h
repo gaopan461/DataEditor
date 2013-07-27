@@ -5,6 +5,7 @@
 #include "ACThreadGuard.h"
 #include <cstdarg>
 #include <fstream>
+#include <vector>
 
 #ifdef AC_LOG
 #define LOG_INTERFACE virtual

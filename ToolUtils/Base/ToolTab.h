@@ -28,7 +28,7 @@ public:
 	int CtrlToDB(int key);
 	int DBToTree();
 public:
-	bool EnableKeyWindow(bool enable);
+	BOOL EnableKeyWindow(bool enable);
 	int LoadDefaultValues();
 	int RestoreLastSelect();
 protected:

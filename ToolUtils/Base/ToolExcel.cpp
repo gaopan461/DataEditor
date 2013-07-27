@@ -2,6 +2,59 @@
 
 BEGIN_NS_AC
 
+const int cst_carry_num = 'Z' - 'A' + 1;
+
+void MakeColumnName(int nCol,CString& strColName)
+{
+	ACCHECK(nCol > 0);
+
+	if(nCol >= 1 && nCol <= cst_carry_num)
+	{
+		strColName.Insert(0,_T('A' + nCol - 1));
+		return;
+	}
+
+	if(nCol % cst_carry_num == 0)
+	{
+		nCol = nCol - cst_carry_num;
+		strColName.Insert(0,_T('Z'));
+		nCol = nCol / cst_carry_num;
+	}
+	else
+	{
+		int nLow = nCol % cst_carry_num;
+		strColName.Insert(0,_T('A' + nLow - 1));
+		nCol = nCol / cst_carry_num;
+	}
+
+	MakeColumnName(nCol,strColName);
+}
+
+CString MakeCellName(int nRow,int nCol)
+{
+	ACCHECK(nRow > 0 && nCol > 0);
+
+	CString strColName;
+	MakeColumnName(nCol,strColName);
+	CString strRowName;
+	strRowName.Format(_T("%d"), nRow);
+	return strColName + strRowName;
+}
+
+int TestMakeCellName()
+{
+	ACCHECK(MakeCellName(1000,1) == _T("A1000"));	// A1000
+	ACCHECK(MakeCellName(1000,26) == _T("Z1000"));		// Z1000
+	ACCHECK(MakeCellName(1000,27) == _T("AA1000"));		// AA1000
+	ACCHECK(MakeCellName(1000,52) == _T("AZ1000"));		// AZ1000
+	ACCHECK(MakeCellName(1000,53) == _T("BA1000"));		// BA1000
+	ACCHECK(MakeCellName(1000,2 * 26 + 26) == _T("BZ1000")); // BZ1000
+	ACCHECK(MakeCellName(1000,2 * 26 * 26 + 26 * 26 + 26) == _T("BZZ1000")); // BZZ1000
+	return 0;
+}
+
+//-----------------------------------------------------------------
+
 ExcelWorkbook::ExcelWorkbook(CString strPath,CWorkbook workbook)
 : m_strPath(strPath)
 , m_objWorkbook(workbook)
@@ -69,9 +122,8 @@ void ExcelWorkbook::SortAllSheetByColumn(int sortByCol,int startRow)
 		ACCHECK(startRow >= 0 && startRow < GetRowCount(nSheet));
 		ACCHECK(sortByCol >= 0 && sortByCol < GetColumnCount(nSheet));
 		CWorksheet sheet = m_objWorkSheets.get_Item(COleVariant((short)(nSheet+1)));
-		CString strCell1,strCell2;
-		strCell1.Format(_T("A%d"),startRow);
-		strCell2.Format(_T("%c%d"),'A'+GetColumnCount(nSheet)-1,GetRowCount(nSheet));
+		CString strCell1 = MakeCellName(startRow,1);
+		CString strCell2 = MakeCellName(GetRowCount(nSheet),GetColumnCount(nSheet));
 		CRange range = sheet.get_Range(COleVariant(strCell1),COleVariant(strCell2));
 		VARIANT key;
 		V_VT(&key) = VT_DISPATCH;
@@ -93,9 +145,8 @@ void ExcelWorkbook::DeleteRow(int sheetidx,int row)
 	ACCHECK(row >= 0 && row < GetRowCount(sheetidx));
 	CWorksheet sheet = m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1)));
 	CRange range = sheet.get_UsedRange();
-	CString str;
-	str.Format(_T("A%d"),row+1);
-	range = range.get_Range(COleVariant(str),COleVariant(str));
+	CString strCell = MakeCellName(row+1,1);
+	range = range.get_Range(COleVariant(strCell),COleVariant(strCell));
 	range = range.get_EntireRow();
 	range.Delete(COleVariant((long)xlShiftUp));
 }
@@ -109,12 +160,14 @@ int ExcelWorkbook::AddRow(int sheetidx)
 	range.put_Item(COleVariant((short)(nRowTotal+1)),COleVariant((short)(1)),COleVariant(_T("0")));
 	return nRowTotal;
 
+/*
 	CString str;
 	str.Format(_T("A%d"),nRowTotal+1);
 	range = range.get_Range(COleVariant(str),COleVariant(str));
 	range = range.get_EntireRow();
 	range.Insert(COleVariant((short)xlShiftDown),covOptional);
-	return nRowTotal;
+	return nRowTotal;*/
+
 }
 
 void ExcelWorkbook::Close()

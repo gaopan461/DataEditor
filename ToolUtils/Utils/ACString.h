@@ -1,9 +1,10 @@
 #ifndef _AC_STRING_H_
 #define _AC_STRING_H_
 
+#include "ACDef.h"
 #include <string>
 #include <vector>
-#include "ACDef.h"
+#include <afxwin.h>
 
 BEGIN_NS_AC
 

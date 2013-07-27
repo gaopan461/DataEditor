@@ -223,12 +223,12 @@ int SItemExcelDB::EditToData(SEdit* pCtrl,CString& data)
 int SItemExcelDB::DataToCheck(SCheck* pCtrl,CString data)
 {
 	bool val = false;
-	if(stricmp(CStringToStlString(data).c_str(),"false") == 0)
+	if(_stricmp(CStringToStlString(data).c_str(),"false") == 0)
 		val = false;
-	else if(stricmp(CStringToStlString(data).c_str(),"true") == 0)
+	else if(_stricmp(CStringToStlString(data).c_str(),"true") == 0)
 		val = true;
 	else
-		val = atoi(CStringToStlString(data).c_str());
+		val = atoi(CStringToStlString(data).c_str()) ? true : false;
 
 	pCtrl->pCtrl->SetCheck(val);
 	return 0;
@@ -236,8 +236,8 @@ int SItemExcelDB::DataToCheck(SCheck* pCtrl,CString data)
 
 int SItemExcelDB::CheckToData(SCheck* pCtrl,CString& data)
 {
-	bool val = pCtrl->pCtrl->GetCheck();
-	data = val ? _T("true") : _T("false");
+	int bCheck = pCtrl->pCtrl->GetCheck();
+	data = bCheck ? _T("true") : _T("false");
 	return 0;
 }
 

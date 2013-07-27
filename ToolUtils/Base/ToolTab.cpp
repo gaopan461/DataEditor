@@ -147,7 +147,7 @@ SItemTab* ToolTab::GetCurrentItem()
 	return m_vtItemTabs[m_nTabCurrent];
 }
 
-bool ToolTab::EnableKeyWindow(bool enable)
+BOOL ToolTab::EnableKeyWindow(bool enable)
 {
 	CEdit* pCtrlKey = m_vtItemTabs[m_nTabCurrent]->GetKeyWnd();
 	ACCHECK(pCtrlKey);

@@ -36,6 +36,9 @@ enum
 	xlShiftDown = -4121,
 };
 
+// 将行号列好转成Cell的名字，如(1000,52) = "AZ1000"
+CString MakeCellName(int nRow,int nCol);
+
 class ExcelWorkbook
 {
 public:

@@ -1,12 +1,10 @@
 #ifndef _AC_DEF_H_
 #define _AC_DEF_H_
 
+#ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
-#include <afx.h>
-#include <afxwin.h>
+#endif
 
-#include <vector>
-#include <string>
 #include <assert.h>
 #include <iostream>
 

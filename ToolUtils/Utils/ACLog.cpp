@@ -1,6 +1,7 @@
 #include "ACLog.h"
 #include <cstdarg>
 #include <cstdio>
+#include <string>
 
 BEGIN_NS_AC
 

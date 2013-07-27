@@ -128,8 +128,11 @@ void ExcelWorkbook::SortAllSheetByColumn(int sortByCol,int startRow)
 		VARIANT key;
 		V_VT(&key) = VT_DISPATCH;
 		V_DISPATCH(&key) = range.get_Range(COleVariant(_T("A1")),COleVariant(_T("A1")));
-		range.Sort(key, xlAscending, covOptional, covOptional, xlAscending, covOptional,
-			xlAscending,xlHeader,covOptional,xlIgnoreCase,xlTopToBottom,xlPinYin,0,0,0);
+		range.Sort(key, xlAscending, covOptional, 
+			covOptional, xlAscending, covOptional,
+			xlAscending,xlYes,covOptional,
+			COleVariant((long)0),xlSortColumns,
+			xlPinYin,0,0,0);
 	}
 }
 
@@ -180,24 +183,26 @@ void ExcelWorkbook::Close()
 
 ToolExcel::ToolExcel(ToolApp* app)
 : Module<ToolApp>(app)
-{}
+{
+	CreateExcelServer();
+}
 
 ToolExcel::~ToolExcel()
 {
-	Finalize();
+	DestroyExcelServer();
 }
 
-int ToolExcel::Initialize()
+int ToolExcel::CreateExcelServer()
 {
 	if(!AfxOleInit())
 	{
-		AfxMessageBox(_T("Error! Ole initial failed!"));
+		ErrorMessageBox(_T("Error! Ole initial failed!"));
 		ExitProcess(-1);
 	}
 
 	if(!m_objApplication.CreateDispatch(_T("Excel.Application")))
 	{
-		AfxMessageBox(_T("Error! Creat excel application server failed!"));
+		ErrorMessageBox(_T("Error! Creat excel application server failed!"));
 		ExitProcess(-1);
 	}
 
@@ -208,7 +213,7 @@ int ToolExcel::Initialize()
 	return 0;
 }
 
-int ToolExcel::Finalize()
+int ToolExcel::DestroyExcelServer()
 {
 	for(MapNameToWorkbookT::iterator iter = m_mapWorkbooks.begin(); iter != m_mapWorkbooks.end(); ++iter)
 	{

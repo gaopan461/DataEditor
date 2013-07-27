@@ -4,6 +4,8 @@
 #include "ToolDef.h"
 #include "ToolApp.h"
 
+#include "ToolExcelDef.h"
+
 #include "stdafx.h"
 #include "CApplication.h"
 #include "CWorkbooks.h"
@@ -13,28 +15,6 @@
 #include "CRange.h"
 
 BEGIN_NS_AC
-
-#define covTrue COleVariant((short)TRUE)
-#define covFalse COleVariant((short)FALSE)
-#define covOptional COleVariant((long)DISP_E_PARAMNOTFOUND, VT_ERROR)
-
-#define xlPinYin ((long)1) // this is the default
-#define xlTopToBottom ((long)1)
-#define xlIgnoreCase COleVariant((long)0)
-#define xlHeader ((long)1)
-
-enum
-{
-	xlAscending  = 1,
-	xlDescending  = 2,
-};
-
-enum
-{
-	xlShiftToLeft = -4159,
-	xlShiftUp = -4162,
-	xlShiftDown = -4121,
-};
 
 // 将行号列好转成Cell的名字，如(1000,52) = "AZ1000"
 CString MakeCellName(int nRow,int nCol);
@@ -70,8 +50,8 @@ public:
 	ToolExcel(ToolApp* app);
 	virtual ~ToolExcel();
 public:
-	int Initialize();
-	int Finalize();
+	int CreateExcelServer();
+	int DestroyExcelServer();
 public:
 	ExcelWorkbook* OpenWorkbook(CString strPath);
 protected:

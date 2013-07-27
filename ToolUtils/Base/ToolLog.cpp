@@ -44,7 +44,7 @@ void ToolLog::Create(const CString& strAppName)
 
 	if(!CListBox::Create(WS_CHILD|WS_VISIBLE|WS_BORDER, rect, pParent, IDC_MAIN_LOG))
 	{
-		AfxMessageBox(_T("Create log window failed!"));
+		ErrorMessageBox(_T("Create log window failed!"));
 		ExitProcess(-1);
 	}
 

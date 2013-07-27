@@ -58,7 +58,6 @@ int ToolApp::InitializeTool(const CString& strAppName)
 	m_pTab->Create();
 	m_pTree->Create();
 	m_pLayout->Init();
-	m_pExcel->Initialize();
 	m_pConfig->Load(strAppName);
 	m_pTab->ChangeTab(0);
 
@@ -143,7 +142,7 @@ int ToolApp::MenuSave()
 		if(!pTabItem->GetDB()->InsertNewKey(nKey))
 		{
 			m_pTab->RestoreLastSelect();
-			AfxMessageBox(_T("Key invalid"));
+			InfoMessageBox(_T("Key invalid"));
 			return -1;
 		}
 	}

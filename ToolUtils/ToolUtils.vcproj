@@ -287,6 +287,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Base\ToolExcelDef.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Base\ToolLayout.cpp"
 				>
 			</File>

@@ -47,7 +47,7 @@ int ToolTree::Create()
 
 	if(!Create(rect, pParent, IDC_MAIN_TREE))
 	{
-		AfxMessageBox(_T("Create main tree failed!"));
+		ErrorMessageBox(_T("Create main tree failed!"));
 		ExitProcess(-1);
 	}
 

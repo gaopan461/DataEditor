@@ -15,6 +15,15 @@
 #define AC_LOG
 #define AC_DEBUG
 
+#define InfoMessageBox(strMsg)	 \
+	AfxMessageBox(strMsg, MB_OK | MB_ICONINFORMATION)
+#define DebugMessageBox(strMsg)	 \
+	AfxMessageBox(strMsg, MB_OK | MB_ICONINFORMATION)
+#define WarningMessageBox(strMsg)	 \
+	AfxMessageBox(strMsg, MB_OK | MB_ICONWARNING)
+#define ErrorMessageBox(strMsg)	 \
+	AfxMessageBox(strMsg, MB_OK | MB_ICONERROR)
+
 BEGIN_NS_AC
 
 inline void InnerAssert(const char* _strExp, const char* _strFile, int _nLine)

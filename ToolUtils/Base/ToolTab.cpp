@@ -34,7 +34,7 @@ void ToolTab::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if(m_pOwner->IsNewing())
 	{
-		AfxMessageBox(_T("当前不可切换"));
+		InfoMessageBox(_T("当前不可切换"));
 		return;
 	}
 	CTabCtrl::OnLButtonDown(nFlags, point);
@@ -108,7 +108,7 @@ int ToolTab::Create()
 
 	if(!CTabCtrl::Create(WS_CHILD|WS_VISIBLE,rect,pParent,IDC_MAIN_TAB))
 	{
-		AfxMessageBox(_T("Create main tab ctrl failed!"));
+		ErrorMessageBox(_T("Create main tab ctrl failed!"));
 		ExitProcess(-1);
 	}
 
@@ -129,7 +129,7 @@ SItemTab* ToolTab::AddTabItem(const CString& strName)
 	CWnd* pWnd = new CWnd();
 	if(!pWnd->Create(NULL, NULL, WS_CHILD, rect, this, IDC_TAB_ITEM + GetItemCount()))
 	{
-		AfxMessageBox(_T("AddTabItem,create tab item windown failed!"));
+		ErrorMessageBox(_T("AddTabItem,create tab item windown failed!"));
 		ExitProcess(-1);
 	}
 

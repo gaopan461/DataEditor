@@ -43,16 +43,16 @@ int SItemExcelDB::InitMapNameToColumn()
 	ACCHECK(m_pExcel->GetSheetCount() > 0);
 
 	int nFirstSheet = 0;
-	if(m_pExcel->GetRowCount(nFirstSheet) < m_nHeadRow)
+	if(m_pExcel->GetUsedRowCount(nFirstSheet) < m_nHeadRow)
 	{
 		ERROR_MSG("Require head,excel:%s",CStringToStlString(m_strFilePath).c_str());
 		return -1;
 	}
 
-	int nColTotal = m_pExcel->GetColumnCount(nFirstSheet);
+	int nColTotal = m_pExcel->GetUsedColumnCount(nFirstSheet);
 	for(int nCol = 0; nCol < nColTotal; ++nCol)
 	{
-		CString str = m_pExcel->GetCell(nFirstSheet,m_nHeadRow,nCol);
+		CString str = m_pExcel->GetCellText(nFirstSheet,m_nHeadRow,nCol);
 		if(str.IsEmpty())
 			continue;
 
@@ -84,12 +84,12 @@ int SItemExcelDB::InitMapKeyToTreeInfo()
 	int nSheetTotal = m_pExcel->GetSheetCount();
 	for(int nSheet = 0; nSheet < nSheetTotal; ++nSheet)
 	{
-		int nRowTotal = m_pExcel->GetRowCount(nSheet);
+		int nRowTotal = m_pExcel->GetUsedRowCount(nSheet);
 		for(int nRow = m_nDataRow; nRow < nRowTotal; ++nRow)
 		{
-			CString str = m_pExcel->GetCell(nSheet,nRow,nKeyCol);
+			CString str = m_pExcel->GetCellText(nSheet,nRow,nKeyCol);
 			int nKey = atoi(CStringToStlString(str).c_str());
-			str = m_pExcel->GetCell(nSheet,nRow,nDesCol);
+			str = m_pExcel->GetCellText(nSheet,nRow,nDesCol);
 			m_mapKeyToTreeInfo.insert(std::make_pair(nKey,STreeItemInfo(nKey,str,nSheet,nRow)));
 		}
 	}
@@ -135,7 +135,7 @@ int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
 			continue;
 		}
 
-		m_pExcel->SetCell(nSheet,nRow,nCtrlCol,strDBVal);
+		m_pExcel->SetCellText(nSheet,nRow,nCtrlCol,strDBVal);
 
 		if(pCtrl->strCName == m_strDesCName)
 		{
@@ -164,7 +164,7 @@ int SItemExcelDB::DBToCtrl(SItemTab* pItemTab,int key)
 		ACCHECK(pCtrl);
 
 		int nCtrlCol = m_mapCNameToColumn[pCtrl->strCName];
-		CString strDBVal = m_pExcel->GetCell(nSheet,nRow,nCtrlCol);
+		CString strDBVal = m_pExcel->GetCellText(nSheet,nRow,nCtrlCol);
 
 		switch(pCtrl->nCtrl)
 		{
@@ -334,14 +334,14 @@ int SItemExcelDB::SortDB()
 
 int SItemExcelDB::SaveDB()
 {
-	m_pExcel->SaveAllSheet();
+	m_pExcel->Save();
 	return 0;
 }
 
 int SItemExcelDB::GetKeyInExcel(int sheet,int row)
 {
 	int nKeyCol = m_mapCNameToColumn[m_strKeyCName];
-	CString strKey = m_pExcel->GetCell(sheet,row,nKeyCol);
+	CString strKey = m_pExcel->GetCellText(sheet,row,nKeyCol);
 	return atoi(CStringToStlString(strKey).c_str());
 }
 
@@ -354,7 +354,8 @@ int SItemExcelDB::InsertNewKey(int key)
 		return -1;
 
 	int nSheet = 0;
-	int nRow = m_pExcel->AddRow(nSheet);
+	m_pExcel->AppendEmptyRow(nSheet);
+	int nRow = m_pExcel->GetUsedRowCount(nSheet) - 1;
 
 	m_mapKeyToTreeInfo.insert(std::make_pair(key,STreeItemInfo(key,_T(""),nSheet,nRow)));
 

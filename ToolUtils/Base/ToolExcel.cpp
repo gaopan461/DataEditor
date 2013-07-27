@@ -55,11 +55,11 @@ int TestMakeCellName()
 
 //-----------------------------------------------------------------
 
-ExcelWorkbook::ExcelWorkbook(CString strPath,CWorkbook workbook)
+ExcelWorkbook::ExcelWorkbook(CString strPath,LPDISPATCH workbook)
 : m_strPath(strPath)
-, m_objWorkbook(workbook)
 {
-	m_objWorkSheets = m_objWorkbook.get_Worksheets();
+	m_objWorkbook.AttachDispatch(workbook);
+	m_objWorkSheets.AttachDispatch(m_objWorkbook.get_Worksheets());
 }
 
 ExcelWorkbook::~ExcelWorkbook()
@@ -73,41 +73,49 @@ int ExcelWorkbook::GetSheetCount()
 	return m_objWorkSheets.get_Count();
 }
 
-int ExcelWorkbook::GetRowCount(int sheetidx)
+int ExcelWorkbook::GetUsedRowCount(int sheetidx)
 {
 	ACCHECK(sheetidx >= 0 && sheetidx < GetSheetCount());
-	CWorksheet sheet = m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1)));
-	CRange range = sheet.get_UsedRange();
-	range = range.get_Rows();
+	CWorksheet sheet;
+	sheet.AttachDispatch(m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1))));
+	CRange range;
+	range.AttachDispatch(sheet.get_UsedRange());
+	range.AttachDispatch(range.get_Rows());
 	return range.get_Count();
 }
 
-int ExcelWorkbook::GetColumnCount(int sheetidx)
+int ExcelWorkbook::GetUsedColumnCount(int sheetidx)
 {
 	ACCHECK(sheetidx >= 0 && sheetidx < GetSheetCount());
-	CWorksheet sheet = m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1)));
-	CRange range = sheet.get_UsedRange();
-	range = range.get_Columns();
+	CWorksheet sheet;
+	sheet.AttachDispatch(m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1))));
+	CRange range;
+	range.AttachDispatch(sheet.get_UsedRange());
+	range.AttachDispatch(range.get_Columns());
 	return range.get_Count();
 }
 
-CString ExcelWorkbook::GetCell(int sheetidx,int row,int col)
+CString ExcelWorkbook::GetCellText(int sheetidx,int row,int col)
 {
 	ACCHECK(sheetidx >= 0 && sheetidx < GetSheetCount());
-	ACCHECK(row >= 0 && row < GetRowCount(sheetidx));
-	ACCHECK(col >= 0 && col < GetColumnCount(sheetidx));
-	CWorksheet sheet = m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1)));
-	CRange range = sheet.get_Cells();
+	ACCHECK(row >= 0 && row < GetUsedRowCount(sheetidx));
+	ACCHECK(col >= 0 && col < GetUsedColumnCount(sheetidx));
+	CWorksheet sheet;
+	sheet.AttachDispatch(m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1))));
+	CRange range;
+	range.AttachDispatch(sheet.get_Cells());
 	return range.get_Item(COleVariant((short)(row+1)),COleVariant((short)(col+1)));
 }
 
-void ExcelWorkbook::SetCell(int sheetidx,int row,int col,CString val)
+void ExcelWorkbook::SetCellText(int sheetidx,int row,int col,CString val)
 {
 	ACCHECK(sheetidx >= 0 && sheetidx < GetSheetCount());
-	ACCHECK(row >= 0 && row < GetRowCount(sheetidx));
-	ACCHECK(col >= 0 && col < GetColumnCount(sheetidx));
-	CWorksheet sheet = m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1)));
-	CRange range = sheet.get_Cells();
+	ACCHECK(row >= 0 && row < GetUsedRowCount(sheetidx));
+	ACCHECK(col >= 0 && col < GetUsedColumnCount(sheetidx));
+	CWorksheet sheet;
+	sheet.AttachDispatch(m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1))));
+	CRange range;
+	range.AttachDispatch(sheet.get_Cells());
 	range.put_Item(COleVariant((short)(row+1)),COleVariant((short)(col+1)),COleVariant(val));
 }
 
@@ -116,67 +124,106 @@ void ExcelWorkbook::SortAllSheetByColumn(int sortByCol,int startRow)
 	int nSheetTotal = GetSheetCount();
 	for(int nSheet = 0; nSheet < nSheetTotal; ++nSheet)
 	{
-		if(GetRowCount(nSheet) <= startRow)
+		if(GetUsedRowCount(nSheet) <= startRow)
 			continue;
 
-		ACCHECK(startRow >= 0 && startRow < GetRowCount(nSheet));
-		ACCHECK(sortByCol >= 0 && sortByCol < GetColumnCount(nSheet));
-		CWorksheet sheet = m_objWorkSheets.get_Item(COleVariant((short)(nSheet+1)));
+		ACCHECK(startRow >= 0 && startRow < GetUsedRowCount(nSheet));
+		ACCHECK(sortByCol >= 0 && sortByCol < GetUsedColumnCount(nSheet));
+		CWorksheet sheet;
+		sheet.AttachDispatch(m_objWorkSheets.get_Item(COleVariant((short)(nSheet+1))));
 		CString strCell1 = MakeCellName(startRow,1);
-		CString strCell2 = MakeCellName(GetRowCount(nSheet),GetColumnCount(nSheet));
-		CRange range = sheet.get_Range(COleVariant(strCell1),COleVariant(strCell2));
+		CString strCell2 = MakeCellName(GetUsedRowCount(nSheet),GetUsedColumnCount(nSheet));
+		CRange range;
+		range.AttachDispatch(sheet.get_Range(COleVariant(strCell1),COleVariant(strCell2)));
 		VARIANT key;
 		V_VT(&key) = VT_DISPATCH;
 		V_DISPATCH(&key) = range.get_Range(COleVariant(_T("A1")),COleVariant(_T("A1")));
-		range.Sort(key, xlAscending, covOptional, 
-			covOptional, xlAscending, covOptional,
-			xlAscending,xlYes,covOptional,
-			COleVariant((long)0),xlSortColumns,
-			xlPinYin,0,0,0);
+		range.Sort(key,xlAscending,covOptional,covOptional,xlAscending,covOptional,
+			xlAscending,xlYes,covOptional,COleVariant((long)0),xlSortColumns,xlPinYin,0,0,0);
 	}
-}
-
-void ExcelWorkbook::SaveAllSheet()
-{
-	m_objWorkbook.Save();
-	m_objWorkbook.put_Saved(TRUE);
 }
 
 void ExcelWorkbook::DeleteRow(int sheetidx,int row)
 {
 	ACCHECK(sheetidx >= 0 && sheetidx < GetSheetCount());
-	ACCHECK(row >= 0 && row < GetRowCount(sheetidx));
-	CWorksheet sheet = m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1)));
-	CRange range = sheet.get_UsedRange();
+	ACCHECK(row >= 0 && row < GetUsedRowCount(sheetidx));
+	CWorksheet sheet;
+	sheet.AttachDispatch(m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1))));
+	CRange range;
+	range.AttachDispatch(sheet.get_UsedRange());
 	CString strCell = MakeCellName(row+1,1);
-	range = range.get_Range(COleVariant(strCell),COleVariant(strCell));
-	range = range.get_EntireRow();
+	range.AttachDispatch(range.get_Range(COleVariant(strCell),COleVariant(strCell)));
+	range.AttachDispatch(range.get_EntireRow());
 	range.Delete(COleVariant((long)xlShiftUp));
 }
 
-int ExcelWorkbook::AddRow(int sheetidx)
+void ExcelWorkbook::GetRowText(int sheetidx,int row,std::vector<CString>& vtStr)
 {
 	ACCHECK(sheetidx >= 0 && sheetidx < GetSheetCount());
-	int nRowTotal = GetRowCount(sheetidx);
-	CWorksheet sheet = m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1)));
-	CRange range = sheet.get_Cells();
-	range.put_Item(COleVariant((short)(nRowTotal+1)),COleVariant((short)(1)),COleVariant(_T("0")));
-	return nRowTotal;
+	ACCHECK(row >= 0 && row < GetUsedRowCount(sheetidx));
+	CWorksheet sheet;
+	sheet.AttachDispatch(m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1))));
+	CRange range;
+	range.AttachDispatch(sheet.get_UsedRange());
+	int nColTotal = GetUsedColumnCount(sheetidx);
+	for(int nCol = 0; nCol < nColTotal; ++nCol)
+	{
+		vtStr.push_back(range.get_Item(COleVariant((short)(row+1)),COleVariant((short)(nCol))));
+	}
+}
 
-/*
-	CString str;
-	str.Format(_T("A%d"),nRowTotal+1);
-	range = range.get_Range(COleVariant(str),COleVariant(str));
-	range = range.get_EntireRow();
-	range.Insert(COleVariant((short)xlShiftDown),covOptional);
-	return nRowTotal;*/
+void ExcelWorkbook::InsertRow(int sheetidx,int row,std::vector<CString>& vtStr)
+{
+	ACCHECK(sheetidx >= 0 && sheetidx < GetSheetCount());
+	ACCHECK(row >= 0 && row < GetUsedRowCount(sheetidx));
+	CWorksheet sheet;
+	sheet.AttachDispatch(m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1))));
+	CRange range;
+	for(size_t nCol = 0; nCol < vtStr.size(); ++nCol)
+	{
+		//获取单元格
+		CString strCell = MakeCellName(row+1,nCol+1);
+		range.AttachDispatch(sheet.get_Range(COleVariant(strCell),covOptional));
 
+		//当前位置插入单元格
+		range.Insert(COleVariant((short)xlShiftDown),covOptional);
+
+		//设置单元格内容
+		range.AttachDispatch(sheet.get_Range(COleVariant(strCell),covOptional));
+		range.put_Value2(COleVariant(vtStr[nCol]));
+
+		//自动列宽
+		range.AttachDispatch(range.get_EntireColumn());
+		range.AutoFit();
+	}
+}
+
+void ExcelWorkbook::AppendEmptyRow(int sheetidx)
+{
+	ACCHECK(sheetidx >= 0 && sheetidx < GetSheetCount());
+	int nRowTotal = GetUsedRowCount(sheetidx);
+	int nColTotal = GetUsedColumnCount(sheetidx);
+	CWorksheet sheet;
+	sheet.AttachDispatch(m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1))));
+	CRange range;
+	range.AttachDispatch(sheet.get_Cells());
+
+	for(int nCol = 0; nCol < nColTotal; ++nCol)
+	{
+		range.put_Item(COleVariant((short)(nRowTotal+1)),COleVariant((short)(nCol+1)),COleVariant(_T(" ")));
+	}
+}
+
+void ExcelWorkbook::Save()
+{
+	m_objWorkbook.Save();
+	m_objWorkbook.put_Saved(TRUE);
 }
 
 void ExcelWorkbook::Close()
 {
-	m_objWorkbook.Close(covTrue,covOptional,covOptional);
-	//m_objWorkbook.put_Saved(true);
+	m_objWorkbook.put_Saved(TRUE);
+	m_objWorkbook.Close(covOptional,COleVariant(m_strPath),covOptional);
 }
 
 //--------------------------------------------------------
@@ -209,7 +256,7 @@ int ToolExcel::CreateExcelServer()
 	m_objApplication.put_AlertBeforeOverwriting(FALSE);
 	m_objApplication.put_DisplayAlerts(FALSE);
 
-	m_objWorkbooks = m_objApplication.get_Workbooks();
+	m_objWorkbooks.AttachDispatch(m_objApplication.get_Workbooks());
 	return 0;
 }
 
@@ -239,9 +286,10 @@ ExcelWorkbook* ToolExcel::OpenWorkbook(CString strPath)
 	if(iter != m_mapWorkbooks.end())
 		return &iter->second;
 
-	CWorkbook workbook = m_objWorkbooks.Open(strPath,covOptional,covOptional,covOptional,
+	CWorkbook workbook;
+	workbook.AttachDispatch(m_objWorkbooks.Open(strPath,covOptional,covOptional,covOptional,
 		covOptional,covOptional,covOptional,covOptional,covOptional,covOptional,
-		covOptional,covOptional,covOptional,covOptional,covOptional);
+		covOptional,covOptional,covOptional,covOptional,covOptional));
 
 	iter = m_mapWorkbooks.insert(std::make_pair(strFileName,ExcelWorkbook(strPath,workbook))).first;
 	return &iter->second;

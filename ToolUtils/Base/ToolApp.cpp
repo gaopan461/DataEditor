@@ -139,7 +139,7 @@ int ToolApp::MenuSave()
 		pCtrlKey->GetWindowText(strKey);
 		nKey = atoi(CStringToStlString(strKey).c_str());
 
-		if(!pTabItem->GetDB()->InsertNewKey(nKey))
+		if(pTabItem->GetDB()->InsertNewKey(nKey) == -1)
 		{
 			m_pTab->RestoreLastSelect();
 			InfoMessageBox(_T("Key invalid"));

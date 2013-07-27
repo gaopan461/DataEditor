@@ -22,21 +22,24 @@ CString MakeCellName(int nRow,int nCol);
 class ExcelWorkbook
 {
 public:
-	ExcelWorkbook(CString strPath,CWorkbook workbook);
+	ExcelWorkbook(CString strPath,LPDISPATCH workbook);
 	virtual ~ExcelWorkbook();
 public:
 	int GetSheetCount();
-	int GetRowCount(int sheetidx);
-	int GetColumnCount(int sheetidx);
-	CString GetCell(int sheetidx,int row,int col);
-	void SetCell(int sheetidx,int row,int col,CString val);
+	int GetUsedRowCount(int sheetidx);
+	int GetUsedColumnCount(int sheetidx);
+public:
+	CString GetCellText(int sheetidx,int row,int col);
+	void SetCellText(int sheetidx,int row,int col,CString val);
 public:
 	void SortAllSheetByColumn(int sortByCol,int startRow);
-	void SaveAllSheet();
 public:
 	void DeleteRow(int sheetidx,int row);
-	int AddRow(int sheetidx);
+	void GetRowText(int sheetidx,int row,std::vector<CString>& vtStr);
+	void InsertRow(int sheetidx,int row,std::vector<CString>& vtStr);
+	void AppendEmptyRow(int sheetidx);
 public:
+	void Save();
 	void Close();
 private:
 	CString m_strPath;

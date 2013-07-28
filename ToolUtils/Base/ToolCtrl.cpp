@@ -255,11 +255,11 @@ int SCheckCombo::DataToCtrl(CString& data)
 	CString strItemText;
 	int nPos = 0;
 	//数组通过,隔开
-	strItemText = data.Tokenize(EXCEL_ARRAY_DELIMITER,nPos);
+	strItemText = data.Tokenize(ARRAY_DELIMITER,nPos);
 	while (strItemText != _T(""))
 	{
 		vtDataItems.push_back(strItemText);
-		strItemText = data.Tokenize(EXCEL_ARRAY_DELIMITER, nPos);
+		strItemText = data.Tokenize(ARRAY_DELIMITER, nPos);
 	};
 
 	pCtrl->SelectAll(FALSE);
@@ -286,7 +286,7 @@ int SCheckCombo::CtrlToData(CString& data)
 			if(bFirst)
 				bFirst = false;
 			else
-				data.Append(EXCEL_ARRAY_DELIMITER);
+				data.Append(ARRAY_DELIMITER);
 
 			data.AppendFormat(_T("%d"),vtItems[ctrlItem].nValue);
 		}

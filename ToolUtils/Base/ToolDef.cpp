@@ -144,14 +144,30 @@ int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
 		pCtrl->CtrlToData(strDBVal);
 
 		m_pExcel->SetCellText(nSheet,nRow,nCtrlCol,strDBVal);
+	}
 
+	SaveDB();
+	UpdateTreeItemInfo(pItemTab,rTreeItemInfo);
+	return 0;
+}
+
+int SItemExcelDB::UpdateTreeItemInfo(SItemTab* pItemTab,STreeItemInfo& rTreeItemInfo)
+{
+	for(size_t i = 0; i < pItemTab->m_vtCtrls.size(); ++i)
+	{
+		SCtrl* pCtrl = pItemTab->m_vtCtrls[i];
+		ACCHECK(pCtrl);
+
+		CString strDBVal;
+		pCtrl->CtrlToData(strDBVal);
 		if(pCtrl->strCName == m_strDesCName)
 		{
 			rTreeItemInfo.m_strDes = strDBVal;
 		}
 	}
 
-	return SaveDB();
+	ToolApp::Instance().GetMainTree()->UpdateOrInsertItemByKey(rTreeItemInfo.m_nKey,rTreeItemInfo.m_strDes,rTreeItemInfo.m_vtLayers);
+	return 0;
 }
 
 int SItemExcelDB::DBToCtrl(SItemTab* pItemTab,int key)
@@ -189,10 +205,7 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 	for(it = m_vtTreeItemInfos.begin(),ed = m_vtTreeItemInfos.end(); it != ed; ++it)
 	{
 		STreeItemInfo& rTreeItemInfo = *it;
-		std::vector<CString> vtLayers;
-		vtLayers.push_back(_T("第一层"));
-		vtLayers.push_back(_T("第二层"));
-		pTree->InsertItem(rTreeItemInfo.m_nKey,rTreeItemInfo.m_strDes,vtLayers);
+		pTree->UpdateOrInsertItemByKey(rTreeItemInfo.m_nKey,rTreeItemInfo.m_strDes,rTreeItemInfo.m_vtLayers);
 	}
 
 	pTree->ExpandAllItems();
@@ -257,6 +270,9 @@ int SItemExcelDB::DeleteByKey(int key)
 	VectorTreeItemInfoT::iterator iterNext = m_vtTreeItemInfos.erase(findResult.second);
 	if(iterNext != m_vtTreeItemInfos.end())
 		nKey = iterNext->m_nKey;
+
+	// 更新tree
+	ToolApp::Instance().GetMainTree()->DeleteItemByKey(key);
 
 	return nKey;
 }

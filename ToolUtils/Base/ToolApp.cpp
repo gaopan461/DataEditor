@@ -151,8 +151,7 @@ int ToolApp::MenuSave()
 		nKey = m_pTree->GetSelectKey();
 	}
 	
-	m_pTab->CtrlToDB(nKey);
-	m_pTab->DBToTree();
+	pTabItem->GetDB()->CtrlToDB(pTabItem,nKey);
 	m_pTree->SelectKey(nKey);
 	return 0;
 }
@@ -174,7 +173,6 @@ int ToolApp::MenuDelete()
 	int nKey = atoi(CStringToStlString(strKey).c_str());
 	int nNextKey = pItemTab->GetDB()->DeleteByKey(nKey);
 
-	m_pTab->DBToTree();
 	m_pTree->SelectKey(nNextKey);
 	return 0;
 }

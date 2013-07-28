@@ -62,35 +62,8 @@ int ToolTab::ChangeTab(int nSel)
 	GetCurrentItem()->m_pWnd->ShowWindow(SW_SHOW);
 	GetCurrentItem()->m_pWnd->SetFocus();
 
-	DBToTree();
+	GetCurrentItem()->GetDB()->DBToTree(m_pOwner->GetMainTree());
 	m_pOwner->GetMainTree()->SelectKey(GetCurrentItem()->m_nLastSelKey);
-	return 0;
-}
-
-int ToolTab::DBToCtrl( int key )
-{
-	SItemTab* pTabItem = m_vtItemTabs[m_nTabCurrent];
-	ACCHECK(pTabItem && pTabItem->m_pDB);
-	
-	pTabItem->GetDB()->DBToCtrl(pTabItem,key);
-	return 0;
-}
-
-int ToolTab::CtrlToDB(int key)
-{
-	SItemTab* pTabItem = m_vtItemTabs[m_nTabCurrent];
-	ACCHECK(pTabItem && pTabItem->m_pDB);
-
-	pTabItem->GetDB()->CtrlToDB(pTabItem,key);
-	return 0;
-}
-
-int ToolTab::DBToTree()
-{
-	SItemTab* pTabItem = m_vtItemTabs[m_nTabCurrent];
-	ACCHECK(pTabItem && pTabItem->m_pDB);
-
-	pTabItem->GetDB()->DBToTree(m_pOwner->GetMainTree());
 	return 0;
 }
 
@@ -165,7 +138,12 @@ int ToolTab::RestoreLastSelect()
 {
 	int nLastSelKey = m_pOwner->GetMainTree()->GetSelectKey();
 	if(nLastSelKey > 0)
-		DBToCtrl(nLastSelKey);
+	{
+		SItemTab* pTabItem = GetCurrentItem();
+		ACCHECK(pTabItem);
+
+		pTabItem->GetDB()->DBToCtrl(pTabItem,nLastSelKey);
+	}
 
 	return 0;
 }

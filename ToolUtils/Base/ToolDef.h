@@ -28,7 +28,7 @@
 #define IDC_TAB_ITEM	2100
 #define IDC_CTRL		2200
 
-#define EXCEL_ARRAY_DELIMITER _T(",")
+#define ARRAY_DELIMITER _T(",")
 
 BEGIN_NS_AC
 
@@ -92,6 +92,7 @@ struct STreeItemInfo
 {
 	int m_nKey;
 	CString m_strDes;
+	std::vector<CString> m_vtLayers;
 	int m_nSheet;
 
 	STreeItemInfo(int key,const CString& des,int sheet)
@@ -131,6 +132,7 @@ struct SItemExcelDB : public SItemDB
 	int InitMapNameToColumn();
 
 	int InitTreeItemInfos();
+	int UpdateTreeItemInfo(SItemTab* pItemTab,STreeItemInfo& rTreeItemInfo);
 	PairTreeInfoFoundT FindTreeInfoByKey(int key);
 
 	int GetKeyInExcel(int sheet,int row);
@@ -143,7 +145,7 @@ struct SItemTab
 	CString m_strName;		// Tab标签页显示名字
 	CString m_strCName;		// db名字
 	SItemDB* m_pDB;			// db指针
-	std::vector<SCtrl*> m_vtLayers;	// 控制主树控件中层级的控件
+	std::vector<CString> m_vtLayers;// 控制主树控件层级的控件名
 	std::vector<SCtrl*> m_vtCtrls;	// 该Tab标签页的全部控件
 
 	CWnd* m_pWnd;		// tab项window，每个tab项是一个window

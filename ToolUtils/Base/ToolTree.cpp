@@ -56,20 +56,35 @@ int ToolTree::Create()
 	return 0;
 }
 
-int ToolTree::InsertItem(int key, const CString& strDes, std::vector<CString>& vtLayers)
+int ToolTree::UpdateOrInsertItemByKey(int key,CString& strDes,std::vector<CString>& vtLayers)
 {
 	CString strKey;
 	strKey.Format(_T("%d"), key);
 
 	COptionTreeItem* pInsertPosition = FindOrCreateLayers(vtLayers);
-	COptionTreeItemStaticEx* pOptItem = (COptionTreeItemStaticEx*)COptionTree::InsertItem(new COptionTreeItemStaticEx(),pInsertPosition);
+	COptionTreeItemStaticEx* pOptItem = (COptionTreeItemStaticEx*)FindItemByInfoText(pInsertPosition,strKey);
+	if(pOptItem == NULL)
+	{
+		pOptItem = (COptionTreeItemStaticEx*)COptionTree::InsertItem(new COptionTreeItemStaticEx(),pInsertPosition);
+		pOptItem->CreateStaticItem(0);
+	}
+
 	ACCHECK(pOptItem);
 
 	pOptItem->SetLabelText(strKey);
 	pOptItem->SetInfoText(strKey);
 	pOptItem->SetStaticText(strDes);
-	pOptItem->CreateStaticItem(0);
 
+	return 0;
+}
+
+int ToolTree::DeleteItemByKey(int key)
+{
+	COptionTreeItem* pFoundItem = FindItemByKey(key);
+	if(pFoundItem)
+	{
+		COptionTree::DeleteItem(pFoundItem);
+	}
 	return 0;
 }
 
@@ -80,7 +95,10 @@ void ToolTree::OnSelect(int key)
 
 	m_nLastSelKey = key;
 
-	m_pOwner->GetMainTab()->DBToCtrl(key);
+	SItemTab* pTabItem = m_pOwner->GetMainTab()->GetCurrentItem();
+	ACCHECK(pTabItem);
+
+	pTabItem->GetDB()->DBToCtrl(pTabItem,key);
 }
 
 void ToolTree::ResetSelectKey()

@@ -26,7 +26,6 @@ public:
 	BOOL Create(RECT rcRect, CWnd* pWnd, UINT nID);
 public:
 	int Create();
-	int InsertItem(int key, const CString& strDes, std::vector<CString>& vtLayers);
 public:
 	void OnSelect(int key);
 public:
@@ -35,6 +34,9 @@ public:
 	void SelectKey(int key);
 public:
 	int InsertUndefinedRoot();
+public:
+	int UpdateOrInsertItemByKey(int key,CString& strDes,std::vector<CString>& vtLayers);
+	int DeleteItemByKey(int key);
 public:
 	COptionTreeItem* FindItemByKey(int key);
 protected:

@@ -24,9 +24,6 @@ public:
 	SItemTab* AddTabItem(const CString& strName);
 	SItemTab* GetCurrentItem();
 	int ChangeTab(int nSel);
-	int DBToCtrl(int key);
-	int CtrlToDB(int key);
-	int DBToTree();
 public:
 	BOOL EnableKeyWindow(bool enable);
 	int LoadDefaultValues();

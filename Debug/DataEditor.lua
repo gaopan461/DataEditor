@@ -5,7 +5,8 @@ EditorConfig =
 	{
 		Name = "ººƒ‹",
 		CName = "MagicType",
-		DB = ExcelDB{Path = "D:\\opensource\\DataEditor\\Debug\\MagicTypeConfig.xls", Key = "ID", Des = "Des", HeadRow = 2, DataRow = 5,},
+		DB = ExcelDB{Path = "C:\\Users\\Public\\Documents\\TestProject\\DataEditor\\Debug\\MagicTypeConfig.xls", Key = "ID", Des = "Des", HeadRow = 2, DataRow = 5,},
+		Layers = {"_Sheet","AttackType","Profession","Des"},
 		Items = {
 			Edit{Name = "ID", CName = "ID", Type = "Int",},
 			Edit{Name = "√Ë ˆ", CName = "Des", Type = "String", Default = "«ÎÃÓ“ª∂Œ√Ë ˆ", Newline = true,},
@@ -34,7 +35,7 @@ EditorConfig =
 	{
 		Name = "Buff",
 		CName = "AuraEffectType",
-		DB = ExcelDB{Path = "D:\\opensource\\DataEditor\\Debug\\AuraEffectTypeConfig.xls", Key = "ID", Des = "Des", HeadRow = 2, DataRow = 5,},
+		DB = ExcelDB{Path = "C:\\Users\\Public\\Documents\\TestProject\\DataEditor\\Debug\\AuraEffectTypeConfig.xls", Key = "ID", Des = "Des", HeadRow = 2, DataRow = 5,},
 		Items = {
 			Edit{Name = "ID", CName = "ID", Type = "Int", Newline = true,},
 			Edit{Name = "√Ë ˆ", CName = "Des", Type = "String", Default = "«ÎÃÓ“ª∂Œ√Ë ˆ",Newline = true,},

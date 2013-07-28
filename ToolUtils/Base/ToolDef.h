@@ -93,18 +93,18 @@ struct STreeItemInfo
 	int m_nKey;
 	CString m_strDes;
 	int m_nSheet;
-	int m_nRow;
 
-	STreeItemInfo(int key,const CString& des,int sheet,int row)
+	STreeItemInfo(int key,const CString& des,int sheet)
 	{
 		m_nKey = key;
 		m_strDes = des;
 		m_nSheet = sheet;
-		m_nRow = row;
 	}
 };
 
-typedef std::map<int,STreeItemInfo> MapKeyToTreeInfoT;
+typedef std::vector<STreeItemInfo> VectorTreeItemInfoT;
+
+typedef std::pair<bool,VectorTreeItemInfoT::iterator> PairTreeInfoFoundT;
 
 struct SItemExcelDB : public SItemDB
 {
@@ -113,7 +113,7 @@ struct SItemExcelDB : public SItemDB
 	ExcelWorkbook* m_pExcel;
 	MapCNameToColumnT m_mapCNameToColumn;
 
-	MapKeyToTreeInfoT m_mapKeyToTreeInfo;
+	VectorTreeItemInfoT m_vtTreeItemInfos;
 
 	SItemExcelDB(const CString& path,const CString& key, const CString& des,int headRow,int dataRow);
 	virtual ~SItemExcelDB();
@@ -129,7 +129,10 @@ struct SItemExcelDB : public SItemDB
 	virtual int DeleteByKey(int key);
 
 	int InitMapNameToColumn();
-	int InitMapKeyToTreeInfo();
+
+	int InitTreeItemInfos();
+	PairTreeInfoFoundT FindTreeInfoByKey(int key);
+
 	int GetKeyInExcel(int sheet,int row);
 
 	int DataToEdit(SEdit* pCtrl,CString data);

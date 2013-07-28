@@ -175,7 +175,7 @@ void ExcelWorkbook::GetRowText(int sheetidx,int row,std::vector<CString>& vtStr)
 void ExcelWorkbook::InsertRow(int sheetidx,int row,std::vector<CString>& vtStr)
 {
 	ACCHECK(sheetidx >= 0 && sheetidx < GetSheetCount());
-	ACCHECK(row >= 0 && row < GetUsedRowCount(sheetidx));
+	ACCHECK(row >= 0);
 	CWorksheet sheet;
 	sheet.AttachDispatch(m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1))));
 	CRange range;
@@ -196,6 +196,18 @@ void ExcelWorkbook::InsertRow(int sheetidx,int row,std::vector<CString>& vtStr)
 		range.AttachDispatch(range.get_EntireColumn());
 		range.AutoFit();
 	}
+}
+
+void ExcelWorkbook::InsertEmptyRow(int sheetidx,int row)
+{
+	ACCHECK(sheetidx >= 0 && sheetidx < GetSheetCount());
+	ACCHECK(row >= 0);
+	int nColTotal = GetUsedColumnCount(sheetidx);
+	std::vector<CString> vtStr;
+	for(int nCol = 0; nCol < nColTotal; ++nCol)
+		vtStr.push_back(_T(" "));
+
+	InsertRow(sheetidx,row,vtStr);
 }
 
 void ExcelWorkbook::AppendEmptyRow(int sheetidx)

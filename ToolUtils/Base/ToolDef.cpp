@@ -3,6 +3,7 @@
 #include "ACString.h"
 #include "ToolTree.h"
 #include "ToolExcel.h"
+#include <algorithm>
 
 BEGIN_NS_AC
 
@@ -27,13 +28,15 @@ SItemExcelDB::SItemExcelDB(const CString& path,const CString& key, const CString
 
 	m_mapCNameToColumn.clear();
 	InitMapNameToColumn();
-	m_mapKeyToTreeInfo.clear();
-	InitMapKeyToTreeInfo();
+
+	SortDB();
+
+	m_vtTreeItemInfos.clear();
+	InitTreeItemInfos();
 }
 
 SItemExcelDB::~SItemExcelDB()
 {
-	SortDB();
 	SaveDB();
 	m_mapCNameToColumn.clear();
 }
@@ -62,7 +65,7 @@ int SItemExcelDB::InitMapNameToColumn()
 	return 0;
 }
 
-int SItemExcelDB::InitMapKeyToTreeInfo()
+int SItemExcelDB::InitTreeItemInfos()
 {
 	MapCNameToColumnT::iterator iter = m_mapCNameToColumn.find(m_strKeyCName);
 	if(iter == m_mapCNameToColumn.end())
@@ -90,24 +93,45 @@ int SItemExcelDB::InitMapKeyToTreeInfo()
 			CString str = m_pExcel->GetCellText(nSheet,nRow,nKeyCol);
 			int nKey = atoi(CStringToStlString(str).c_str());
 			str = m_pExcel->GetCellText(nSheet,nRow,nDesCol);
-			m_mapKeyToTreeInfo.insert(std::make_pair(nKey,STreeItemInfo(nKey,str,nSheet,nRow)));
+			m_vtTreeItemInfos.push_back(STreeItemInfo(nKey,str,nSheet));
 		}
 	}
 	return 0;
 }
 
+struct CompareTreeInfo
+{
+	bool operator()(const STreeItemInfo& lh,const STreeItemInfo& rh)
+	{
+		return lh.m_nKey < rh.m_nKey;
+	}
+};
+
+PairTreeInfoFoundT SItemExcelDB::FindTreeInfoByKey(int key)
+{
+	PairTreeInfoFoundT result;
+	result.second = std::lower_bound(m_vtTreeItemInfos.begin(),m_vtTreeItemInfos.end(),STreeItemInfo(key,_T(""),-1),CompareTreeInfo());
+
+	if(result.second == m_vtTreeItemInfos.end() || result.second->m_nKey != key)
+		result.first = false;
+	else
+		result.first = true;
+
+	return result;
+}
+
 int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
 {
-	MapKeyToTreeInfoT::iterator iter = m_mapKeyToTreeInfo.find(key);
-	if(iter == m_mapKeyToTreeInfo.end())
+	PairTreeInfoFoundT findResult = FindTreeInfoByKey(key);
+	if(!findResult.first)
 	{
 		ERROR_MSG("CtrlToDB,can't find key:%d",key);
 		return -1;
 	}
 
-	STreeItemInfo& rTreeItemInfo = iter->second;
+	STreeItemInfo& rTreeItemInfo = *(findResult.second);
 	int nSheet = rTreeItemInfo.m_nSheet;
-	int nRow = rTreeItemInfo.m_nRow;
+	int nRow = findResult.second - m_vtTreeItemInfos.begin() + m_nDataRow;
 
 	for(size_t i = 0; i < pItemTab->m_vtCtrls.size(); ++i)
 	{
@@ -148,15 +172,16 @@ int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
 
 int SItemExcelDB::DBToCtrl(SItemTab* pItemTab,int key)
 {
-	MapKeyToTreeInfoT::iterator iter = m_mapKeyToTreeInfo.find(key);
-	if(iter == m_mapKeyToTreeInfo.end())
+	PairTreeInfoFoundT findResult = FindTreeInfoByKey(key);
+	if(!findResult.first)
 	{
 		ERROR_MSG("DBToCtrl,can't find key:%d",key);
 		return -1;
 	}
 
-	int nSheet = iter->second.m_nSheet;
-	int nRow = iter->second.m_nRow;
+	STreeItemInfo& rTreeItemInfo = *(findResult.second);
+	int nSheet = rTreeItemInfo.m_nSheet;
+	int nRow = findResult.second - m_vtTreeItemInfos.begin() + m_nDataRow;
 
 	for(size_t i = 0; i < pItemTab->m_vtCtrls.size(); ++i)
 	{
@@ -312,10 +337,10 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 	pTree->DeleteAllItems();
 	pTree->InsertUndefinedRoot();
 
-	MapKeyToTreeInfoT::iterator it,ed;
-	for(it = m_mapKeyToTreeInfo.begin(),ed = m_mapKeyToTreeInfo.end(); it != ed; ++it)
+	VectorTreeItemInfoT::iterator it,ed;
+	for(it = m_vtTreeItemInfos.begin(),ed = m_vtTreeItemInfos.end(); it != ed; ++it)
 	{
-		STreeItemInfo& rTreeItemInfo = it->second;
+		STreeItemInfo& rTreeItemInfo = *it;
 		pTree->InsertItem(rTreeItemInfo.m_nKey,rTreeItemInfo.m_strDes);
 	}
 
@@ -350,14 +375,14 @@ int SItemExcelDB::InsertNewKey(int key)
 	if(key <= 0)
 		return -1;
 
-	if(m_mapKeyToTreeInfo.find(key) != m_mapKeyToTreeInfo.end())
+	PairTreeInfoFoundT findResult = FindTreeInfoByKey(key);
+	if(findResult.first)
 		return -1;
 
 	int nSheet = 0;
-	m_pExcel->AppendEmptyRow(nSheet);
-	int nRow = m_pExcel->GetUsedRowCount(nSheet) - 1;
-
-	m_mapKeyToTreeInfo.insert(std::make_pair(key,STreeItemInfo(key,_T(""),nSheet,nRow)));
+	int nRow = findResult.second - m_vtTreeItemInfos.begin() + m_nDataRow;
+	m_pExcel->InsertEmptyRow(nSheet,nRow);
+	m_vtTreeItemInfos.insert(findResult.second,STreeItemInfo(key,_T(""),nSheet));
 
 	return key;
 }
@@ -367,19 +392,20 @@ int SItemExcelDB::DeleteByKey(int key)
 	if(key <= 0)
 		return -1;
 
-	MapKeyToTreeInfoT::iterator iter = m_mapKeyToTreeInfo.find(key);
-	if(iter == m_mapKeyToTreeInfo.end())
+	PairTreeInfoFoundT findResult = FindTreeInfoByKey(key);
+	if(!findResult.first)
 		return -1;
 
-	STreeItemInfo& rTreeItemInfo = iter->second;
-	m_pExcel->DeleteRow(rTreeItemInfo.m_nSheet,rTreeItemInfo.m_nRow);
+	STreeItemInfo& rTreeItemInfo = *(findResult.second);
+	int nRow = findResult.second - m_vtTreeItemInfos.begin() + m_nDataRow;
+	m_pExcel->DeleteRow(rTreeItemInfo.m_nSheet,nRow);
 
 	SaveDB();
 
 	int nKey = -1;
-	MapKeyToTreeInfoT::iterator iterNext = m_mapKeyToTreeInfo.erase(iter);
-	if(iterNext != m_mapKeyToTreeInfo.end())
-		nKey = iterNext->first;
+	VectorTreeItemInfoT::iterator iterNext = m_vtTreeItemInfos.erase(findResult.second);
+	if(iterNext != m_vtTreeItemInfos.end())
+		nKey = iterNext->m_nKey;
 
 	return nKey;
 }

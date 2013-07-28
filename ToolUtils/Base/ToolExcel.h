@@ -37,6 +37,7 @@ public:
 	void DeleteRow(int sheetidx,int row);
 	void GetRowText(int sheetidx,int row,std::vector<CString>& vtStr);
 	void InsertRow(int sheetidx,int row,std::vector<CString>& vtStr);
+	void InsertEmptyRow(int sheetidx,int row);
 	void AppendEmptyRow(int sheetidx);
 public:
 	void Save();

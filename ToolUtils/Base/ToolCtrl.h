@@ -21,13 +21,13 @@ struct SComboItem
 
 struct SCtrl
 {
-	CString strName;
-	CString strCName;
-	int nCtrl;
-	int nWidth1;
-	bool bNewline;
+	CString strName;	// 控件显示名字，CStatic的名字
+	CString strCName;	// 控件数据存db时名字，存db的key
+	int nCtrl;			// 控件的类型
+	int nWidth1;		// 名称控件的宽度
+	bool bNewline;		// 下一个控件是否换行显示
 
-	CStatic* pStatic;
+	CStatic* pStatic;	// 名称控件
 
 	SCtrl()
 	{
@@ -41,16 +41,19 @@ struct SCtrl
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
 	virtual int LoadDefaultValue(){return 0;}
 
+	virtual int DataToCtrl(CString& data){return 0;}
+	virtual int CtrlToData(CString& data){return 0;}
+
 	void CreateStatic(CWnd* pParent);
 };
 
 struct SEdit : public SCtrl
 {
-	int nType;
-	int nWidth2;
-	CString strDefault;
+	int nType;			// 编辑框中数据的类型
+	int nWidth2;		// 控件的宽度
+	CString strDefault;	// 控件默认值
 
-	CEdit* pCtrl;
+	CEdit* pCtrl;		// 控件
 
 	SEdit()
 	{
@@ -63,6 +66,9 @@ struct SEdit : public SCtrl
 
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
 	virtual int LoadDefaultValue();
+
+	virtual int DataToCtrl(CString& data);
+	virtual int CtrlToData(CString& data);
 };
 
 struct SCheck : public SCtrl
@@ -82,6 +88,9 @@ struct SCheck : public SCtrl
 
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
 	virtual int LoadDefaultValue();
+
+	virtual int DataToCtrl(CString& data);
+	virtual int CtrlToData(CString& data);
 };
 
 struct SStatic : public SCtrl
@@ -111,6 +120,9 @@ struct SCombobox : public SCtrl
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
 	virtual int LoadDefaultValue();
 
+	virtual int DataToCtrl(CString& data);
+	virtual int CtrlToData(CString& data);
+
 	void pfnAddComboItem(void* ctx);
 };
 
@@ -132,6 +144,9 @@ struct SCheckCombo : public SCtrl
 
 	virtual int Init(LuaConfig& rLuaConfig,CWnd* pParent);
 	virtual int LoadDefaultValue();
+
+	virtual int DataToCtrl(CString& data);
+	virtual int CtrlToData(CString& data);
 
 	void pfnAddComboItem(void* ctx);
 };

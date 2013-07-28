@@ -134,30 +134,21 @@ struct SItemExcelDB : public SItemDB
 	PairTreeInfoFoundT FindTreeInfoByKey(int key);
 
 	int GetKeyInExcel(int sheet,int row);
-
-	int DataToEdit(SEdit* pCtrl,CString data);
-	int DataToCheck(SCheck* pCtrl,CString data);
-	int DataToCombobox(SCombobox* pCtrl,CString data);
-	int DataToCheckCombo(SCheckCombo* pCtrl,CString data);
-
-	int EditToData(SEdit* pCtrl,CString& data);
-	int CheckToData(SCheck* pCtrl,CString& data);
-	int ComboboxToData(SCombobox* pCtrl,CString& data);
-	int CheckComboToData(SCheckCombo* pCtrl,CString& data);
 };
 
 //-----------------------------------------------------------
 
 struct SItemTab
 {
-	CString m_strName;
-	CString m_strCName;
-	SItemDB* m_pDB;
-	std::vector<SCtrl*> m_vtCtrls;
+	CString m_strName;		// Tab标签页显示名字
+	CString m_strCName;		// db名字
+	SItemDB* m_pDB;			// db指针
+	std::vector<SCtrl*> m_vtLayers;	// 控制主树控件中层级的控件
+	std::vector<SCtrl*> m_vtCtrls;	// 该Tab标签页的全部控件
 
 	CWnd* m_pWnd;		// tab项window，每个tab项是一个window
 	CEdit* m_pKeyWnd;	// key对应控件的window
-	int m_nLastSelKey;
+	int m_nLastSelKey;	// 上次选择的key
 
 	SItemTab();
 	virtual ~SItemTab();

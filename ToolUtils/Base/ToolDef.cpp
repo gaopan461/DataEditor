@@ -141,23 +141,7 @@ int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
 		int nCtrlCol = m_mapCNameToColumn[pCtrl->strCName];
 
 		CString strDBVal;
-		switch(pCtrl->nCtrl)
-		{
-		case CTRL_EDIT:
-			EditToData((SEdit*)pCtrl,strDBVal);
-			break;
-		case CTRL_CHECK:
-			CheckToData((SCheck*)pCtrl,strDBVal);
-			break;
-		case CTRL_COMBOBOX:
-			ComboboxToData((SCombobox*)pCtrl,strDBVal);
-			break;
-		case CTRL_CHECKCOMBO:
-			CheckComboToData((SCheckCombo*)pCtrl,strDBVal);
-			break;
-		default:
-			continue;
-		}
+		pCtrl->CtrlToData(strDBVal);
 
 		m_pExcel->SetCellText(nSheet,nRow,nCtrlCol,strDBVal);
 
@@ -190,145 +174,9 @@ int SItemExcelDB::DBToCtrl(SItemTab* pItemTab,int key)
 
 		int nCtrlCol = m_mapCNameToColumn[pCtrl->strCName];
 		CString strDBVal = m_pExcel->GetCellText(nSheet,nRow,nCtrlCol);
-
-		switch(pCtrl->nCtrl)
-		{
-		case CTRL_EDIT:
-			DataToEdit((SEdit*)pCtrl,strDBVal);
-			break;
-		case CTRL_CHECK:
-			DataToCheck((SCheck*)pCtrl,strDBVal);
-			break;
-		case CTRL_COMBOBOX:
-			DataToCombobox((SCombobox*)pCtrl,strDBVal);
-			break;
-		case CTRL_CHECKCOMBO:
-			DataToCheckCombo((SCheckCombo*)pCtrl,strDBVal);
-			break;
-		default:
-			continue;
-		}
+		pCtrl->DataToCtrl(strDBVal);
 	}
 
-	return 0;
-}
-
-int SItemExcelDB::DataToEdit(SEdit* pCtrl,CString data)
-{
-	if(pCtrl->nType == DATA_INT)
-	{
-		int nData = atoi(CStringToStlString(data).c_str());
-		data.Format(_T("%d"),nData);
-	}
-
-	pCtrl->pCtrl->SetWindowText(data);
-	return 0;
-}
-
-int SItemExcelDB::EditToData(SEdit* pCtrl,CString& data)
-{
-	CString strCtrlVal;
-	pCtrl->pCtrl->GetWindowText(strCtrlVal);
-	if(pCtrl->nType == DATA_INT)
-	{
-		int nData = atoi(CStringToStlString(strCtrlVal).c_str());
-		data.Format(_T("%d"),nData);
-	}
-	else if(pCtrl->nType == DATA_FLOAT)
-	{
-		double fData = atof(CStringToStlString(strCtrlVal).c_str());
-		data.Format(_T("%.6lf"),fData);
-	}
-	else
-		data = strCtrlVal;
-
-	return 0;
-}
-
-int SItemExcelDB::DataToCheck(SCheck* pCtrl,CString data)
-{
-	bool val = false;
-	if(_stricmp(CStringToStlString(data).c_str(),"false") == 0)
-		val = false;
-	else if(_stricmp(CStringToStlString(data).c_str(),"true") == 0)
-		val = true;
-	else
-		val = atoi(CStringToStlString(data).c_str()) ? true : false;
-
-	pCtrl->pCtrl->SetCheck(val);
-	return 0;
-}
-
-int SItemExcelDB::CheckToData(SCheck* pCtrl,CString& data)
-{
-	int bCheck = pCtrl->pCtrl->GetCheck();
-	data = bCheck ? _T("true") : _T("false");
-	return 0;
-}
-
-int SItemExcelDB::DataToCombobox(SCombobox* pCtrl,CString data)
-{
-	int dbVal = atoi(CStringToStlString(data).c_str());
-	for(size_t ctlItem = 0; ctlItem < pCtrl->vtItems.size(); ++ctlItem)
-	{
-		if(dbVal == pCtrl->vtItems[ctlItem].nValue)
-		{
-			pCtrl->pCtrl->SetCurSel(ctlItem);
-			break;
-		}
-	}
-	return 0;
-}
-
-int SItemExcelDB::ComboboxToData(SCombobox* pCtrl,CString& data)
-{
-	int curSel = pCtrl->pCtrl->GetCurSel();
-	data.Format(_T("%d"),pCtrl->vtItems[curSel].nValue);
-	return 0;
-}
-
-int SItemExcelDB::DataToCheckCombo(SCheckCombo* pCtrl,CString data)
-{
-	std::vector<CString> vtItems;
-	CString strItemText;
-	int nPos = 0;
-	//数组通过,隔开
-	strItemText = data.Tokenize(EXCEL_ARRAY_DELIMITER,nPos);
-	while (strItemText != _T(""))
-	{
-		vtItems.push_back(strItemText);
-		strItemText = data.Tokenize(EXCEL_ARRAY_DELIMITER, nPos);
-	};
-
-	pCtrl->pCtrl->SelectAll(FALSE);
-
-	for(size_t dbItem = 0; dbItem < vtItems.size(); ++dbItem)
-	{
-		int dbVal = atoi(CStringToStlString(vtItems[dbItem]).c_str());
-		for(size_t ctlItem = 0; ctlItem < pCtrl->vtItems.size(); ++ctlItem)
-		{
-			if(dbVal == pCtrl->vtItems[ctlItem].nValue)
-				pCtrl->pCtrl->SetCheck(ctlItem,true);
-		}
-	}
-	return 0;
-}
-
-int SItemExcelDB::CheckComboToData(SCheckCombo* pCtrl,CString& data)
-{
-	bool bFirst = true;
-	for(size_t ctrlItem = 0; ctrlItem < pCtrl->vtItems.size(); ++ctrlItem)
-	{
-		if(pCtrl->pCtrl->GetCheck(ctrlItem))
-		{
-			if(bFirst)
-				bFirst = false;
-			else
-				data.Append(EXCEL_ARRAY_DELIMITER);
-
-			data.AppendFormat(_T("%d"),pCtrl->vtItems[ctrlItem].nValue);
-		}
-	}
 	return 0;
 }
 

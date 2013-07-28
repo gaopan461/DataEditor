@@ -341,7 +341,10 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 	for(it = m_vtTreeItemInfos.begin(),ed = m_vtTreeItemInfos.end(); it != ed; ++it)
 	{
 		STreeItemInfo& rTreeItemInfo = *it;
-		pTree->InsertItem(rTreeItemInfo.m_nKey,rTreeItemInfo.m_strDes);
+		std::vector<CString> vtLayers;
+		vtLayers.push_back(_T("第一层"));
+		vtLayers.push_back(_T("第二层"));
+		pTree->InsertItem(rTreeItemInfo.m_nKey,rTreeItemInfo.m_strDes,vtLayers);
 	}
 
 	pTree->ExpandAllItems();

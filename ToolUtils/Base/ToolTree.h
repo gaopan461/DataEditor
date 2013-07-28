@@ -26,7 +26,7 @@ public:
 	BOOL Create(RECT rcRect, CWnd* pWnd, UINT nID);
 public:
 	int Create();
-	int InsertItem(int key, const CString& strDes);
+	int InsertItem(int key, const CString& strDes, std::vector<CString>& vtLayers);
 public:
 	void OnSelect(int key);
 public:
@@ -38,7 +38,10 @@ public:
 public:
 	COptionTreeItem* FindItemByKey(int key);
 protected:
-	static BOOL CALLBACK EnumFindItemByKey(COptionTree* otProp, COptionTreeItem* otiItem, LPARAM lParam);
+	COptionTreeItem* FindOrCreateLayers(std::vector<CString>& vtLayers);
+	COptionTreeItem* FindItemByInfoText(COptionTreeItem* otiRoot, const CString& strInfoText);
+protected:
+	static BOOL CALLBACK EnumFindItemByInfoText(COptionTree* otProp, COptionTreeItem* otiItem, LPARAM lParam);
 private:
 	int m_nLastSelKey;
 	COptionTreeItem* m_pUndefinedRoot;

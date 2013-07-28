@@ -56,12 +56,13 @@ int ToolTree::Create()
 	return 0;
 }
 
-int ToolTree::InsertItem( int key, const CString& strDes )
+int ToolTree::InsertItem(int key, const CString& strDes, std::vector<CString>& vtLayers)
 {
 	CString strKey;
 	strKey.Format(_T("%d"), key);
 
-	COptionTreeItemStaticEx* pOptItem = (COptionTreeItemStaticEx*)COptionTree::InsertItem(new COptionTreeItemStaticEx(),m_pUndefinedRoot);
+	COptionTreeItem* pInsertPosition = FindOrCreateLayers(vtLayers);
+	COptionTreeItemStaticEx* pOptItem = (COptionTreeItemStaticEx*)COptionTree::InsertItem(new COptionTreeItemStaticEx(),pInsertPosition);
 	ACCHECK(pOptItem);
 
 	pOptItem->SetLabelText(strKey);
@@ -116,18 +117,49 @@ int ToolTree::InsertUndefinedRoot()
 	return 0;
 }
 
+COptionTreeItem* ToolTree::FindOrCreateLayers(std::vector<CString>& vtLayers)
+{
+	if(vtLayers.empty())
+		return m_pUndefinedRoot;
+
+	COptionTreeItem* pCurrentRoot = &m_otiRoot;
+	for(std::vector<CString>::iterator iter = vtLayers.begin(); iter != vtLayers.end(); ++iter)
+	{
+		COptionTreeItem* pFoundItem = FindItemByInfoText(pCurrentRoot,*iter);
+		if(pFoundItem == NULL)
+		{
+			pFoundItem = COptionTree::InsertItem(new COptionTreeItem(),pCurrentRoot);
+			ACCHECK(pFoundItem);
+
+			pFoundItem->SetLabelText(*iter);
+			pFoundItem->SetInfoText(*iter);
+		}
+
+		pCurrentRoot = pFoundItem;
+	}
+
+	return pCurrentRoot;
+}
+
 COptionTreeItem* ToolTree::FindItemByKey(int key)
+{
+	CString strKey;
+	strKey.Format(_T("%d"),key);
+	return FindItemByInfoText(&m_otiRoot,strKey);
+}
+
+COptionTreeItem* ToolTree::FindItemByInfoText(COptionTreeItem* otiRoot, const CString& strInfoText)
 {
 	// Mark found as NULL
 	m_otiFound = NULL;
 
 	// Enumerate items
-	EnumItems(&m_otiRoot, EnumFindItemByKey, (LPARAM)key);
+	EnumItems(otiRoot, EnumFindItemByInfoText, (LPARAM)(&strInfoText));
 
 	return m_otiFound;
 }
 
-BOOL CALLBACK ToolTree::EnumFindItemByKey(COptionTree* otProp, COptionTreeItem* otiItem, LPARAM lParam)
+BOOL CALLBACK ToolTree::EnumFindItemByInfoText(COptionTree* otProp, COptionTreeItem* otiItem, LPARAM lParam)
 {
 	// Validate items
 	if (otiItem == NULL)
@@ -135,11 +167,13 @@ BOOL CALLBACK ToolTree::EnumFindItemByKey(COptionTree* otProp, COptionTreeItem* 
 		return FALSE;
 	}
 
-	// Find item
-	int nKey = (int)lParam;
-	CString strKey;
-	strKey.Format(_T("%d"),nKey);
-	if (otiItem->GetInfoText() == strKey)
+	CString* pInfoText = (CString*)lParam;
+	if (pInfoText == NULL)
+	{
+		return FALSE;
+	}
+
+	if (otiItem->GetInfoText() == *pInfoText)
 	{
 		m_otiFound = otiItem;
 

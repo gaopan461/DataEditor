@@ -32,7 +32,6 @@ SItemExcelDB::SItemExcelDB(const CString& path,const CString& key, const CString
 	SortDB();
 
 	m_vtTreeItemInfos.clear();
-	InitTreeItemInfos();
 }
 
 SItemExcelDB::~SItemExcelDB()
@@ -96,7 +95,11 @@ int SItemExcelDB::InitTreeItemInfos()
 
 			for(size_t i = 0; i < vtLayerCol.size(); ++i)
 			{
-				info.m_vtLayers.push_back(m_pExcel->GetCellText(nSheet,nRow,vtLayerCol[i]));
+				CString strLayerValue = m_pExcel->GetCellText(nSheet,nRow,vtLayerCol[i]);
+				if(strLayerValue.IsEmpty())
+					continue;
+
+				info.m_vtLayers.push_back(strLayerValue);
 			}
 
 			m_vtTreeItemInfos.push_back(info);
@@ -312,7 +315,11 @@ STreeItemInfo SItemExcelDB::GetTreeItemInfo(int nSheet,int nRow)
 
 	for(size_t i = 0; i < vtLayerCol.size(); ++i)
 	{
-		info.m_vtLayers.push_back(m_pExcel->GetCellText(nSheet,nRow,vtLayerCol[i]));
+		CString strLayerValue = m_pExcel->GetCellText(nSheet,nRow,vtLayerCol[i]);
+		if(strLayerValue.IsEmpty())
+			continue;
+
+		info.m_vtLayers.push_back(strLayerValue);
 	}
 
 	return info;

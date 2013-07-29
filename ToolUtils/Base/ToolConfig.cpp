@@ -56,21 +56,22 @@ void ToolConfig::LoadEditorDBConfig(SItemTab* pTab)
 		{
 			int headRow = m_objLua.GetInteger("./DB/HeadRow");
 			int dataRow = m_objLua.GetInteger("./DB/DataRow");
-			pTab->m_pDB = new SItemExcelDB(path,key,des,headRow,dataRow);
+			SItemExcelDB* pDB = new SItemExcelDB(path,key,des,headRow,dataRow);
+			ACCHECK(pDB);
+
+			// 初始化Layer配置
+			std::vector<std::string> vtStlStr = m_objLua.GetStringVector("./Layers");
+			for(size_t i = 0; i < vtStlStr.size(); ++i)
+			{
+				pDB->m_vtLayerCName.push_back(StlStringToCString(vtStlStr[i]));
+			}
+
+			pDB->InitTreeItemInfos();
+			pTab->m_pDB = pDB;
 		}
 		break;
 	default:
 		ERROR_MSG("LoadEditorDBConfig,unknown db type:%d",type);
-	}
-
-	SItemDB* pDB = pTab->GetDB();
-	ACCHECK(pDB);
-
-	// 初始化Layer配置
-	std::vector<std::string> vtStlStr = m_objLua.GetStringVector("./Layers");
-	for(size_t i = 0; i < vtStlStr.size(); ++i)
-	{
-		pDB->m_vtLayerCName.push_back(StlStringToCString(vtStlStr[i]));
 	}
 }
 

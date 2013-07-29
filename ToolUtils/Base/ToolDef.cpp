@@ -74,15 +74,13 @@ int SItemExcelDB::InitTreeItemInfos()
 		return -1;
 	}
 	int nKeyCol = iter->second;
+	int nDesCol = m_mapCNameToColumn[m_strDesCName];
 
-	int nDesCol = 1;
-	iter = m_mapCNameToColumn.find(m_strDesCName);
-	if(iter == m_mapCNameToColumn.end())
+	std::vector<int> vtLayerCol;
+	for(size_t i = 0; i < m_vtLayerCName.size(); ++i)
 	{
-		WARN_MSG("DBToTree no des,excel:%s,des:%s",CStringToStlString(m_strFilePath).c_str(),CStringToStlString(m_strDesCName).c_str());
+		vtLayerCol.push_back(m_mapCNameToColumn[m_vtLayerCName[i]]);
 	}
-	else
-		nDesCol = iter->second;
 
 	int nSheetTotal = m_pExcel->GetSheetCount();
 	for(int nSheet = 0; nSheet < nSheetTotal; ++nSheet)
@@ -90,10 +88,18 @@ int SItemExcelDB::InitTreeItemInfos()
 		int nRowTotal = m_pExcel->GetUsedRowCount(nSheet);
 		for(int nRow = m_nDataRow; nRow < nRowTotal; ++nRow)
 		{
-			CString str = m_pExcel->GetCellText(nSheet,nRow,nKeyCol);
-			int nKey = atoi(CStringToStlString(str).c_str());
-			str = m_pExcel->GetCellText(nSheet,nRow,nDesCol);
-			m_vtTreeItemInfos.push_back(STreeItemInfo(nKey,str,nSheet));
+			STreeItemInfo info;
+			CString strKey = m_pExcel->GetCellText(nSheet,nRow,nKeyCol);
+			info.m_nKey = atoi(CStringToStlString(strKey).c_str());
+			info.m_strDes = m_pExcel->GetCellText(nSheet,nRow,nDesCol);
+			info.m_nSheet = nSheet;
+
+			for(size_t i = 0; i < vtLayerCol.size(); ++i)
+			{
+				info.m_vtLayers.push_back(m_pExcel->GetCellText(nSheet,nRow,vtLayerCol[i]));
+			}
+
+			m_vtTreeItemInfos.push_back(info);
 		}
 	}
 	return 0;
@@ -110,7 +116,9 @@ struct CompareTreeInfo
 PairTreeInfoFoundT SItemExcelDB::FindTreeInfoByKey(int key)
 {
 	PairTreeInfoFoundT result;
-	result.second = std::lower_bound(m_vtTreeItemInfos.begin(),m_vtTreeItemInfos.end(),STreeItemInfo(key,_T(""),-1),CompareTreeInfo());
+	STreeItemInfo info;
+	info.m_nKey = key;
+	result.second = std::lower_bound(m_vtTreeItemInfos.begin(),m_vtTreeItemInfos.end(),info,CompareTreeInfo());
 
 	if(result.second == m_vtTreeItemInfos.end() || result.second->m_nKey != key)
 		result.first = false;
@@ -140,18 +148,41 @@ int SItemExcelDB::Save(int key, MapCNameToValueT& mapValues)
 	}
 
 	SaveDB();
-	UpdateTreeItemInfo(rTreeItemInfo,mapValues);
+
+	// 更新tree
+	STreeItemInfo infoNew = GetTreeItemInfo(nSheet,nRow);
+	ACCHECK(infoNew.m_nKey == rTreeItemInfo.m_nKey);
+
+	if(infoNew.m_vtLayers != rTreeItemInfo.m_vtLayers)
+	{
+		ToolApp::Instance().GetMainTree()->DeleteItemByKey(infoNew.m_nKey);
+		ToolApp::Instance().GetMainTree()->UpdateOrInsertItemByKey(infoNew.m_nKey,infoNew.m_strDes,infoNew.m_vtLayers);
+		ToolApp::Instance().GetMainTree()->SelectKey(key);
+	}
+	else if(infoNew.m_strDes != rTreeItemInfo.m_strDes)
+	{
+		ToolApp::Instance().GetMainTree()->UpdateOrInsertItemByKey(infoNew.m_nKey,infoNew.m_strDes,infoNew.m_vtLayers);
+	}
+
+	rTreeItemInfo = infoNew;
 	return 0;
 }
 
-int SItemExcelDB::UpdateTreeItemInfo(STreeItemInfo& rTreeItemInfo,MapCNameToValueT& mapValues)
+int SItemExcelDB::UpdateTreeItemInfo(STreeItemInfo& rTreeItemInfo,MapCNameToValueT& mapValues,bool bForcedUpdateTree /* = false */)
 {
+	bool bChanged = false;
 	for(MapCNameToValueT::iterator iter = mapValues.begin(); iter != mapValues.end(); ++iter)
 	{
+		// 更新描述信息
 		if(iter->first == m_strDesCName)
 		{
+			if(rTreeItemInfo.m_strDes == iter->second)
+				bChanged = true;
+
 			rTreeItemInfo.m_strDes = iter->second;
 		}
+
+		// 更新层级信息
 	}
 
 	ToolApp::Instance().GetMainTree()->UpdateOrInsertItemByKey(rTreeItemInfo.m_nKey,rTreeItemInfo.m_strDes,rTreeItemInfo.m_vtLayers);
@@ -252,11 +283,39 @@ int SItemExcelDB::InsertByKey(int key, MapCNameToValueT& mapValues)
 	m_pExcel->InsertRow(nSheet,nRow,vtValues);
 	SaveDB();
 
-	VectorTreeItemInfoT::iterator iterInserted;
-	iterInserted = m_vtTreeItemInfos.insert(findResult.second,STreeItemInfo(key,_T(""),nSheet));
-	UpdateTreeItemInfo(*iterInserted,mapValues);
+	STreeItemInfo infoNew = GetTreeItemInfo(nSheet,nRow);
+	m_vtTreeItemInfos.insert(findResult.second,infoNew);
+
+	// 更新tree
+	ToolApp::Instance().GetMainTree()->UpdateOrInsertItemByKey(infoNew.m_nKey,infoNew.m_strDes,infoNew.m_vtLayers);
+	ToolApp::Instance().GetMainTree()->SelectKey(key);
 
 	return key;
+}
+
+STreeItemInfo SItemExcelDB::GetTreeItemInfo(int nSheet,int nRow)
+{
+	int nKeyCol = m_mapCNameToColumn[m_strKeyCName];
+	int nDesCol = m_mapCNameToColumn[m_strDesCName];
+
+	std::vector<int> vtLayerCol;
+	for(size_t i = 0; i < m_vtLayerCName.size(); ++i)
+	{
+		vtLayerCol.push_back(m_mapCNameToColumn[m_vtLayerCName[i]]);
+	}
+
+	STreeItemInfo info;
+	CString strKey = m_pExcel->GetCellText(nSheet,nRow,nKeyCol);
+	info.m_nKey = atoi(CStringToStlString(strKey).c_str());
+	info.m_strDes = m_pExcel->GetCellText(nSheet,nRow,nDesCol);
+	info.m_nSheet = nSheet;
+
+	for(size_t i = 0; i < vtLayerCol.size(); ++i)
+	{
+		info.m_vtLayers.push_back(m_pExcel->GetCellText(nSheet,nRow,vtLayerCol[i]));
+	}
+
+	return info;
 }
 
 int SItemExcelDB::DeleteByKey(int key)
@@ -274,15 +333,16 @@ int SItemExcelDB::DeleteByKey(int key)
 
 	SaveDB();
 
-	int nKey = -1;
+	int nNextKey = -1;
 	VectorTreeItemInfoT::iterator iterNext = m_vtTreeItemInfos.erase(findResult.second);
 	if(iterNext != m_vtTreeItemInfos.end())
-		nKey = iterNext->m_nKey;
+		nNextKey = iterNext->m_nKey;
 
 	// 更新tree
 	ToolApp::Instance().GetMainTree()->DeleteItemByKey(key);
+	ToolApp::Instance().GetMainTree()->SelectKey(nNextKey);
 
-	return nKey;
+	return nNextKey;
 }
 
 //-----------------------------------------------------

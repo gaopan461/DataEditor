@@ -200,6 +200,9 @@ int SCombobox::DataToCtrl(CString& data)
 int SCombobox::CtrlToData(CString& data)
 {
 	int curSel = pCtrl->GetCurSel();
+	if(curSel < 0)
+		return -1;
+
 	data.Format(_T("%d"),vtItems[curSel].nValue);
 	return 0;
 }

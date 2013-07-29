@@ -62,6 +62,16 @@ void ToolConfig::LoadEditorDBConfig(SItemTab* pTab)
 	default:
 		ERROR_MSG("LoadEditorDBConfig,unknown db type:%d",type);
 	}
+
+	SItemDB* pDB = pTab->GetDB();
+	ACCHECK(pDB);
+
+	// ≥ı ºªØLayer≈‰÷√
+	std::vector<std::string> vtStlStr = m_objLua.GetStringVector("./Layers");
+	for(size_t i = 0; i < vtStlStr.size(); ++i)
+	{
+		pDB->m_vtLayerCName.push_back(StlStringToCString(vtStlStr[i]));
+	}
 }
 
 void ToolConfig::LoadEditorCtrlConfig(SItemTab* pTab)

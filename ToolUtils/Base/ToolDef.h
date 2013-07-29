@@ -74,6 +74,8 @@ struct SItemDB
 	CString m_strKeyCName;
 	CString m_strDesCName;
 
+	std::vector<CString> m_vtLayerCName;// 控制主树控件层级的控件名
+
 	SItemDB(int type,const CString& path,const CString& key,const CString& des);
 	virtual ~SItemDB(){}
 
@@ -96,13 +98,6 @@ struct STreeItemInfo
 	CString m_strDes;
 	std::vector<CString> m_vtLayers;
 	int m_nSheet;
-
-	STreeItemInfo(int key,const CString& des,int sheet)
-	{
-		m_nKey = key;
-		m_strDes = des;
-		m_nSheet = sheet;
-	}
 };
 
 typedef std::vector<STreeItemInfo> VectorTreeItemInfoT;
@@ -134,7 +129,8 @@ struct SItemExcelDB : public SItemDB
 	int InitMapNameToColumn();
 
 	int InitTreeItemInfos();
-	int UpdateTreeItemInfo(STreeItemInfo& rTreeItemInfo,MapCNameToValueT& mapValues);
+	STreeItemInfo GetTreeItemInfo(int nSheet,int nRow);
+	int UpdateTreeItemInfo(STreeItemInfo& rTreeItemInfo,MapCNameToValueT& mapValues,bool bForcedUpdateTree = false);
 	PairTreeInfoFoundT FindTreeInfoByKey(int key);
 
 	int GetKeyInExcel(int sheet,int row);
@@ -147,7 +143,6 @@ struct SItemTab
 	CString m_strName;		// Tab标签页显示名字
 	CString m_strCName;		// db名字
 	SItemDB* m_pDB;			// db指针
-	std::vector<CString> m_vtLayers;// 控制主树控件层级的控件名
 	std::vector<SCtrl*> m_vtCtrls;	// 该Tab标签页的全部控件
 
 	CWnd* m_pWnd;		// tab项window，每个tab项是一个window

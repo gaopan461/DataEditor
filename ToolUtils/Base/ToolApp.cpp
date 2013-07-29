@@ -173,9 +173,8 @@ int ToolApp::MenuDelete()
 	pKeyWnd->GetWindowText(strKey);
 
 	int nKey = atoi(CStringToStlString(strKey).c_str());
-	int nNextKey = pItemTab->GetDB()->DeleteByKey(nKey);
+	pItemTab->GetDB()->DeleteByKey(nKey);
 
-	m_pTree->SelectKey(nNextKey);
 	return 0;
 }
 

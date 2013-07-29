@@ -85,6 +85,36 @@ bool LuaConfig::GetBoolean(const std::string& strParamName)
 	return result;
 }
 
+std::vector<std::string> LuaConfig::GetStringVector(const std::string& strParamName)
+{
+	int oldTop = lua_gettop(m_pLua);
+
+	int ret = PushParam(strParamName);
+	if(ret != 0)
+	{
+		ERROR_MSG("Param format invalid:%s",strParamName.c_str());
+		ACCHECK(false);
+	}
+
+	ACCHECK(lua_istable(m_pLua,-1));
+	std::vector<std::string> result;
+	
+	int tableLen = lua_objlen(m_pLua,-1);
+	for(int i = 1; i <= tableLen; ++i)
+	{
+		lua_pushinteger(m_pLua, i);
+		lua_gettable(m_pLua, -2);
+
+		ACCHECK(lua_isstring(m_pLua,-1));
+		result.push_back(lua_tostring(m_pLua,-1));
+
+		lua_pop(m_pLua, 1);
+	}
+
+	lua_settop(m_pLua,oldTop);
+	return result;
+}
+
 int LuaConfig::PushParam(const std::string& strParamName)
 {
 	std::vector<std::string> vtStr;

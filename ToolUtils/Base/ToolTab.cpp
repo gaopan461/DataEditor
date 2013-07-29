@@ -142,7 +142,7 @@ int ToolTab::RestoreLastSelect()
 		SItemTab* pTabItem = GetCurrentItem();
 		ACCHECK(pTabItem);
 
-		pTabItem->GetDB()->DBToCtrl(pTabItem,nLastSelKey);
+		pTabItem->DBToCtrl(nLastSelKey);
 	}
 
 	return 0;

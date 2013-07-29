@@ -120,12 +120,12 @@ PairTreeInfoFoundT SItemExcelDB::FindTreeInfoByKey(int key)
 	return result;
 }
 
-int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
+int SItemExcelDB::Save(int key, MapCNameToValueT& mapValues)
 {
 	PairTreeInfoFoundT findResult = FindTreeInfoByKey(key);
 	if(!findResult.first)
 	{
-		ERROR_MSG("CtrlToDB,can't find key:%d",key);
+		ERROR_MSG("Save,can't find key:%d",key);
 		return -1;
 	}
 
@@ -133,36 +133,24 @@ int SItemExcelDB::CtrlToDB(SItemTab* pItemTab,int key)
 	int nSheet = rTreeItemInfo.m_nSheet;
 	int nRow = findResult.second - m_vtTreeItemInfos.begin() + m_nDataRow;
 
-	for(size_t i = 0; i < pItemTab->m_vtCtrls.size(); ++i)
+	for(MapCNameToValueT::iterator iter = mapValues.begin(); iter != mapValues.end(); ++iter)
 	{
-		SCtrl* pCtrl = pItemTab->m_vtCtrls[i];
-		ACCHECK(pCtrl);
-
-		int nCtrlCol = m_mapCNameToColumn[pCtrl->strCName];
-
-		CString strDBVal;
-		pCtrl->CtrlToData(strDBVal);
-
-		m_pExcel->SetCellText(nSheet,nRow,nCtrlCol,strDBVal);
+		int nCtrlCol = m_mapCNameToColumn[iter->first];
+		m_pExcel->SetCellText(nSheet,nRow,nCtrlCol,iter->second);
 	}
 
 	SaveDB();
-	UpdateTreeItemInfo(pItemTab,rTreeItemInfo);
+	UpdateTreeItemInfo(rTreeItemInfo,mapValues);
 	return 0;
 }
 
-int SItemExcelDB::UpdateTreeItemInfo(SItemTab* pItemTab,STreeItemInfo& rTreeItemInfo)
+int SItemExcelDB::UpdateTreeItemInfo(STreeItemInfo& rTreeItemInfo,MapCNameToValueT& mapValues)
 {
-	for(size_t i = 0; i < pItemTab->m_vtCtrls.size(); ++i)
+	for(MapCNameToValueT::iterator iter = mapValues.begin(); iter != mapValues.end(); ++iter)
 	{
-		SCtrl* pCtrl = pItemTab->m_vtCtrls[i];
-		ACCHECK(pCtrl);
-
-		CString strDBVal;
-		pCtrl->CtrlToData(strDBVal);
-		if(pCtrl->strCName == m_strDesCName)
+		if(iter->first == m_strDesCName)
 		{
-			rTreeItemInfo.m_strDes = strDBVal;
+			rTreeItemInfo.m_strDes = iter->second;
 		}
 	}
 
@@ -170,12 +158,12 @@ int SItemExcelDB::UpdateTreeItemInfo(SItemTab* pItemTab,STreeItemInfo& rTreeItem
 	return 0;
 }
 
-int SItemExcelDB::DBToCtrl(SItemTab* pItemTab,int key)
+int SItemExcelDB::Load(int key, MapCNameToValueT& mapValues)
 {
 	PairTreeInfoFoundT findResult = FindTreeInfoByKey(key);
 	if(!findResult.first)
 	{
-		ERROR_MSG("DBToCtrl,can't find key:%d",key);
+		ERROR_MSG("Load,can't find key:%d",key);
 		return -1;
 	}
 
@@ -183,14 +171,10 @@ int SItemExcelDB::DBToCtrl(SItemTab* pItemTab,int key)
 	int nSheet = rTreeItemInfo.m_nSheet;
 	int nRow = findResult.second - m_vtTreeItemInfos.begin() + m_nDataRow;
 
-	for(size_t i = 0; i < pItemTab->m_vtCtrls.size(); ++i)
+	for(MapCNameToColumnT::iterator iter = m_mapCNameToColumn.begin(); iter != m_mapCNameToColumn.end(); ++iter)
 	{
-		SCtrl* pCtrl = pItemTab->m_vtCtrls[i];
-		ACCHECK(pCtrl);
-
-		int nCtrlCol = m_mapCNameToColumn[pCtrl->strCName];
-		CString strDBVal = m_pExcel->GetCellText(nSheet,nRow,nCtrlCol);
-		pCtrl->DataToCtrl(strDBVal);
+		CString strDBVal = m_pExcel->GetCellText(nSheet,nRow,iter->second);
+		mapValues.insert(std::make_pair(iter->first,strDBVal));
 	}
 
 	return 0;
@@ -234,7 +218,7 @@ int SItemExcelDB::GetKeyInExcel(int sheet,int row)
 	return atoi(CStringToStlString(strKey).c_str());
 }
 
-int SItemExcelDB::InsertNewKey(int key)
+int SItemExcelDB::InsertByKey(int key, MapCNameToValueT& mapValues)
 {
 	if(key <= 0)
 		return -1;
@@ -245,8 +229,32 @@ int SItemExcelDB::InsertNewKey(int key)
 
 	int nSheet = 0;
 	int nRow = findResult.second - m_vtTreeItemInfos.begin() + m_nDataRow;
-	m_pExcel->InsertEmptyRow(nSheet,nRow);
-	m_vtTreeItemInfos.insert(findResult.second,STreeItemInfo(key,_T(""),nSheet));
+
+	std::vector<CString> vtValues;
+	int nColTotal = m_pExcel->GetUsedRowCount(nSheet);
+	vtValues.reserve(nColTotal);
+	for(int nCol = 0; nCol < nColTotal; ++nCol)
+	{
+		vtValues.push_back(_T(" "));
+	}
+
+	for(MapCNameToValueT::iterator iter = mapValues.begin(); iter != mapValues.end(); ++iter)
+	{
+		MapCNameToColumnT::iterator iterCNToCol = m_mapCNameToColumn.find(iter->first);
+		if(iterCNToCol == m_mapCNameToColumn.end())
+			continue;
+
+		int nCol = iterCNToCol->second;
+		ACCHECK(nCol >= 0 && nCol < nColTotal);
+		vtValues[nCol] = iter->second;
+	}
+
+	m_pExcel->InsertRow(nSheet,nRow,vtValues);
+	SaveDB();
+
+	VectorTreeItemInfoT::iterator iterInserted;
+	iterInserted = m_vtTreeItemInfos.insert(findResult.second,STreeItemInfo(key,_T(""),nSheet));
+	UpdateTreeItemInfo(*iterInserted,mapValues);
 
 	return key;
 }
@@ -306,6 +314,48 @@ int SItemTab::LoadDefaultValues()
 	{
 		SCtrl* pCtrl = m_vtCtrls[i];
 		pCtrl->LoadDefaultValue();
+	}
+	return 0;
+}
+
+int SItemTab::CtrlToDB(int key)
+{
+	MapCNameToValueT mapValues;
+	GetAllCtrlValues(mapValues);
+	m_pDB->Save(key,mapValues);
+	return 0;
+}
+
+int SItemTab::DBToCtrl(int key)
+{
+	MapCNameToValueT mapValues;
+	m_pDB->Load(key,mapValues);
+	SetAllCtrlValues(mapValues);
+	return 0;
+}
+
+int SItemTab::GetAllCtrlValues(MapCNameToValueT& mapValues)
+{
+	for(size_t i = 0; i < m_vtCtrls.size(); ++i)
+	{
+		SCtrl* pCtrl = m_vtCtrls[i];
+		CString strValue;
+		pCtrl->CtrlToData(strValue);
+		mapValues.insert(std::make_pair(pCtrl->strCName,strValue));
+	}
+	return 0;
+}
+
+int SItemTab::SetAllCtrlValues(MapCNameToValueT& mapValues)
+{
+	for(size_t i = 0; i < m_vtCtrls.size(); ++i)
+	{
+		SCtrl* pCtrl = m_vtCtrls[i];
+		MapCNameToValueT::iterator iter = mapValues.find(pCtrl->strCName);
+		if(iter != mapValues.end())
+		{
+			pCtrl->DataToCtrl(iter->second);
+		}
 	}
 	return 0;
 }

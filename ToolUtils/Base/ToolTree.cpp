@@ -98,7 +98,7 @@ void ToolTree::OnSelect(int key)
 	SItemTab* pTabItem = m_pOwner->GetMainTab()->GetCurrentItem();
 	ACCHECK(pTabItem);
 
-	pTabItem->GetDB()->DBToCtrl(pTabItem,key);
+	pTabItem->DBToCtrl(key);
 }
 
 void ToolTree::ResetSelectKey()

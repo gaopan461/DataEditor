@@ -139,20 +139,22 @@ int ToolApp::MenuSave()
 		pCtrlKey->GetWindowText(strKey);
 		nKey = atoi(CStringToStlString(strKey).c_str());
 
-		if(pTabItem->GetDB()->InsertNewKey(nKey) == -1)
+		MapCNameToValueT mapValues;
+		pTabItem->GetAllCtrlValues(mapValues);
+		if(pTabItem->GetDB()->InsertByKey(nKey,mapValues) == -1)
 		{
 			m_pTab->RestoreLastSelect();
 			InfoMessageBox(_T("Key invalid"));
 			return -1;
 		}
+
+		m_pTree->SelectKey(nKey);
 	}
 	else
 	{
-		nKey = m_pTree->GetSelectKey();
+		pTabItem->CtrlToDB(m_pTree->GetSelectKey());
 	}
 	
-	pTabItem->GetDB()->CtrlToDB(pTabItem,nKey);
-	m_pTree->SelectKey(nKey);
 	return 0;
 }
 

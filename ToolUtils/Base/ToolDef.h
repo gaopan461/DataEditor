@@ -61,6 +61,8 @@ enum EDBType
 	DB_PYTHON,
 };
 
+typedef std::map<CString,CString> MapCNameToValueT;
+
 //-----------------------------------------------------------
 
 struct SItemTab;
@@ -75,14 +77,14 @@ struct SItemDB
 	SItemDB(int type,const CString& path,const CString& key,const CString& des);
 	virtual ~SItemDB(){}
 
-	virtual int CtrlToDB(SItemTab* pItemTab,int key){return 0;}
-	virtual int DBToCtrl(SItemTab* pItemTab,int key){return 0;}
+	virtual int Save(int key, MapCNameToValueT& mapValues){return 0;}
+	virtual int Load(int key, MapCNameToValueT& mapValues){return 0;}
 
 	virtual int DBToTree(ToolTree* pTree){return 0;}
 	virtual int SortDB(){return 0;}
 	virtual int SaveDB(){return 0;}
 
-	virtual int InsertNewKey(int key){return -1;}
+	virtual int InsertByKey(int key, MapCNameToValueT& mapValues){return -1;}
 	virtual int DeleteByKey(int key){return -1;}
 };
 
@@ -119,20 +121,20 @@ struct SItemExcelDB : public SItemDB
 	SItemExcelDB(const CString& path,const CString& key, const CString& des,int headRow,int dataRow);
 	virtual ~SItemExcelDB();
 
-	virtual int CtrlToDB(SItemTab* pItemTab,int key);
-	virtual int DBToCtrl(SItemTab* pItemTab,int key);
+	virtual int Save(int key, MapCNameToValueT& mapValues);
+	virtual int Load(int key, MapCNameToValueT& mapValues);
 
 	virtual int DBToTree(ToolTree* pTree);
 	virtual int SortDB();
 	virtual int SaveDB();
 
-	virtual int InsertNewKey(int key);
+	virtual int InsertByKey(int key, MapCNameToValueT& mapValues);
 	virtual int DeleteByKey(int key);
 
 	int InitMapNameToColumn();
 
 	int InitTreeItemInfos();
-	int UpdateTreeItemInfo(SItemTab* pItemTab,STreeItemInfo& rTreeItemInfo);
+	int UpdateTreeItemInfo(STreeItemInfo& rTreeItemInfo,MapCNameToValueT& mapValues);
 	PairTreeInfoFoundT FindTreeInfoByKey(int key);
 
 	int GetKeyInExcel(int sheet,int row);
@@ -158,6 +160,12 @@ struct SItemTab
 	SItemDB* GetDB(){return m_pDB;}
 	CEdit* GetKeyWnd(){return m_pKeyWnd;}
 	int LoadDefaultValues();
+
+	int CtrlToDB(int key);
+	int DBToCtrl(int key);
+
+	int GetAllCtrlValues(MapCNameToValueT& mapValues);
+	int SetAllCtrlValues(MapCNameToValueT& mapValues);
 };
 
 //-----------------------------------------------------------

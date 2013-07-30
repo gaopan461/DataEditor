@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ToolTree.h"
 #include "ToolApp.h"
 #include "ToolTab.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ToolCtrl.h"
 #include "ACString.h"
 #include "ToolApp.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ToolConfig.h"
 #include "ACString.h"
 #include "ToolCtrl.h"
@@ -13,7 +14,7 @@ ToolConfig::ToolConfig(ToolApp* app)
 
 int ToolConfig::Load(const CString& strAppName)
 {
-	CString cstrFileName = strAppName + ".lua";
+	CString cstrFileName = strAppName + _T(".lua");
 	std::string stlstrFileName = CStringToStlString(cstrFileName);
 	m_objLua.Load(stlstrFileName);
 

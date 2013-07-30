@@ -226,7 +226,7 @@ int SItemExcelDB::DBToTree(ToolTree* pTree)
 		pTree->UpdateOrInsertItemByKey(rTreeItemInfo.m_nKey,rTreeItemInfo.m_strDes,rTreeItemInfo.m_vtLayers);
 	}
 
-	pTree->ExpandAllItems();
+	//pTree->ExpandAllItems();
 	pTree->UpdatedItems();
 	pTree->ResetSelectKey();
 	return 0;

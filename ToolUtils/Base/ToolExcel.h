@@ -59,7 +59,7 @@ public:
 public:
 	ExcelWorkbook* OpenWorkbook(CString strPath);
 protected:
-	typedef std::map<CString,ExcelWorkbook> MapNameToWorkbookT;
+	typedef std::map<CString,ExcelWorkbook*> MapNameToWorkbookT;
 private:
 	CApplication m_objApplication;
 	CWorkbooks m_objWorkbooks;

@@ -64,8 +64,8 @@ ExcelWorkbook::ExcelWorkbook(CString strPath,LPDISPATCH workbook)
 
 ExcelWorkbook::~ExcelWorkbook()
 {
-	m_objWorkSheets.DetachDispatch();
-	m_objWorkbook.DetachDispatch();
+	m_objWorkSheets.ReleaseDispatch();
+	m_objWorkbook.ReleaseDispatch();
 }
 
 int ExcelWorkbook::GetSheetCount()
@@ -276,15 +276,16 @@ int ToolExcel::DestroyExcelServer()
 {
 	for(MapNameToWorkbookT::iterator iter = m_mapWorkbooks.begin(); iter != m_mapWorkbooks.end(); ++iter)
 	{
-		ExcelWorkbook& rBook = iter->second;
-		rBook.Close();
+		ExcelWorkbook* pBook = iter->second;
+		pBook->Close();
+		_safe_delete(pBook);
 	}
 
 	m_mapWorkbooks.clear();
 	m_objWorkbooks.Close();
-	m_objWorkbooks.DetachDispatch();
-	m_objApplication.DetachDispatch();
+	m_objWorkbooks.ReleaseDispatch();
 	m_objApplication.Quit();
+	m_objApplication.ReleaseDispatch();
 	return 0;
 }
 
@@ -296,15 +297,15 @@ ExcelWorkbook* ToolExcel::OpenWorkbook(CString strPath)
 
 	MapNameToWorkbookT::iterator iter = m_mapWorkbooks.find(strFileName);
 	if(iter != m_mapWorkbooks.end())
-		return &iter->second;
+		return iter->second;
 
-	CWorkbook workbook;
-	workbook.AttachDispatch(m_objWorkbooks.Open(strPath,covOptional,covOptional,covOptional,
+	LPDISPATCH workbook = m_objWorkbooks.Open(strPath,covOptional,covOptional,covOptional,
 		covOptional,covOptional,covOptional,covOptional,covOptional,covOptional,
-		covOptional,covOptional,covOptional,covOptional,covOptional));
+		covOptional,covOptional,covOptional,covOptional,covOptional);
 
-	iter = m_mapWorkbooks.insert(std::make_pair(strFileName,ExcelWorkbook(strPath,workbook))).first;
-	return &iter->second;
+	ExcelWorkbook* pBook = new ExcelWorkbook(strPath,workbook);
+	m_mapWorkbooks.insert(std::make_pair(strFileName,pBook));
+	return pBook;
 }
 
 END_NS_AC

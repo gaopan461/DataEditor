@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(VSInstallDir)..\Lua\5.1\include&quot;;&quot;$(ProjectDir)\COptionTree&quot;;&quot;$(ProjectDir)\Utils&quot;;&quot;$(ProjectDir)\Base&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(VSInstallDir)..\Lua\5.1\include&quot;;&quot;$(ProjectDir)\COptionTree&quot;;&quot;$(ProjectDir)\Utils&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -151,6 +151,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\CheckComboBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 			</File>
@@ -162,6 +166,10 @@
 			>
 			<File
 				RelativePath=".\CApplication.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CheckComboBox.h"
 				>
 			</File>
 			<File
@@ -232,94 +240,6 @@
 			</File>
 			<File
 				RelativePath=".\Utils\ACThreadGuard.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Base"
-			>
-			<File
-				RelativePath=".\Base\CheckComboBox.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\CheckComboBox.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolApp.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolApp.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolConfig.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolConfig.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolCtrl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolDef.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolDef.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolExcel.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolExcel.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolExcelDef.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolLayout.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolLayout.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolLog.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolLog.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolTab.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolTab.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolTree.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolTree.h"
 				>
 			</File>
 		</Filter>

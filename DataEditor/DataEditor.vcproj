@@ -46,7 +46,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(VSInstallDir)..\Lua\5.1\include&quot;;&quot;$(ProjectDir)..\ToolUtils\Base&quot;;&quot;$(ProjectDir)..\ToolUtils\COptionTree&quot;;&quot;$(ProjectDir)..\ToolUtils\Utils&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\Base&quot;;&quot;$(VSInstallDir)..\Lua\5.1\include&quot;;&quot;$(ProjectDir)..\ToolUtils&quot;;&quot;$(ProjectDir)..\ToolUtils\COptionTree&quot;;&quot;$(ProjectDir)..\ToolUtils\Utils&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -259,6 +259,86 @@
 			</File>
 			<File
 				RelativePath=".\res\DataEditor.rc2"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Base"
+			>
+			<File
+				RelativePath=".\Base\ToolApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolApp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolConfig.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolConfig.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolCtrl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolCtrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolDef.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolDef.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolExcel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolExcel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolExcelDef.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolLayout.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolLayout.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolLog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolLog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolTab.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolTab.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolTree.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolTree.h"
 				>
 			</File>
 		</Filter>

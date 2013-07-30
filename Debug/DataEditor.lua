@@ -5,7 +5,7 @@ EditorConfig =
 	{
 		Name = "技能",
 		CName = "MagicType",
-		DB = ExcelDB{Path = "D:\\opensource\\DataEditor\\Debug\\MagicTypeConfig.xls", Key = "ID", Des = "Des", HeadRow = 2, DataRow = 5,},
+		DB = ExcelDB{Path = "C:\\Users\\Public\\Documents\\TestProject\\DataEditor\\Debug\\MagicTypeConfig.xls", Key = "ID", Des = "Des", HeadRow = 2, DataRow = 5,},
 		Layers = {"Layer1","Layer2","Layer3","Layer4",},
 		Items = {
 			Edit{Name = "层级一", CName = "Layer1", Type = "String",},
@@ -39,7 +39,7 @@ EditorConfig =
 	{
 		Name = "Buff",
 		CName = "AuraEffectType",
-		DB = ExcelDB{Path = "D:\\opensource\\DataEditor\\Debug\\AuraEffectTypeConfig.xls", Key = "ID", Des = "Des", HeadRow = 2, DataRow = 5,},
+		DB = ExcelDB{Path = "C:\\Users\\Public\\Documents\\TestProject\\DataEditor\\Debug\\AuraEffectTypeConfig.xls", Key = "ID", Des = "Des", HeadRow = 2, DataRow = 5,},
 		Layers = {},
 		Items = {
 			Edit{Name = "ID", CName = "ID", Type = "Int", Newline = true,},

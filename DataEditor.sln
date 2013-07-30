@@ -8,6 +8,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DataEditor", "DataEditor\Da
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ToolUtils", "ToolUtils\ToolUtils.vcproj", "{9926FBFC-04B9-44AB-BAFD-0B267A6263D1}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SkillEditor", "SkillEditor\SkillEditor.vcproj", "{2EEE82C2-F4D2-492E-AF52-01F396F15808}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -22,6 +24,10 @@ Global
 		{9926FBFC-04B9-44AB-BAFD-0B267A6263D1}.Debug|Win32.Build.0 = Debug|Win32
 		{9926FBFC-04B9-44AB-BAFD-0B267A6263D1}.Release|Win32.ActiveCfg = Release|Win32
 		{9926FBFC-04B9-44AB-BAFD-0B267A6263D1}.Release|Win32.Build.0 = Release|Win32
+		{2EEE82C2-F4D2-492E-AF52-01F396F15808}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2EEE82C2-F4D2-492E-AF52-01F396F15808}.Debug|Win32.Build.0 = Debug|Win32
+		{2EEE82C2-F4D2-492E-AF52-01F396F15808}.Release|Win32.ActiveCfg = Release|Win32
+		{2EEE82C2-F4D2-492E-AF52-01F396F15808}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -45,6 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\Base&quot;;&quot;$(VSInstallDir)..\Lua\5.1\include&quot;;&quot;$(ProjectDir)..\ToolUtils&quot;;&quot;$(ProjectDir)..\ToolUtils\COptionTree&quot;;&quot;$(ProjectDir)..\ToolUtils\Utils&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -67,7 +68,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="ToolUtils.lib lua51.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(VSInstallDir)..\Lua\5.1\lib&quot;;&quot;$(ProjectDir)..\Debug&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -255,6 +258,54 @@
 			</File>
 			<File
 				RelativePath=".\res\SkillEditor.rc2"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Base"
+			>
+			<File
+				RelativePath=".\Base\ToolApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolApp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolDef.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolDef.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolExcel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolExcel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolExcelDef.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolLog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolLog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolTree.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ToolTree.h"
 				>
 			</File>
 		</Filter>

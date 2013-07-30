@@ -63,6 +63,7 @@ BEGIN_MESSAGE_MAP(CSkillEditorDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -98,6 +99,14 @@ BOOL CSkillEditorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+
+	_tsetlocale(LC_ALL, _T(""));
+
+	// 设置心跳，10ms一次
+	::SetTimer(m_hWnd,1,10,NULL);
+
+	// 初始化工具
+	InitializeTool(_T("SkillEditor"));
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -151,3 +160,20 @@ HCURSOR CSkillEditorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+void CSkillEditorDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+
+	if(nIDEvent == 1)
+	{
+		this->Update();
+	}
+
+	__super::OnTimer(nIDEvent);
+}
+
+CWnd* CSkillEditorDlg::GetMainWnd()
+{
+	return this;
+}

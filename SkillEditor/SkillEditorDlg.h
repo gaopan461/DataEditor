@@ -4,9 +4,13 @@
 
 #pragma once
 
+#include "ToolApp.h"
+
+USE_NS_AC
+
 
 // CSkillEditorDlg 对话框
-class CSkillEditorDlg : public CDialog
+class CSkillEditorDlg : public CDialog, public ToolApp
 {
 // 构造
 public:
@@ -29,4 +33,8 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+public:
+	virtual CWnd* GetMainWnd();
 };

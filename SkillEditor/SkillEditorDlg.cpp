@@ -214,7 +214,7 @@ void CSkillEditorDlg::InitializeTab()
 void CSkillEditorDlg::OpenExcelDBs()
 {
 	SExcelConfig magic;
-	magic.m_strExcelPath = _T(".\\MagicTypeConfig.xls");
+	magic.m_strExcelPath = _T("D:\\opensource\\DataEditor\\Debug\\MagicTypeConfig.xls");
 	magic.m_strExcelCName = _T("MagicType");
 	magic.m_strKeyCName = _T("ID");
 	magic.m_strDesCName = _T("Des");
@@ -225,13 +225,31 @@ void CSkillEditorDlg::OpenExcelDBs()
 	m_pExcel->OpenWorkbook(magic);
 
 	SExcelConfig buff;
-	buff.m_strExcelPath = _T(".\\AuraEffectTypeConfig.xls");
+	buff.m_strExcelPath = _T("D:\\opensource\\DataEditor\\Debug\\AuraEffectTypeConfig.xls");
 	buff.m_strExcelCName = _T("AuraEffectType");
 	buff.m_strKeyCName = _T("ID");
 	buff.m_strDesCName = _T("Des");
 	buff.m_nHeadRow = 2;
 	buff.m_nDataRow = 5;
 	m_pExcel->OpenWorkbook(buff);
+}
+
+void CSkillEditorDlg::OnLoadFromDB(MapCNameToValueT& mapValues)
+{
+	CString strCurrentDB = m_pTree->GetCurrentDB();
+	if(strCurrentDB == _T("MagicType"))
+		m_objMagicWindow.OnLoadFromDB(mapValues);
+	else if(strCurrentDB == _T("AuraEffectType"))
+		m_objEffectCommonWindow.OnLoadFromDB(mapValues);
+}
+
+void CSkillEditorDlg::OnSaveToDB(MapCNameToValueT& mapValues)
+{
+	CString strCurrentDB = m_pTree->GetCurrentDB();
+	if(strCurrentDB == _T("MagicType"))
+		m_objMagicWindow.OnSaveToDB(mapValues);
+	else if(strCurrentDB == _T("AuraEffectType"))
+		m_objEffectCommonWindow.OnSaveToDB(mapValues);
 }
 
 void CSkillEditorDlg::OnTcnSelchangeMainTab(NMHDR *pNMHDR, LRESULT *pResult)

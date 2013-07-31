@@ -49,5 +49,8 @@ protected:
 	void InitializeTab();
 	void OpenExcelDBs();
 public:
+	void OnLoadFromDB(MapCNameToValueT& mapValues);
+	void OnSaveToDB(MapCNameToValueT& mapValues);
+public:
 	afx_msg void OnTcnSelchangeMainTab(NMHDR *pNMHDR, LRESULT *pResult);
 };

@@ -51,6 +51,15 @@ struct SExcelConfig
 	int m_nDataRow;				// Excel中数据起始的行(索引从0开始)
 };
 
+//-------------------------------------------------
+
+void InitDeclare(CWnd* pWnd,MapCNameToValueT& mapValues);
+
+void DeclareID(bool bSaveOrLoad,int nDlgID,const CString& strCName);
+void DeclareEditStr(bool bSaveOrLoad,int nDlgID,const CString& strCName);
+void DeclareEditInt(bool bSaveOrLoad,int nDlgID,const CString& strCName);
+void DeclareEditFloat(bool bSaveOrLoad,int nDlgID,const CString& strCName);
+
 //-----------------------------------------------------------
 
 template <class T>

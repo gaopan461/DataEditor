@@ -8,7 +8,6 @@
 #define IDD_SKILLEDITOR_DIALOG          102
 #define IDR_MAINFRAME                   128
 #define IDD_DIALOG_MAGIC                129
-#define IDD_DIALOG2                     130
 #define IDD_DIALOG_EFFECTCOMMON         130
 #define IDC_TREE1                       1000
 #define IDC_MAIN_TREE                   1000
@@ -16,6 +15,11 @@
 #define IDC_MAIN_TAB                    1002
 #define IDC_EDIT1                       1003
 #define IDC_BUTTON1                     1005
+#define IDC_EFFECT_ID                   1006
+#define IDC_EFFECT_DES                  1007
+#define IDC_EFFECT_INT                  1008
+#define IDC_EDIT4                       1009
+#define IDC_EFFECT_FLOAT                1009
 
 // Next default values for new objects
 // 
@@ -23,7 +27,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1006
+#define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

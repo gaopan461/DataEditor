@@ -189,6 +189,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\EffectCommonWindow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MagicWindow.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SkillEditor.cpp"
 				>
 			</File>
@@ -222,6 +230,14 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\EffectCommonWindow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MagicWindow.h"
+				>
+			</File>
 			<File
 				RelativePath=".\Resource.h"
 				>
@@ -273,10 +289,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Base\ToolDef.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Base\ToolDef.h"
 				>
 			</File>
@@ -315,5 +327,9 @@
 		</File>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="SkillEditor.rc"
+		/>
 	</Globals>
 </VisualStudioProject>

@@ -40,13 +40,67 @@ public:
 	void InsertEmptyRow(int sheetidx,int row);
 	void AppendEmptyRow(int sheetidx);
 public:
-	void Save();
-	void Close();
+	void SaveWorkbook();
+	void CloseWorkbook();
 private:
 	CString m_strPath;
 	CWorkbook m_objWorkbook;
 	CWorksheets m_objWorkSheets;
 };
+
+//--------------------------------------------------------------
+
+typedef std::map<CString,size_t> MapCNameToColumnT;
+
+struct STreeItemInfo
+{
+	int m_nKey;
+	CString m_strDes;
+	std::vector<CString> m_vtLayers;
+	int m_nSheet;
+};
+
+typedef std::vector<STreeItemInfo> VectorTreeItemInfoT;
+
+typedef std::pair<bool,VectorTreeItemInfoT::iterator> PairTreeInfoFoundT;
+
+class ExcelDB : public ExcelWorkbook
+{
+public:
+	ExcelDB(const CString& path,const CString& key, const CString& des,int headRow,int dataRow);
+	virtual ~ExcelDB();
+public:
+	virtual int Save(int key, MapCNameToValueT& mapValues);
+	virtual int Load(int key, MapCNameToValueT& mapValues);
+
+	virtual int DBToTree(ToolTree* pTree);
+	virtual int SortDB();
+
+	virtual int InsertByKey(int key, MapCNameToValueT& mapValues);
+	virtual int DeleteByKey(int key);
+
+	int InitMapNameToColumn();
+
+	int InitTreeItemInfos();
+	STreeItemInfo GetTreeItemInfo(int nSheet,int nRow);
+	int UpdateTreeItemInfo(STreeItemInfo& rTreeItemInfo,MapCNameToValueT& mapValues,bool bForcedUpdateTree = false);
+	PairTreeInfoFoundT FindTreeInfoByKey(int key);
+
+	int GetKeyInExcel(int sheet,int row);
+private:
+	CString m_strFilePath;
+	CString m_strKeyCName;
+	CString m_strDesCName;
+
+	std::vector<CString> m_vtLayerCName;// 控制主树控件层级的控件名
+
+	int m_nHeadRow;
+	int m_nDataRow;
+	MapCNameToColumnT m_mapCNameToColumn;
+	VectorTreeItemInfoT m_vtTreeItemInfos;
+};
+
+//--------------------------------------------------------------
 
 class ToolExcel : public Module<ToolApp>
 {

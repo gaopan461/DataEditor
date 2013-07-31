@@ -56,6 +56,7 @@ CSkillEditorDlg::CSkillEditorDlg(CWnd* pParent /*=NULL*/)
 void CSkillEditorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_MAIN_TAB, m_objMainTab);
 }
 
 BEGIN_MESSAGE_MAP(CSkillEditorDlg, CDialog)
@@ -64,6 +65,7 @@ BEGIN_MESSAGE_MAP(CSkillEditorDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
 	ON_WM_TIMER()
+	ON_NOTIFY(TCN_SELCHANGE, IDC_MAIN_TAB, &CSkillEditorDlg::OnTcnSelchangeMainTab)
 END_MESSAGE_MAP()
 
 
@@ -107,6 +109,9 @@ BOOL CSkillEditorDlg::OnInitDialog()
 
 	// 初始化工具
 	InitializeTool(_T("SkillEditor"));
+
+	// 初始化主Tab
+	InitializeTab();
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -176,4 +181,42 @@ void CSkillEditorDlg::OnTimer(UINT_PTR nIDEvent)
 CWnd* CSkillEditorDlg::GetMainWnd()
 {
 	return this;
+}
+
+void CSkillEditorDlg::InitializeTab()
+{
+	m_objMainTab.InsertItem(0,_T("技能"));
+	m_objMainTab.InsertItem(1,_T("效果"));
+
+	CRect rect;
+	m_objMainTab.GetClientRect(&rect);
+	ClientToScreen(&rect);
+	rect.left -= 2;
+	rect.top -= 4;
+
+	m_objMagicWindow.Create(IDD_DIALOG_MAGIC,&m_objMainTab);
+	m_objEffectCommonWindow.Create(IDD_DIALOG_EFFECTCOMMON,&m_objMainTab);
+	m_objMagicWindow.MoveWindow(rect);
+	m_objEffectCommonWindow.MoveWindow(rect);
+
+	m_objMagicWindow.ShowWindow(SW_SHOW);
+	m_objEffectCommonWindow.ShowWindow(SW_HIDE);
+}
+
+void CSkillEditorDlg::OnTcnSelchangeMainTab(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	// TODO: 在此添加控件通知处理程序代码
+
+	switch(m_objMainTab.GetCurSel())
+	{
+	case 0:
+		m_objMagicWindow.ShowWindow(SW_SHOW);
+		m_objEffectCommonWindow.ShowWindow(SW_HIDE);
+		break;
+	case 1:
+		m_objMagicWindow.ShowWindow(SW_HIDE);
+		m_objEffectCommonWindow.ShowWindow(SW_SHOW);
+		break;
+	}
+	*pResult = 0;
 }

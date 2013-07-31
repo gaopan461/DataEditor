@@ -5,6 +5,10 @@
 #pragma once
 
 #include "ToolApp.h"
+#include "afxcmn.h"
+
+#include "MagicWindow.h"
+#include "EffectCommonWindow.h"
 
 USE_NS_AC
 
@@ -37,4 +41,12 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 public:
 	virtual CWnd* GetMainWnd();
+protected:
+	CTabCtrl m_objMainTab;
+	MagicWindow m_objMagicWindow;
+	EffectCommonWindow m_objEffectCommonWindow;
+protected:
+	void InitializeTab();
+public:
+	afx_msg void OnTcnSelchangeMainTab(NMHDR *pNMHDR, LRESULT *pResult);
 };

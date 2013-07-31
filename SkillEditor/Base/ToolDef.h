@@ -15,12 +15,6 @@
 
 BEGIN_NS_AC
 
-class ToolTree;
-class ExcelWorkbook;
-class ToolExcel;
-
-//-----------------------------------------------------------
-
 enum EDataType
 {
 	DATA_INT = 0,
@@ -45,79 +39,6 @@ enum EDBType
 };
 
 typedef std::map<CString,CString> MapCNameToValueT;
-
-//-----------------------------------------------------------
-
-struct SItemTab;
-
-struct SItemDB
-{
-	int m_nDBType;
-	CString m_strFilePath;
-	CString m_strKeyCName;
-	CString m_strDesCName;
-
-	std::vector<CString> m_vtLayerCName;// 控制主树控件层级的控件名
-
-	SItemDB(int type,const CString& path,const CString& key,const CString& des);
-	virtual ~SItemDB(){}
-
-	virtual int Save(int key, MapCNameToValueT& mapValues){return 0;}
-	virtual int Load(int key, MapCNameToValueT& mapValues){return 0;}
-
-	virtual int DBToTree(ToolTree* pTree){return 0;}
-	virtual int SortDB(){return 0;}
-	virtual int SaveDB(){return 0;}
-
-	virtual int InsertByKey(int key, MapCNameToValueT& mapValues){return -1;}
-	virtual int DeleteByKey(int key){return -1;}
-};
-
-typedef std::map<CString,size_t> MapCNameToColumnT;
-
-struct STreeItemInfo
-{
-	int m_nKey;
-	CString m_strDes;
-	std::vector<CString> m_vtLayers;
-	int m_nSheet;
-};
-
-typedef std::vector<STreeItemInfo> VectorTreeItemInfoT;
-
-typedef std::pair<bool,VectorTreeItemInfoT::iterator> PairTreeInfoFoundT;
-
-struct SItemExcelDB : public SItemDB
-{
-	int m_nHeadRow;
-	int m_nDataRow;
-	ExcelWorkbook* m_pExcel;
-	MapCNameToColumnT m_mapCNameToColumn;
-
-	VectorTreeItemInfoT m_vtTreeItemInfos;
-
-	SItemExcelDB(const CString& path,const CString& key, const CString& des,int headRow,int dataRow);
-	virtual ~SItemExcelDB();
-
-	virtual int Save(int key, MapCNameToValueT& mapValues);
-	virtual int Load(int key, MapCNameToValueT& mapValues);
-
-	virtual int DBToTree(ToolTree* pTree);
-	virtual int SortDB();
-	virtual int SaveDB();
-
-	virtual int InsertByKey(int key, MapCNameToValueT& mapValues);
-	virtual int DeleteByKey(int key);
-
-	int InitMapNameToColumn();
-
-	int InitTreeItemInfos();
-	STreeItemInfo GetTreeItemInfo(int nSheet,int nRow);
-	int UpdateTreeItemInfo(STreeItemInfo& rTreeItemInfo,MapCNameToValueT& mapValues,bool bForcedUpdateTree = false);
-	PairTreeInfoFoundT FindTreeInfoByKey(int key);
-
-	int GetKeyInExcel(int sheet,int row);
-};
 
 //-----------------------------------------------------------
 

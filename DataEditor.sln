@@ -9,6 +9,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ToolUtils", "ToolUtils\ToolUtils.vcproj", "{9926FBFC-04B9-44AB-BAFD-0B267A6263D1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SkillEditor", "SkillEditor\SkillEditor.vcproj", "{2EEE82C2-F4D2-492E-AF52-01F396F15808}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9926FBFC-04B9-44AB-BAFD-0B267A6263D1} = {9926FBFC-04B9-44AB-BAFD-0B267A6263D1}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

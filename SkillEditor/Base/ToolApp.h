@@ -68,6 +68,10 @@ public:
 	CFont m_objFont;
 private:
 	bool m_bIsNewing;	// 正在新建一项数据
+public:
+	void PushCheckCombo(CWnd* pCheckCombo);
+protected:
+	std::vector<CWnd*> m_vtCheckCombos;
 };
 
 END_NS_AC

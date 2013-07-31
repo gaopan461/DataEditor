@@ -51,14 +51,59 @@ struct SExcelConfig
 	int m_nDataRow;				// Excel中数据起始的行(索引从0开始)
 };
 
-//-------------------------------------------------
+//-----------------------------------------------------------
+
+struct SComboItem
+{
+	CString m_strName;
+	CString m_strValue;
+	int m_nValue;
+	float m_fValue;
+	SComboItem(const CString& strName,const CString& strValue)
+	{
+		m_strName = strName;
+		m_strValue = strValue;
+		m_nValue = 0;
+		m_fValue = 0.0f;
+	}
+	SComboItem(const CString& strName,int nValue)
+	{
+		m_strName = strName;
+		m_strValue = _T("");
+		m_nValue = nValue;
+		m_fValue = 0.0f;
+	}
+	SComboItem(const CString& strName,float fValue)
+	{
+		m_strName = strName;
+		m_strValue = _T("");
+		m_nValue = 0;
+		m_fValue = fValue;
+	}
+};
+
+typedef std::vector<SComboItem> VectorComboItemT;
+
+void CreateCheckCombo(CWnd* pWnd, int nDlgID, VectorComboItemT& vtConfs);
+void CreateCombobox(CWnd* pWnd, int nDlgID, VectorComboItemT& vtConfs);
 
 void InitDeclare(CWnd* pWnd,MapCNameToValueT& mapValues);
 
 void DeclareID(bool bSaveOrLoad,int nDlgID,const CString& strCName);
+
 void DeclareEditStr(bool bSaveOrLoad,int nDlgID,const CString& strCName);
 void DeclareEditInt(bool bSaveOrLoad,int nDlgID,const CString& strCName);
 void DeclareEditFloat(bool bSaveOrLoad,int nDlgID,const CString& strCName);
+
+void DeclareCheckbox(bool bSaveOrLoad,int nDlgID,const CString& strCName);
+
+void DeclareComboboxStr(bool bSaveOrLoad,int nDlgID,const CString& strCName,VectorComboItemT& vtConfs);
+void DeclareComboboxInt(bool bSaveOrLoad,int nDlgID,const CString& strCName,VectorComboItemT& vtConfs);
+void DeclareComboboxFloat(bool bSaveOrLoad,int nDlgID,const CString& strCName,VectorComboItemT& vtConfs);
+
+void DeclareCheckComboStrArray(bool bSaveOrLoad,int nDlgID,const CString& strCName,VectorComboItemT& vtConfs);
+void DeclareCheckComboIntArray(bool bSaveOrLoad,int nDlgID,const CString& strCName,VectorComboItemT& vtConfs);
+void DeclareCheckComboFloatArray(bool bSaveOrLoad,int nDlgID,const CString& strCName,VectorComboItemT& vtConfs);
 
 //-----------------------------------------------------------
 

@@ -213,8 +213,19 @@ void CSkillEditorDlg::InitializeTab()
 
 void CSkillEditorDlg::OpenExcelDBs()
 {
+	HMODULE module = GetModuleHandle(0);   
+	wchar_t pFileName[MAX_PATH];   
+	GetModuleFileName(module, pFileName, MAX_PATH);   
+
+	CString strPath(pFileName);   
+	int nPos = strPath.ReverseFind( _T('\\') );   
+	if( nPos < 0 )   
+		strPath = _T("");   
+	else   
+		strPath = strPath.Left( nPos );
+
 	SExcelConfig magic;
-	magic.m_strExcelPath = _T("D:\\opensource\\DataEditor\\Debug\\MagicTypeConfig.xls");
+	magic.m_strExcelPath = strPath + _T("\\MagicTypeConfig.xls");
 	magic.m_strExcelCName = _T("MagicType");
 	magic.m_strKeyCName = _T("ID");
 	magic.m_strDesCName = _T("Des");
@@ -225,7 +236,7 @@ void CSkillEditorDlg::OpenExcelDBs()
 	m_pExcel->OpenWorkbook(magic);
 
 	SExcelConfig buff;
-	buff.m_strExcelPath = _T("D:\\opensource\\DataEditor\\Debug\\AuraEffectTypeConfig.xls");
+	buff.m_strExcelPath = strPath + _T("\\AuraEffectTypeConfig.xls");
 	buff.m_strExcelCName = _T("AuraEffectType");
 	buff.m_strKeyCName = _T("ID");
 	buff.m_strDesCName = _T("Des");

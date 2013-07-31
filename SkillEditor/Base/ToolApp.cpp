@@ -57,6 +57,12 @@ int ToolApp::InitializeTool(const CString& strAppName)
 
 int ToolApp::FinalizeTool()
 {
+	for(size_t i = 0; i < m_vtCheckCombos.size(); ++i)
+	{
+		_safe_delete(m_vtCheckCombos[i]);
+	}
+	m_vtCheckCombos.clear();
+
 	m_objFont.DeleteObject();
 	return 0;
 }
@@ -114,6 +120,11 @@ int ToolApp::MenuCopy()
 int ToolApp::MenuCancel()
 {
 	return 0;
+}
+
+void ToolApp::PushCheckCombo(CWnd* pCheckCombo)
+{
+	m_vtCheckCombos.push_back(pCheckCombo);
 }
 
 END_NS_AC

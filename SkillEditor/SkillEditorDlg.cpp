@@ -6,6 +6,9 @@
 #include "SkillEditor.h"
 #include "SkillEditorDlg.h"
 
+#include "ToolExcel.h"
+#include "ToolTree.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -113,6 +116,11 @@ BOOL CSkillEditorDlg::OnInitDialog()
 	// 初始化主Tab
 	InitializeTab();
 
+	// 打开ExcelDB
+	OpenExcelDBs();
+
+	m_pTree->SetCurrentDB(_T("MagicType"));
+
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -203,6 +211,29 @@ void CSkillEditorDlg::InitializeTab()
 	m_objEffectCommonWindow.ShowWindow(SW_HIDE);
 }
 
+void CSkillEditorDlg::OpenExcelDBs()
+{
+	SExcelConfig magic;
+	magic.m_strExcelPath = _T(".\\MagicTypeConfig.xls");
+	magic.m_strExcelCName = _T("MagicType");
+	magic.m_strKeyCName = _T("ID");
+	magic.m_strDesCName = _T("Des");
+	magic.m_vtLayerCName.push_back(_T("Layer1"));
+	magic.m_vtLayerCName.push_back(_T("Layer2"));
+	magic.m_nHeadRow = 2;
+	magic.m_nDataRow = 5;
+	m_pExcel->OpenWorkbook(magic);
+
+	SExcelConfig buff;
+	buff.m_strExcelPath = _T(".\\AuraEffectTypeConfig.xls");
+	buff.m_strExcelCName = _T("AuraEffectType");
+	buff.m_strKeyCName = _T("ID");
+	buff.m_strDesCName = _T("Des");
+	buff.m_nHeadRow = 2;
+	buff.m_nDataRow = 5;
+	m_pExcel->OpenWorkbook(buff);
+}
+
 void CSkillEditorDlg::OnTcnSelchangeMainTab(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	// TODO: 在此添加控件通知处理程序代码
@@ -210,10 +241,12 @@ void CSkillEditorDlg::OnTcnSelchangeMainTab(NMHDR *pNMHDR, LRESULT *pResult)
 	switch(m_objMainTab.GetCurSel())
 	{
 	case 0:
+		m_pTree->SetCurrentDB(_T("MagicType"));
 		m_objMagicWindow.ShowWindow(SW_SHOW);
 		m_objEffectCommonWindow.ShowWindow(SW_HIDE);
 		break;
 	case 1:
+		m_pTree->SetCurrentDB(_T("AuraEffectType"));
 		m_objMagicWindow.ShowWindow(SW_HIDE);
 		m_objEffectCommonWindow.ShowWindow(SW_SHOW);
 		break;

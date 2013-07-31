@@ -22,7 +22,7 @@ CString MakeCellName(int nRow,int nCol);
 class ExcelWorkbook
 {
 public:
-	ExcelWorkbook(CString strPath,LPDISPATCH workbook);
+	ExcelWorkbook(LPDISPATCH workbook);
 	virtual ~ExcelWorkbook();
 public:
 	int GetSheetCount();
@@ -43,7 +43,6 @@ public:
 	void SaveWorkbook();
 	void CloseWorkbook();
 private:
-	CString m_strPath;
 	CWorkbook m_objWorkbook;
 	CWorksheets m_objWorkSheets;
 };
@@ -67,11 +66,11 @@ typedef std::pair<bool,VectorTreeItemInfoT::iterator> PairTreeInfoFoundT;
 class ExcelDB : public ExcelWorkbook
 {
 public:
-	ExcelDB(const CString& path,const CString& key, const CString& des,int headRow,int dataRow);
+	ExcelDB(LPDISPATCH pWorkbook, SExcelConfig& rExcelConfig);
 	virtual ~ExcelDB();
 public:
-	virtual int Save(int key, MapCNameToValueT& mapValues);
-	virtual int Load(int key, MapCNameToValueT& mapValues);
+	virtual int ReadDBRecord(int key, MapCNameToValueT& mapValues);
+	virtual int WriteDBRecord(int key, MapCNameToValueT& mapValues);
 
 	virtual int DBToTree(ToolTree* pTree);
 	virtual int SortDB();
@@ -87,6 +86,15 @@ public:
 	PairTreeInfoFoundT FindTreeInfoByKey(int key);
 
 	int GetKeyInExcel(int sheet,int row);
+public:
+	int GetLastSelectKey()
+	{
+		return m_nLastSelectKey;
+	}
+	void SetLastSelectKey(int key)
+	{
+		m_nLastSelectKey = key;
+	}
 private:
 	CString m_strFilePath;
 	CString m_strKeyCName;
@@ -98,6 +106,8 @@ private:
 	int m_nDataRow;
 	MapCNameToColumnT m_mapCNameToColumn;
 	VectorTreeItemInfoT m_vtTreeItemInfos;
+private:
+	int m_nLastSelectKey;
 };
 
 //--------------------------------------------------------------
@@ -111,9 +121,10 @@ public:
 	int CreateExcelServer();
 	int DestroyExcelServer();
 public:
-	ExcelWorkbook* OpenWorkbook(CString strPath);
+	ExcelDB* OpenWorkbook(SExcelConfig& rExcelConfig);
+	ExcelDB* GetWorkbook(CString strExcelCName);
 protected:
-	typedef std::map<CString,ExcelWorkbook*> MapNameToWorkbookT;
+	typedef std::map<CString,ExcelDB*> MapNameToWorkbookT;
 private:
 	CApplication m_objApplication;
 	CWorkbooks m_objWorkbooks;

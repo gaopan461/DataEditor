@@ -24,10 +24,12 @@ public:
 public:
 	int Create();
 public:
+	int SetCurrentDB(const CString& strDBName);
+	CString GetCurrentDB();
+public:
 	void OnSelect(int key);
 public:
 	void ResetSelectKey();
-	int GetSelectKey();
 	void SelectKey(int key);
 public:
 	int InsertUndefinedRoot();
@@ -43,6 +45,7 @@ protected:
 	static BOOL CALLBACK EnumFindItemByInfoText(COptionTree* otProp, COptionTreeItem* otiItem, LPARAM lParam);
 private:
 	int m_nLastSelKey;
+	CString m_strDBName;
 	COptionTreeItem* m_pUndefinedRoot;
 };
 

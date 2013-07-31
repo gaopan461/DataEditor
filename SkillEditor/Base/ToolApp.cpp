@@ -67,6 +67,30 @@ int ToolApp::Update()
 	return 0;
 }
 
+int ToolApp::LoadFromDB(int key)
+{
+	CString strCurrentDB = m_pTree->GetCurrentDB();
+	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
+	ACCHECK(pExcelDB);
+
+	MapCNameToValueT mapValues;
+	pExcelDB->ReadDBRecord(key,mapValues);
+	OnLoadFromDB(mapValues);
+	return 0;
+}
+
+int ToolApp::SaveToDB(int key)
+{
+	CString strCurrentDB = m_pTree->GetCurrentDB();
+	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
+	ACCHECK(pExcelDB);
+
+	MapCNameToValueT mapValues;
+	OnSaveToDB(mapValues);
+	pExcelDB->WriteDBRecord(key,mapValues);
+	return 0;
+}
+
 int ToolApp::MenuNew()
 {	
 	return 0;

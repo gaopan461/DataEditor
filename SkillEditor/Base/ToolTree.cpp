@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ToolTree.h"
 #include "ToolApp.h"
+#include "ToolExcel.h"
 #include "Resource.h"
 
 BEGIN_NS_AC
@@ -10,6 +11,7 @@ ToolTree::ToolTree(ToolApp* app)
 , m_nLastSelKey(-1)
 , m_pUndefinedRoot(NULL)
 {
+	m_strDBName = _T("");
 }
 
 ToolTree::~ToolTree()
@@ -54,6 +56,33 @@ int ToolTree::Create()
 	return 0;
 }
 
+int ToolTree::SetCurrentDB(const CString& strDBName)
+{
+	if(strDBName == m_strDBName)
+		return 0;
+
+	m_strDBName = strDBName;
+
+	ExcelDB* pExcelDB = ToolApp::Instance().GetExcelTool()->GetWorkbook(m_strDBName);
+	if(pExcelDB == NULL)
+	{
+		CString strError = _T("DB not exist:");
+		strError.Append(m_strDBName);
+		ErrorMessageBox(strError);
+		ExitProcess(-1);
+	}
+
+	pExcelDB->DBToTree(this);
+	ResetSelectKey();
+	SelectKey(pExcelDB->GetLastSelectKey());
+	return 0;
+}
+
+CString ToolTree::GetCurrentDB()
+{
+	return m_strDBName;
+}
+
 int ToolTree::UpdateOrInsertItemByKey(int key,CString& strDes,std::vector<CString>& vtLayers)
 {
 	CString strKey;
@@ -92,23 +121,17 @@ void ToolTree::OnSelect(int key)
 		return;
 
 	m_nLastSelKey = key;
-/*
 
-	SItemTab* pTabItem = m_pOwner->GetMainTab()->GetCurrentItem();
-	ACCHECK(pTabItem);
+	ExcelDB* pExcelDB = ToolApp::Instance().GetExcelTool()->GetWorkbook(m_strDBName);
+	ACCHECK(pExcelDB);
 
-	pTabItem->DBToCtrl(key);*/
-
+	pExcelDB->SetLastSelectKey(key);
+	ToolApp::Instance().LoadFromDB(key);
 }
 
 void ToolTree::ResetSelectKey()
 {
 	m_nLastSelKey = -1;
-}
-
-int ToolTree::GetSelectKey()
-{
-	return m_nLastSelKey;
 }
 
 void ToolTree::SelectKey(int key)

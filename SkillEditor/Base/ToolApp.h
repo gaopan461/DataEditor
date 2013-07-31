@@ -20,6 +20,12 @@ public:
 	virtual int Update();
 	virtual int FinalizeTool();
 public:
+	int LoadFromDB(int key);
+	int SaveToDB(int key);
+public:
+	virtual void OnLoadFromDB(MapCNameToValueT& mapValues){}
+	virtual void OnSaveToDB(MapCNameToValueT& mapValues){}
+public:
 	int MenuNew();
 	int MenuSave();
 	int MenuDelete();

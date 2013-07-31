@@ -61,8 +61,7 @@ int TestMakeCellName()
 
 //-----------------------------------------------------------------
 
-ExcelWorkbook::ExcelWorkbook(CString strPath,LPDISPATCH workbook)
-: m_strPath(strPath)
+ExcelWorkbook::ExcelWorkbook(LPDISPATCH workbook)
 {
 	m_objWorkbook.AttachDispatch(workbook);
 	m_objWorkSheets.AttachDispatch(m_objWorkbook.get_Worksheets());
@@ -241,16 +240,20 @@ void ExcelWorkbook::SaveWorkbook()
 void ExcelWorkbook::CloseWorkbook()
 {
 	m_objWorkbook.put_Saved(TRUE);
-	m_objWorkbook.Close(covOptional,COleVariant(m_strPath),covOptional);
+	m_objWorkbook.Close(covOptional,covOptional,covOptional);
 }
 
 //--------------------------------------------------------
 
-ExcelDB::ExcelDB(const CString& path,const CString& key, const CString& des,int headRow,int dataRow)
-: ExcelWorkbook(path,NULL)
+ExcelDB::ExcelDB(LPDISPATCH pWorkbook, SExcelConfig& rExcelConfig)
+: ExcelWorkbook(pWorkbook)
 {
-	m_nHeadRow = headRow-1;
-	m_nDataRow = dataRow-1;
+	m_strFilePath = rExcelConfig.m_strExcelPath;
+	m_strKeyCName = rExcelConfig.m_strKeyCName;
+	m_strDesCName = rExcelConfig.m_strDesCName;
+	m_vtLayerCName = rExcelConfig.m_vtLayerCName;
+	m_nHeadRow = rExcelConfig.m_nHeadRow-1;
+	m_nDataRow = rExcelConfig.m_nDataRow-1;
 
 	m_mapCNameToColumn.clear();
 	InitMapNameToColumn();
@@ -258,11 +261,11 @@ ExcelDB::ExcelDB(const CString& path,const CString& key, const CString& des,int 
 	SortDB();
 
 	m_vtTreeItemInfos.clear();
+	InitTreeItemInfos();
 }
 
 ExcelDB::~ExcelDB()
 {
-	SaveWorkbook();
 	m_mapCNameToColumn.clear();
 }
 
@@ -357,12 +360,12 @@ PairTreeInfoFoundT ExcelDB::FindTreeInfoByKey(int key)
 	return result;
 }
 
-int ExcelDB::Save(int key, MapCNameToValueT& mapValues)
+int ExcelDB::WriteDBRecord(int key, MapCNameToValueT& mapValues)
 {
 	PairTreeInfoFoundT findResult = FindTreeInfoByKey(key);
 	if(!findResult.first)
 	{
-		ERROR_MSG("Save,can't find key:%d",key);
+		ERROR_MSG("WriteDBRecord,can't find key:%d",key);
 		return -1;
 	}
 
@@ -418,12 +421,12 @@ int ExcelDB::UpdateTreeItemInfo(STreeItemInfo& rTreeItemInfo,MapCNameToValueT& m
 	return 0;
 }
 
-int ExcelDB::Load(int key, MapCNameToValueT& mapValues)
+int ExcelDB::ReadDBRecord(int key, MapCNameToValueT& mapValues)
 {
 	PairTreeInfoFoundT findResult = FindTreeInfoByKey(key);
 	if(!findResult.first)
 	{
-		ERROR_MSG("Load,can't find key:%d",key);
+		ERROR_MSG("ReadDBRecord,can't find key:%d",key);
 		return -1;
 	}
 
@@ -454,7 +457,6 @@ int ExcelDB::DBToTree(ToolTree* pTree)
 
 	//pTree->ExpandAllItems();
 	pTree->UpdatedItems();
-	pTree->ResetSelectKey();
 	return 0;
 }
 
@@ -610,7 +612,7 @@ int ToolExcel::DestroyExcelServer()
 {
 	for(MapNameToWorkbookT::iterator iter = m_mapWorkbooks.begin(); iter != m_mapWorkbooks.end(); ++iter)
 	{
-		ExcelWorkbook* pBook = iter->second;
+		ExcelDB* pBook = iter->second;
 		pBook->CloseWorkbook();
 		_safe_delete(pBook);
 	}
@@ -623,23 +625,28 @@ int ToolExcel::DestroyExcelServer()
 	return 0;
 }
 
-ExcelWorkbook* ToolExcel::OpenWorkbook(CString strPath)
+ExcelDB* ToolExcel::OpenWorkbook(SExcelConfig& rExcelConfig)
 {
-	int pos = strPath.ReverseFind('\\');
-	CString strFileName = strPath.Right(strPath.GetLength()-pos-1);
-	ACCHECK(strFileName.Right(4) == _T(".xls") || strFileName.Right(5) == _T(".xlsx"));
-
-	MapNameToWorkbookT::iterator iter = m_mapWorkbooks.find(strFileName);
+	MapNameToWorkbookT::iterator iter = m_mapWorkbooks.find(rExcelConfig.m_strExcelCName);
 	if(iter != m_mapWorkbooks.end())
 		return iter->second;
 
-	LPDISPATCH workbook = m_objWorkbooks.Open(strPath,covOptional,covOptional,covOptional,
-		covOptional,covOptional,covOptional,covOptional,covOptional,covOptional,
-		covOptional,covOptional,covOptional,covOptional,covOptional);
+	LPDISPATCH workbook = m_objWorkbooks.Open(rExcelConfig.m_strExcelPath,covOptional,
+		covOptional,covOptional,covOptional,covOptional,covOptional,covOptional,covOptional,
+		covOptional,covOptional,covOptional,covOptional,covOptional,covOptional);
 
-	ExcelWorkbook* pBook = new ExcelWorkbook(strPath,workbook);
-	m_mapWorkbooks.insert(std::make_pair(strFileName,pBook));
-	return pBook;
+	ExcelDB* pExcelDB = new ExcelDB(workbook,rExcelConfig);
+	m_mapWorkbooks.insert(std::make_pair(rExcelConfig.m_strExcelCName,pExcelDB));
+	return pExcelDB;
+}
+
+ExcelDB* ToolExcel::GetWorkbook(CString strExcelCName)
+{
+	MapNameToWorkbookT::iterator iter = m_mapWorkbooks.find(strExcelCName);
+	if(iter != m_mapWorkbooks.end())
+		return iter->second;
+
+	return NULL;
 }
 
 END_NS_AC

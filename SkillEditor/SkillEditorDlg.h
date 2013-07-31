@@ -47,6 +47,7 @@ protected:
 	EffectCommonWindow m_objEffectCommonWindow;
 protected:
 	void InitializeTab();
+	void OpenExcelDBs();
 public:
 	afx_msg void OnTcnSelchangeMainTab(NMHDR *pNMHDR, LRESULT *pResult);
 };

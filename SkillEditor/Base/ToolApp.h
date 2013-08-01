@@ -69,9 +69,10 @@ public:
 private:
 	bool m_bIsNewing;	// 正在新建一项数据
 public:
-	void PushCheckCombo(CWnd* pCheckCombo);
+	void InsertCheckCombo(int nDlgID, CWnd* pCheckCombo);
+	CWnd* FindCheckCombo(int nDlgID);
 protected:
-	std::vector<CWnd*> m_vtCheckCombos;
+	std::map<int,CWnd*> m_mapCheckCombos;
 };
 
 END_NS_AC

@@ -57,11 +57,12 @@ int ToolApp::InitializeTool(const CString& strAppName)
 
 int ToolApp::FinalizeTool()
 {
-	for(size_t i = 0; i < m_vtCheckCombos.size(); ++i)
+	for(std::map<int,CWnd*>::iterator iter = m_mapCheckCombos.begin(); iter != m_mapCheckCombos.end(); ++iter)
 	{
-		_safe_delete(m_vtCheckCombos[i]);
+		CWnd* pCheckCombo = iter->second;
+		_safe_delete(pCheckCombo);
 	}
-	m_vtCheckCombos.clear();
+	m_mapCheckCombos.clear();
 
 	m_objFont.DeleteObject();
 	return 0;
@@ -122,9 +123,18 @@ int ToolApp::MenuCancel()
 	return 0;
 }
 
-void ToolApp::PushCheckCombo(CWnd* pCheckCombo)
+void ToolApp::InsertCheckCombo(int nDlgID, CWnd* pCheckCombo)
 {
-	m_vtCheckCombos.push_back(pCheckCombo);
+	m_mapCheckCombos.insert(std::make_pair(nDlgID,pCheckCombo));
+}
+
+CWnd* ToolApp::FindCheckCombo(int nDlgID)
+{
+	std::map<int,CWnd*>::iterator iter = m_mapCheckCombos.find(nDlgID);
+	if(iter != m_mapCheckCombos.end())
+		return iter->second;
+
+	return NULL;
 }
 
 END_NS_AC

@@ -265,7 +265,12 @@ void CSkillEditorDlg::OnSaveToDB(MapCNameToValueT& mapValues)
 
 int CSkillEditorDlg::MenuNew()
 {
-	ToolApp::MenuNew();
+	if(ToolApp::MenuNew() != 0)
+	{
+		WarningMessageBox(_T("当前不可新建"));
+		return -1;
+	}
+
 	int nNewKey = GetUnusedKey();
 	ACCHECK(nNewKey > 0);
 	
@@ -283,6 +288,15 @@ int CSkillEditorDlg::MenuNew()
 
 	InsertByKey(nNewKey,mapDefault);
 	return 0;
+}
+
+CWnd* CSkillEditorDlg::GetCurrentKeyWindow()
+{
+	CString strCurrentDB = m_pTree->GetCurrentDB();
+	if(strCurrentDB == _T("MagicType"))
+		return NULL;
+	else if(strCurrentDB == _T("AuraEffectType"))
+		return m_objEffectCommonWindow.GetDlgItem(IDC_EFFECT_ID);
 }
 
 void CSkillEditorDlg::OnTcnSelchangeMainTab(NMHDR *pNMHDR, LRESULT *pResult)

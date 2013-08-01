@@ -78,6 +78,7 @@ public:
 	virtual int InsertByKey(int key, MapCNameToValueT& mapValues);
 	virtual int DeleteByKey(int key);
 	virtual int GetUnusedKey();
+	virtual int ModifyKey(int oldKey,int newKey);
 
 	int InitMapNameToColumn();
 

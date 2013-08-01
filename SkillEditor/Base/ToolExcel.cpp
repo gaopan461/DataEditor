@@ -582,6 +582,52 @@ int ExcelDB::GetUnusedKey()
 	return m_vtTreeItemInfos.back().m_nKey + 1;
 }
 
+int ExcelDB::ModifyKey(int oldKey,int newKey)
+{
+	if(newKey <= 0)
+		return -1;
+
+	if(oldKey == newKey)
+		return 0;
+
+	if(!FindTreeInfoByKey(oldKey).first)
+		return -2;
+
+	if(FindTreeInfoByKey(newKey).first)
+		return -3;
+
+	PairTreeInfoFoundT findResult = FindTreeInfoByKey(oldKey);
+	ACCHECK(findResult.first == true);
+
+	STreeItemInfo info = *(findResult.second);
+	info.m_nKey = newKey;
+
+	int oldRow = findResult.second - m_vtTreeItemInfos.begin() + m_nDataRow;
+	std::vector<CString> vtStr;
+	GetRowText(info.m_nSheet,oldRow,vtStr);
+	int nKeyCol = m_mapCNameToColumn[m_strKeyCName];
+	CString strNewKey;
+	strNewKey.Format(_T("%d"),newKey);
+	vtStr[nKeyCol] = strNewKey;
+
+	m_vtTreeItemInfos.erase(findResult.second);
+	DeleteRow(info.m_nSheet,oldRow);
+	
+	PairTreeInfoFoundT insertPosition = FindTreeInfoByKey(newKey);
+	ACCHECK(insertPosition.first == false);
+	int newRow = insertPosition.second - m_vtTreeItemInfos.begin() + m_nDataRow;
+
+	m_vtTreeItemInfos.insert(insertPosition.second,info);
+	InsertRow(info.m_nSheet,newRow,vtStr);
+
+	SaveWorkbook();
+
+	m_nLastSelectKey = newKey;
+	
+	ToolApp::Instance().GetMainTree()->ModifyKey(oldKey,newKey);
+	return 0;
+}
+
 //--------------------------------------------------------
 
 ToolExcel::ToolExcel(ToolApp* app)

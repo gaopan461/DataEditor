@@ -75,6 +75,7 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 public:
 	virtual CWnd* GetMainWnd();
+	virtual CWnd* GetCurrentKeyWindow();
 protected:
 	CTabCtrl m_objMainTab;
 	MagicWindow m_objMagicWindow;

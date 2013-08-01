@@ -11,6 +11,7 @@ BEGIN_NS_AC
 ToolApp* ToolApp::m_pInstance = NULL;
 
 ToolApp::ToolApp()
+: m_bIsNewing(false)
 {
 	m_pInstance = this;
 	m_pTree = new ToolTree(this);
@@ -110,13 +111,42 @@ int ToolApp::SaveToDB(int key)
 
 int ToolApp::MenuNew()
 {
+	if(m_bIsNewing)
+		return -1;
+
+	m_bIsNewing = true;
 	m_pTree->EnableWindow(FALSE);
+
+	CEdit* pKeyWnd = (CEdit*)GetCurrentKeyWindow();
+	ACCHECK(pKeyWnd);
+
+	pKeyWnd->EnableWindow(TRUE);
 	return 0;
 }
 
 int ToolApp::MenuSave()
 {
-	return 0;
+	CEdit* pKeyWnd = (CEdit*)GetCurrentKeyWindow();
+	ACCHECK(pKeyWnd);
+
+	CString strKey;
+	pKeyWnd->GetWindowText(strKey);
+	int nKey = atoi(CStringToStlString(strKey).c_str());
+
+	if(m_bIsNewing)
+	{
+		if(ModifyKey(m_pTree->GetSelectKey(),nKey) != 0)
+		{
+			WarningMessageBox(_T("IDÎÞÐ§"));
+			pKeyWnd->SetFocus();
+			return -1;
+		}
+
+		m_bIsNewing = false;
+		pKeyWnd->EnableWindow(FALSE);
+		m_pTree->EnableWindow(TRUE);
+	}
+	return SaveToDB(nKey);
 }
 
 int ToolApp::MenuDelete()
@@ -150,6 +180,15 @@ int ToolApp::InsertByKey(int key, MapCNameToValueT& mapValues)
 	ACCHECK(pExcelDB);
 
 	return pExcelDB->InsertByKey(key,mapValues);
+}
+
+int ToolApp::ModifyKey(int oldKey,int newKey)
+{
+	CString strCurrentDB = m_pTree->GetCurrentDB();
+	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
+	ACCHECK(pExcelDB);
+
+	return pExcelDB->ModifyKey(oldKey,newKey);
 }
 
 void ToolApp::InsertCheckCombo(int nDlgID, CWnd* pCheckCombo)

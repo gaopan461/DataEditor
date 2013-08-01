@@ -34,8 +34,13 @@ public:
 public:
 	int GetUnusedKey();
 	int InsertByKey(int key, MapCNameToValueT& mapValues);
+	int ModifyKey(int oldKey,int newKey);
 public:
 	virtual CWnd* GetMainWnd()
+	{
+		return NULL;
+	}
+	virtual CWnd* GetCurrentKeyWindow()
 	{
 		return NULL;
 	}
@@ -57,6 +62,10 @@ public:
 	{
 		return m_pExcel;
 	}
+public:
+	bool IsNewing();
+private:
+	bool m_bIsNewing;
 private:
 	static ToolApp* m_pInstance;
 protected:

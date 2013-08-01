@@ -16,7 +16,6 @@ ToolApp::ToolApp()
 	m_pTree = new ToolTree(this);
 	m_pLog = new ToolLog(this);
 	m_pExcel = new ToolExcel(this);
-	m_bIsNewing = false;
 }
 
 ToolApp::~ToolApp()
@@ -48,6 +47,15 @@ int ToolApp::InitializeTool(const CString& strAppName)
 	m_pLog->Create(strAppName);
 	m_pTree->Create();
 
+	m_pMenu = new CMenu;
+	m_pMenu->CreatePopupMenu();
+	m_pMenu->AppendMenu(MF_STRING,ID_MENU_NEW,_T("新建"));
+	m_pMenu->AppendMenu(MF_STRING,ID_MENU_SAVE,_T("保存"));
+	m_pMenu->AppendMenu(MF_STRING,ID_MENU_DELETE,_T("删除"));
+	m_pMenu->AppendMenu(MF_STRING,ID_MENU_COPY,_T("复制"));
+	m_pMenu->AppendMenu(MF_STRING,ID_MENU_CANCEL,_T("取消"));
+	SetMenu(GetMainWnd()->GetSafeHwnd(),m_pMenu->GetSafeHmenu());
+
 	INFO_MSG("--------------------------------------------");
 	INFO_MSG("               %s Start             ",CStringToStlString(strAppName).c_str());
 	INFO_MSG("--------------------------------------------");
@@ -64,6 +72,8 @@ int ToolApp::FinalizeTool()
 	}
 	m_mapCheckCombos.clear();
 
+	m_pMenu->DestroyMenu();
+	delete m_pMenu;
 	m_objFont.DeleteObject();
 	return 0;
 }
@@ -99,7 +109,8 @@ int ToolApp::SaveToDB(int key)
 }
 
 int ToolApp::MenuNew()
-{	
+{
+	m_pTree->EnableWindow(FALSE);
 	return 0;
 }
 
@@ -121,6 +132,24 @@ int ToolApp::MenuCopy()
 int ToolApp::MenuCancel()
 {
 	return 0;
+}
+
+int ToolApp::GetUnusedKey()
+{
+	CString strCurrentDB = m_pTree->GetCurrentDB();
+	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
+	ACCHECK(pExcelDB);
+
+	return pExcelDB->GetUnusedKey();
+}
+
+int ToolApp::InsertByKey(int key, MapCNameToValueT& mapValues)
+{
+	CString strCurrentDB = m_pTree->GetCurrentDB();
+	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
+	ACCHECK(pExcelDB);
+
+	return pExcelDB->InsertByKey(key,mapValues);
 }
 
 void ToolApp::InsertCheckCombo(int nDlgID, CWnd* pCheckCombo)

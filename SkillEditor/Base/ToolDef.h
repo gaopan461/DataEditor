@@ -8,8 +8,11 @@
 
 #include "ACDef.h"
 
-#define IDC_TAB_ITEM	2100
-#define IDC_CTRL		2200
+#define ID_MENU_NEW		5000
+#define ID_MENU_SAVE	5001
+#define ID_MENU_DELETE	5002
+#define ID_MENU_COPY	5003
+#define ID_MENU_CANCEL	5004
 
 #define ARRAY_DELIMITER _T(",")
 

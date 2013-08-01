@@ -32,6 +32,9 @@ public:
 	int MenuCopy();
 	int MenuCancel();
 public:
+	int GetUnusedKey();
+	int InsertByKey(int key, MapCNameToValueT& mapValues);
+public:
 	virtual CWnd* GetMainWnd()
 	{
 		return NULL;
@@ -54,10 +57,6 @@ public:
 	{
 		return m_pExcel;
 	}
-	bool IsNewing()
-	{
-		return m_bIsNewing;
-	}
 private:
 	static ToolApp* m_pInstance;
 protected:
@@ -66,8 +65,7 @@ protected:
 	ToolExcel* m_pExcel;
 public:
 	CFont m_objFont;
-private:
-	bool m_bIsNewing;	// 正在新建一项数据
+	CMenu* m_pMenu;
 public:
 	void InsertCheckCombo(int nDlgID, CWnd* pCheckCombo);
 	CWnd* FindCheckCombo(int nDlgID);

@@ -574,6 +574,14 @@ int ExcelDB::DeleteByKey(int key)
 	return nNextKey;
 }
 
+int ExcelDB::GetUnusedKey()
+{
+	if(m_vtTreeItemInfos.empty())
+		return 1;
+
+	return m_vtTreeItemInfos.back().m_nKey + 1;
+}
+
 //--------------------------------------------------------
 
 ToolExcel::ToolExcel(ToolApp* app)

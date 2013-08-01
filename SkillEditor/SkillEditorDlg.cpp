@@ -263,6 +263,28 @@ void CSkillEditorDlg::OnSaveToDB(MapCNameToValueT& mapValues)
 		m_objEffectCommonWindow.OnSaveToDB(mapValues);
 }
 
+int CSkillEditorDlg::MenuNew()
+{
+	ToolApp::MenuNew();
+	int nNewKey = GetUnusedKey();
+	ACCHECK(nNewKey > 0);
+	
+	CString strNewKey;
+	strNewKey.Format(_T("%d"),nNewKey);
+
+	MapCNameToValueT mapDefault;
+	mapDefault[_T("ID")] = strNewKey;
+	mapDefault[_T("Des")] = _T("请填描述");
+	mapDefault[_T("TestInt")] = _T("0");
+	mapDefault[_T("TestFloat")] = _T("0");
+	mapDefault[_T("TestBool")] = _T("false");
+	mapDefault[_T("TestEnum")] = _T("0");
+	mapDefault[_T("TestArray")] = _T("");
+
+	InsertByKey(nNewKey,mapDefault);
+	return 0;
+}
+
 void CSkillEditorDlg::OnTcnSelchangeMainTab(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	// TODO: 在此添加控件通知处理程序代码

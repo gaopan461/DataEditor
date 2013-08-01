@@ -47,9 +47,6 @@ void InitDeclare(CWnd* pWnd,MapCNameToValueT& mapValues)
 
 void DeclareID(bool bSaveOrLoad,int nDlgID,const CString& strCName)
 {
-	CWnd* pMainWnd = ToolApp::Instance().GetMainWnd();
-	ACCHECK(pMainWnd);
-
 	ToolTree* pMainTree = ToolApp::Instance().GetMainTree();
 	ACCHECK(pMainTree);
 
@@ -91,18 +88,6 @@ void DeclareID(bool bSaveOrLoad,int nDlgID,const CString& strCName)
 
 void _DeclareEdit(bool bSaveOrLoad,int nDlgID,const CString& strCName,int nCastType)
 {
-	CWnd* pMainWnd = ToolApp::Instance().GetMainWnd();
-	ACCHECK(pMainWnd);
-
-	ToolTree* pMainTree = ToolApp::Instance().GetMainTree();
-	ACCHECK(pMainTree);
-
-	ToolExcel* pExcelTool = ToolApp::Instance().GetExcelTool();
-	ACCHECK(pExcelTool);
-
-	ExcelDB* pExcelDB = pExcelTool->GetWorkbook(pMainTree->GetCurrentDB());
-	ACCHECK(pExcelDB);
-
 	MapCNameToValueT& mapValues = *(g_objDeclareInfo.m_pMapValues);
 	CWnd* pWnd = g_objDeclareInfo.m_pWnd;
 
@@ -162,18 +147,6 @@ void DeclareEditFloat(bool bSaveOrLoad,int nDlgID,const CString& strCName)
 
 void DeclareCheckbox(bool bSaveOrLoad,int nDlgID,const CString& strCName)
 {
-	CWnd* pMainWnd = ToolApp::Instance().GetMainWnd();
-	ACCHECK(pMainWnd);
-
-	ToolTree* pMainTree = ToolApp::Instance().GetMainTree();
-	ACCHECK(pMainTree);
-
-	ToolExcel* pExcelTool = ToolApp::Instance().GetExcelTool();
-	ACCHECK(pExcelTool);
-
-	ExcelDB* pExcelDB = pExcelTool->GetWorkbook(pMainTree->GetCurrentDB());
-	ACCHECK(pExcelDB);
-
 	MapCNameToValueT& mapValues = *(g_objDeclareInfo.m_pMapValues);
 	CWnd* pWnd = g_objDeclareInfo.m_pWnd;
 

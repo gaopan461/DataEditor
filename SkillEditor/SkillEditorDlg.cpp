@@ -240,6 +240,16 @@ void CSkillEditorDlg::OpenExcelDBs()
 	ACCHECK(pMagicDB);
 
 	// 设置MagicTypeConfig表默认值
+	MapCNameToValueT mapMagicDefault;
+	mapMagicDefault[_T("ID")] = _T("-1");
+	mapMagicDefault[_T("Des")] = _T("请填技能名");
+	mapMagicDefault[_T("AttackType")] = _T("0");
+	mapMagicDefault[_T("Profession")] = _T("");
+	mapMagicDefault[_T("HitedBreak")] = _T("true");
+	mapMagicDefault[_T("Layer1")] = _T("");
+	mapMagicDefault[_T("Layer2")] = _T("");
+	mapMagicDefault[_T("Layer3")] = _T("");
+	mapMagicDefault[_T("Layer4")] = _T("");
 
 
 	// 载入AuraEffectTypeConfig表
@@ -287,7 +297,7 @@ CWnd* CSkillEditorDlg::GetCurrentKeyWindow()
 {
 	CString strCurrentDB = m_pTree->GetCurrentDB();
 	if(strCurrentDB == _T("MagicType"))
-		return NULL;
+		return m_objMagicWindow.GetDlgItem(IDC_MAGIC_ID);
 	else if(strCurrentDB == _T("AuraEffectType"))
 		return m_objEffectCommonWindow.GetDlgItem(IDC_EFFECT_ID);
 

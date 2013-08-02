@@ -21,6 +21,16 @@
 #define IDC_EFFECT_BOOL                 1010
 #define IDC_EFFECT_ENUM                 1011
 #define IDC_EFFECT_ARRAY                1012
+#define IDC_MAGIC_HITEDBREAK            1013
+#define IDC_MAGIC_ID                    1014
+#define IDC_MAGIC_DES                   1016
+#define IDC_MAGIC_ATTACKTYPE            1017
+#define IDC_MAGIC_PROFESSION            1018
+#define IDC_MAGIC_LAYER1                1019
+#define IDC_MAGIC_LAYER2                1020
+#define IDC_MAGIC_LAYER3                1021
+#define IDC_EDIT6                       1022
+#define IDC_MAGIC_LAYER4                1022
 
 // Next default values for new objects
 // 
@@ -28,7 +38,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        132
 #define _APS_NEXT_COMMAND_VALUE         32776
-#define _APS_NEXT_CONTROL_VALUE         1013
+#define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           106
 #endif
 #endif

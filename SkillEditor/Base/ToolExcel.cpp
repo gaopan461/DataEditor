@@ -109,7 +109,16 @@ CString ExcelWorkbook::GetCellText(int sheetidx,int row,int col)
 	sheet.AttachDispatch(m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1))));
 	CRange range;
 	range.AttachDispatch(sheet.get_Cells());
-	return range.get_Item(COleVariant((short)(row+1)),COleVariant((short)(col+1)));
+	CString strCell = MakeCellName(row+1,col+1);
+	range.AttachDispatch(range.get_Range(COleVariant(strCell),covOptional));
+	COleVariant result = range.get_Value2();
+	if(result.vt == VT_BOOL)
+	{
+		/* 0 == FALSE, -1 == TRUE */
+		return result.boolVal == -1 ? _T("true") : _T("false");
+	}
+	else
+		return result;
 }
 
 void ExcelWorkbook::SetCellText(int sheetidx,int row,int col,CString val)

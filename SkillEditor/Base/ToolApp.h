@@ -32,9 +32,7 @@ public:
 	int MenuCopy();
 	int MenuCancel();
 public:
-	int GetUnusedKey();
-	int InsertByKey(int key, MapCNameToValueT& mapValues);
-	int ModifyKey(int oldKey,int newKey);
+	int InsertByKey(int key);
 public:
 	virtual CWnd* GetMainWnd()
 	{
@@ -63,7 +61,10 @@ public:
 		return m_pExcel;
 	}
 public:
-	bool IsNewing();
+	bool IsNewing()
+	{
+		return m_bIsNewing;
+	}
 private:
 	bool m_bIsNewing;
 private:

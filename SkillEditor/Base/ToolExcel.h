@@ -31,6 +31,7 @@ public:
 public:
 	CString GetCellText(int sheetidx,int row,int col);
 	void SetCellText(int sheetidx,int row,int col,CString val);
+	void SetCellText(int sheetidx,int row,int col,int val);
 public:
 	void SortAllSheetByColumn(int sortByCol,int startRow);
 public:
@@ -72,13 +73,15 @@ public:
 	virtual int ReadDBRecord(int key, MapCNameToValueT& mapValues);
 	virtual int WriteDBRecord(int key, MapCNameToValueT& mapValues);
 
+	virtual void SetDBDefaultValue(MapCNameToValueT& mapDefault);
+	virtual void GetDBDefaultValue(MapCNameToValueT& mapDefault);
+
 	virtual int DBToTree(ToolTree* pTree);
 	virtual int SortDB();
 
 	virtual int InsertByKey(int key, MapCNameToValueT& mapValues);
 	virtual int DeleteByKey(int key);
 	virtual int GetUnusedKey();
-	virtual int ModifyKey(int oldKey,int newKey);
 
 	int InitMapNameToColumn();
 
@@ -108,6 +111,7 @@ private:
 	int m_nDataRow;
 	MapCNameToColumnT m_mapCNameToColumn;
 	VectorTreeItemInfoT m_vtTreeItemInfos;
+	MapCNameToValueT m_mapDefaultValue;
 private:
 	int m_nLastSelectKey;
 };

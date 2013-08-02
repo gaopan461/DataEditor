@@ -77,6 +77,7 @@ public:
 	virtual CWnd* GetMainWnd();
 	virtual CWnd* GetCurrentKeyWindow();
 protected:
+	int m_nTabLastSel;
 	CTabCtrl m_objMainTab;
 	MagicWindow m_objMagicWindow;
 	EffectCommonWindow m_objEffectCommonWindow;
@@ -86,8 +87,6 @@ protected:
 public:
 	void OnLoadFromDB(MapCNameToValueT& mapValues);
 	void OnSaveToDB(MapCNameToValueT& mapValues);
-public:
-	virtual int MenuNew();
 public:
 	afx_msg void OnTcnSelchangeMainTab(NMHDR *pNMHDR, LRESULT *pResult);
 };

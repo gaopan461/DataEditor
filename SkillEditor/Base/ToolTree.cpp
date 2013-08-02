@@ -149,25 +149,6 @@ void ToolTree::SelectKey(int key)
 	UpdatedItems();
 }
 
-int ToolTree::GetSelectKey()
-{
-	return m_nLastSelKey;
-}
-
-void ToolTree::ModifyKey(int oldKey,int newKey)
-{
-	COptionTreeItem* pTreeItem = FindItemByKey(oldKey);
-	ACCHECK(pTreeItem);
-
-	m_nLastSelKey = newKey;
-
-	CString strNewKey;
-	strNewKey.Format(_T("%d"),newKey);
-	pTreeItem->SetLabelText(strNewKey);
-	pTreeItem->SetInfoText(strNewKey);
-	UpdatedItems();
-}
-
 int ToolTree::InsertUndefinedRoot()
 {
 	m_pUndefinedRoot = COptionTree::InsertItem(new COptionTreeItem());

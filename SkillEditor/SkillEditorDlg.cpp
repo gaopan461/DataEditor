@@ -196,6 +196,8 @@ void CSkillEditorDlg::InitializeTab()
 	m_objMainTab.InsertItem(0,_T("技能"));
 	m_objMainTab.InsertItem(1,_T("效果"));
 
+	m_nTabLastSel = 0;
+
 	CRect rect;
 	m_objMainTab.GetClientRect(&rect);
 	ClientToScreen(&rect);
@@ -224,6 +226,7 @@ void CSkillEditorDlg::OpenExcelDBs()
 	else   
 		strPath = strPath.Left( nPos );
 
+	// 载入MagicTypeConfig表
 	SExcelConfig magic;
 	magic.m_strExcelPath = strPath + _T("\\MagicTypeConfig.xls");
 	magic.m_strExcelCName = _T("MagicType");
@@ -233,8 +236,13 @@ void CSkillEditorDlg::OpenExcelDBs()
 	magic.m_vtLayerCName.push_back(_T("Layer2"));
 	magic.m_nHeadRow = 2;
 	magic.m_nDataRow = 5;
-	m_pExcel->OpenWorkbook(magic);
+	ExcelDB* pMagicDB = m_pExcel->OpenWorkbook(magic);
+	ACCHECK(pMagicDB);
 
+	// 设置MagicTypeConfig表默认值
+
+
+	// 载入AuraEffectTypeConfig表
 	SExcelConfig buff;
 	buff.m_strExcelPath = strPath + _T("\\AuraEffectTypeConfig.xls");
 	buff.m_strExcelCName = _T("AuraEffectType");
@@ -242,7 +250,19 @@ void CSkillEditorDlg::OpenExcelDBs()
 	buff.m_strDesCName = _T("Des");
 	buff.m_nHeadRow = 2;
 	buff.m_nDataRow = 5;
-	m_pExcel->OpenWorkbook(buff);
+	ExcelDB* pBuffDB = m_pExcel->OpenWorkbook(buff);
+	ACCHECK(pBuffDB);
+
+	// 设置MagicTypeConfig表默认值
+	MapCNameToValueT mapBuffDefault;
+	mapBuffDefault[_T("ID")] = _T("-1");
+	mapBuffDefault[_T("Des")] = _T("请填描述");
+	mapBuffDefault[_T("TestInt")] = _T("0");
+	mapBuffDefault[_T("TestFloat")] = _T("0");
+	mapBuffDefault[_T("TestBool")] = _T("false");
+	mapBuffDefault[_T("TestEnum")] = _T("0");
+	mapBuffDefault[_T("TestArray")] = _T("");
+	pBuffDB->SetDBDefaultValue(mapBuffDefault);
 }
 
 void CSkillEditorDlg::OnLoadFromDB(MapCNameToValueT& mapValues)
@@ -263,33 +283,6 @@ void CSkillEditorDlg::OnSaveToDB(MapCNameToValueT& mapValues)
 		m_objEffectCommonWindow.OnSaveToDB(mapValues);
 }
 
-int CSkillEditorDlg::MenuNew()
-{
-	if(ToolApp::MenuNew() != 0)
-	{
-		WarningMessageBox(_T("当前不可新建"));
-		return -1;
-	}
-
-	int nNewKey = GetUnusedKey();
-	ACCHECK(nNewKey > 0);
-	
-	CString strNewKey;
-	strNewKey.Format(_T("%d"),nNewKey);
-
-	MapCNameToValueT mapDefault;
-	mapDefault[_T("ID")] = strNewKey;
-	mapDefault[_T("Des")] = _T("请填描述");
-	mapDefault[_T("TestInt")] = _T("0");
-	mapDefault[_T("TestFloat")] = _T("0");
-	mapDefault[_T("TestBool")] = _T("false");
-	mapDefault[_T("TestEnum")] = _T("0");
-	mapDefault[_T("TestArray")] = _T("");
-
-	InsertByKey(nNewKey,mapDefault);
-	return 0;
-}
-
 CWnd* CSkillEditorDlg::GetCurrentKeyWindow()
 {
 	CString strCurrentDB = m_pTree->GetCurrentDB();
@@ -297,20 +290,31 @@ CWnd* CSkillEditorDlg::GetCurrentKeyWindow()
 		return NULL;
 	else if(strCurrentDB == _T("AuraEffectType"))
 		return m_objEffectCommonWindow.GetDlgItem(IDC_EFFECT_ID);
+
+	return NULL;
 }
 
 void CSkillEditorDlg::OnTcnSelchangeMainTab(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	// TODO: 在此添加控件通知处理程序代码
 
+	if(IsNewing())
+	{
+		m_objMainTab.SetCurSel(m_nTabLastSel);
+		InfoMessageBox(_T("当前状态不能切换"));
+		return;
+	}
+
 	switch(m_objMainTab.GetCurSel())
 	{
 	case 0:
+		m_nTabLastSel = 0;
 		m_pTree->SetCurrentDB(_T("MagicType"));
 		m_objMagicWindow.ShowWindow(SW_SHOW);
 		m_objEffectCommonWindow.ShowWindow(SW_HIDE);
 		break;
 	case 1:
+		m_nTabLastSel = 1;
 		m_pTree->SetCurrentDB(_T("AuraEffectType"));
 		m_objMagicWindow.ShowWindow(SW_HIDE);
 		m_objEffectCommonWindow.ShowWindow(SW_SHOW);

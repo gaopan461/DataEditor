@@ -47,15 +47,6 @@ void InitDeclare(CWnd* pWnd,MapCNameToValueT& mapValues)
 
 void DeclareID(bool bSaveOrLoad,int nDlgID,const CString& strCName)
 {
-	ToolTree* pMainTree = ToolApp::Instance().GetMainTree();
-	ACCHECK(pMainTree);
-
-	ToolExcel* pExcelTool = ToolApp::Instance().GetExcelTool();
-	ACCHECK(pExcelTool);
-
-	ExcelDB* pExcelDB = pExcelTool->GetWorkbook(pMainTree->GetCurrentDB());
-	ACCHECK(pExcelDB);
-
 	MapCNameToValueT& mapValues = *(g_objDeclareInfo.m_pMapValues);
 	CWnd* pWnd = g_objDeclareInfo.m_pWnd;
 
@@ -67,11 +58,12 @@ void DeclareID(bool bSaveOrLoad,int nDlgID,const CString& strCName)
 		CString strValue;
 		pEdit->GetWindowText(strValue);
 		int nKey = atoi(CStringToStlString(strValue).c_str());
-		if(nKey != pExcelDB->GetLastSelectKey())
+		if(nKey <= 0)
 		{
 			WarningMessageBox(_T("ID invalid!"));
 			return ;
 		}
+		mapValues.insert(std::make_pair(strCName,strValue));
 	}
 	else
 	{

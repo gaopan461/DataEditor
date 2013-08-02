@@ -124,6 +124,18 @@ void ExcelWorkbook::SetCellText(int sheetidx,int row,int col,CString val)
 	range.put_Item(COleVariant((short)(row+1)),COleVariant((short)(col+1)),COleVariant(val));
 }
 
+void ExcelWorkbook::SetCellText(int sheetidx,int row,int col,int val)
+{
+	ACCHECK(sheetidx >= 0 && sheetidx < GetSheetCount());
+	ACCHECK(row >= 0 && row < GetUsedRowCount(sheetidx));
+	ACCHECK(col >= 0 && col < GetUsedColumnCount(sheetidx));
+	CWorksheet sheet;
+	sheet.AttachDispatch(m_objWorkSheets.get_Item(COleVariant((short)(sheetidx+1))));
+	CRange range;
+	range.AttachDispatch(sheet.get_Cells());
+	range.put_Item(COleVariant((short)(row+1)),COleVariant((short)(col+1)),COleVariant((long)val));
+}
+
 void ExcelWorkbook::SortAllSheetByColumn(int sortByCol,int startRow)
 {
 	int nSheetTotal = GetSheetCount();
@@ -376,7 +388,13 @@ int ExcelDB::WriteDBRecord(int key, MapCNameToValueT& mapValues)
 	for(MapCNameToValueT::iterator iter = mapValues.begin(); iter != mapValues.end(); ++iter)
 	{
 		int nCtrlCol = m_mapCNameToColumn[iter->first];
-		SetCellText(nSheet,nRow,nCtrlCol,iter->second);
+		if(iter->first == m_strKeyCName)
+		{
+			int nKey = atoi(CStringToStlString(iter->second).c_str());
+			SetCellText(nSheet,nRow,nCtrlCol,nKey);
+		}
+		else
+			SetCellText(nSheet,nRow,nCtrlCol,iter->second);
 	}
 
 	SaveWorkbook();
@@ -398,6 +416,16 @@ int ExcelDB::WriteDBRecord(int key, MapCNameToValueT& mapValues)
 
 	rTreeItemInfo = infoNew;
 	return 0;
+}
+
+void ExcelDB::SetDBDefaultValue(MapCNameToValueT& mapDefault)
+{
+	m_mapDefaultValue = mapDefault;
+}
+
+void ExcelDB::GetDBDefaultValue(MapCNameToValueT& mapDefault)
+{
+	mapDefault = m_mapDefaultValue;
 }
 
 int ExcelDB::UpdateTreeItemInfo(STreeItemInfo& rTreeItemInfo,MapCNameToValueT& mapValues,bool bForcedUpdateTree /* = false */)
@@ -486,13 +514,7 @@ int ExcelDB::InsertByKey(int key, MapCNameToValueT& mapValues)
 	int nSheet = 0;
 	int nRow = findResult.second - m_vtTreeItemInfos.begin() + m_nDataRow;
 
-	std::vector<CString> vtValues;
-	int nColTotal = GetUsedRowCount(nSheet);
-	vtValues.reserve(nColTotal);
-	for(int nCol = 0; nCol < nColTotal; ++nCol)
-	{
-		vtValues.push_back(_T(" "));
-	}
+	InsertEmptyRow(nSheet,nRow);
 
 	for(MapCNameToValueT::iterator iter = mapValues.begin(); iter != mapValues.end(); ++iter)
 	{
@@ -501,11 +523,17 @@ int ExcelDB::InsertByKey(int key, MapCNameToValueT& mapValues)
 			continue;
 
 		int nCol = iterCNToCol->second;
-		ACCHECK(nCol >= 0 && nCol < nColTotal);
-		vtValues[nCol] = iter->second;
+		ACCHECK(nCol >= 0);
+
+		if(iter->first == m_strKeyCName)
+		{
+			int nKey = atoi(CStringToStlString(iter->second).c_str());
+			SetCellText(nSheet,nRow,nCol,nKey);
+		}
+		else
+			SetCellText(nSheet,nRow,nCol,iter->second);
 	}
 
-	InsertRow(nSheet,nRow,vtValues);
 	SaveWorkbook();
 
 	STreeItemInfo infoNew = GetTreeItemInfo(nSheet,nRow);
@@ -580,52 +608,6 @@ int ExcelDB::GetUnusedKey()
 		return 1;
 
 	return m_vtTreeItemInfos.back().m_nKey + 1;
-}
-
-int ExcelDB::ModifyKey(int oldKey,int newKey)
-{
-	if(newKey <= 0)
-		return -1;
-
-	if(oldKey == newKey)
-		return 0;
-
-	if(!FindTreeInfoByKey(oldKey).first)
-		return -2;
-
-	if(FindTreeInfoByKey(newKey).first)
-		return -3;
-
-	PairTreeInfoFoundT findResult = FindTreeInfoByKey(oldKey);
-	ACCHECK(findResult.first == true);
-
-	STreeItemInfo info = *(findResult.second);
-	info.m_nKey = newKey;
-
-	int oldRow = findResult.second - m_vtTreeItemInfos.begin() + m_nDataRow;
-	std::vector<CString> vtStr;
-	GetRowText(info.m_nSheet,oldRow,vtStr);
-	int nKeyCol = m_mapCNameToColumn[m_strKeyCName];
-	CString strNewKey;
-	strNewKey.Format(_T("%d"),newKey);
-	vtStr[nKeyCol] = strNewKey;
-
-	m_vtTreeItemInfos.erase(findResult.second);
-	DeleteRow(info.m_nSheet,oldRow);
-	
-	PairTreeInfoFoundT insertPosition = FindTreeInfoByKey(newKey);
-	ACCHECK(insertPosition.first == false);
-	int newRow = insertPosition.second - m_vtTreeItemInfos.begin() + m_nDataRow;
-
-	m_vtTreeItemInfos.insert(insertPosition.second,info);
-	InsertRow(info.m_nSheet,newRow,vtStr);
-
-	SaveWorkbook();
-
-	m_nLastSelectKey = newKey;
-	
-	ToolApp::Instance().GetMainTree()->ModifyKey(oldKey,newKey);
-	return 0;
 }
 
 //--------------------------------------------------------

@@ -117,10 +117,25 @@ int ToolApp::MenuNew()
 	m_bIsNewing = true;
 	m_pTree->EnableWindow(FALSE);
 
+	CString strCurrentDB = m_pTree->GetCurrentDB();
+	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
+	ACCHECK(pExcelDB);
+
+	// 载入默认值
+	MapCNameToValueT mapDefault;
+	pExcelDB->GetDBDefaultValue(mapDefault);
+	OnLoadFromDB(mapDefault);
+
 	CEdit* pKeyWnd = (CEdit*)GetCurrentKeyWindow();
 	ACCHECK(pKeyWnd);
 
 	pKeyWnd->EnableWindow(TRUE);
+
+	// 设置key默认值
+	int nNewKey = pExcelDB->GetUnusedKey();
+	CString strNewKey;
+	strNewKey.Format(_T("%d"),nNewKey);
+	pKeyWnd->SetWindowText(strNewKey);
 	return 0;
 }
 
@@ -135,7 +150,7 @@ int ToolApp::MenuSave()
 
 	if(m_bIsNewing)
 	{
-		if(ModifyKey(m_pTree->GetSelectKey(),nKey) != 0)
+		if(InsertByKey(nKey) != 0)
 		{
 			WarningMessageBox(_T("ID无效"));
 			pKeyWnd->SetFocus();
@@ -146,7 +161,10 @@ int ToolApp::MenuSave()
 		pKeyWnd->EnableWindow(FALSE);
 		m_pTree->EnableWindow(TRUE);
 	}
-	return SaveToDB(nKey);
+	else
+		SaveToDB(nKey);
+
+	return 0;
 }
 
 int ToolApp::MenuDelete()
@@ -164,31 +182,32 @@ int ToolApp::MenuCancel()
 	return 0;
 }
 
-int ToolApp::GetUnusedKey()
+int ToolApp::InsertByKey(int key)
 {
 	CString strCurrentDB = m_pTree->GetCurrentDB();
 	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
 	ACCHECK(pExcelDB);
 
-	return pExcelDB->GetUnusedKey();
-}
+	MapCNameToValueT mapDefault;
+	pExcelDB->GetDBDefaultValue(mapDefault);
 
-int ToolApp::InsertByKey(int key, MapCNameToValueT& mapValues)
-{
-	CString strCurrentDB = m_pTree->GetCurrentDB();
-	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
-	ACCHECK(pExcelDB);
+	MapCNameToValueT mapCurrent;
+	OnSaveToDB(mapCurrent);
 
-	return pExcelDB->InsertByKey(key,mapValues);
-}
+	for(MapCNameToValueT::iterator iter = mapCurrent.begin(); iter != mapCurrent.end(); ++iter)
+	{
+		CString strCName = iter->first;
+		CString strValue = iter->second;
 
-int ToolApp::ModifyKey(int oldKey,int newKey)
-{
-	CString strCurrentDB = m_pTree->GetCurrentDB();
-	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
-	ACCHECK(pExcelDB);
+		MapCNameToValueT::iterator iterDefault = mapDefault.find(strCName);
+		if(iterDefault != mapDefault.end())
+			iterDefault->second = strValue;
+	}
 
-	return pExcelDB->ModifyKey(oldKey,newKey);
+	if(pExcelDB->InsertByKey(key,mapDefault) > 0)
+		return 0;
+	else
+		return -1;
 }
 
 void ToolApp::InsertCheckCombo(int nDlgID, CWnd* pCheckCombo)

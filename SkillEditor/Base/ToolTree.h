@@ -31,8 +31,6 @@ public:
 public:
 	void ResetSelectKey();
 	void SelectKey(int key);
-	int GetSelectKey();
-	void ModifyKey(int oldKey,int newKey);
 public:
 	int InsertUndefinedRoot();
 public:

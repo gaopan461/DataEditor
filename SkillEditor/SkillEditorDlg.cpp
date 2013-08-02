@@ -250,6 +250,7 @@ void CSkillEditorDlg::OpenExcelDBs()
 	mapMagicDefault[_T("Layer2")] = _T("");
 	mapMagicDefault[_T("Layer3")] = _T("");
 	mapMagicDefault[_T("Layer4")] = _T("");
+	pMagicDB->SetDBDefaultValue(mapMagicDefault);
 
 
 	// ‘ÿ»ÎAuraEffectTypeConfig±Ì

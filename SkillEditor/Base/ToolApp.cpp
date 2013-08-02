@@ -57,6 +57,12 @@ int ToolApp::InitializeTool(const CString& strAppName)
 	m_pMenu->AppendMenu(MF_STRING,ID_MENU_CANCEL,_T("取消"));
 	SetMenu(GetMainWnd()->GetSafeHwnd(),m_pMenu->GetSafeHmenu());
 
+	m_pMenu->EnableMenuItem(ID_MENU_NEW,FALSE);
+	m_pMenu->EnableMenuItem(ID_MENU_SAVE,FALSE);
+	m_pMenu->EnableMenuItem(ID_MENU_DELETE,FALSE);
+	m_pMenu->EnableMenuItem(ID_MENU_COPY,FALSE);
+	m_pMenu->EnableMenuItem(ID_MENU_CANCEL,TRUE);
+
 	INFO_MSG("--------------------------------------------");
 	INFO_MSG("               %s Start             ",CStringToStlString(strAppName).c_str());
 	INFO_MSG("--------------------------------------------");
@@ -117,6 +123,12 @@ int ToolApp::MenuNew()
 	m_bIsNewing = true;
 	m_pTree->EnableWindow(FALSE);
 
+	m_pMenu->EnableMenuItem(ID_MENU_NEW,TRUE);
+	m_pMenu->EnableMenuItem(ID_MENU_SAVE,FALSE);
+	m_pMenu->EnableMenuItem(ID_MENU_DELETE,TRUE);
+	m_pMenu->EnableMenuItem(ID_MENU_COPY,TRUE);
+	m_pMenu->EnableMenuItem(ID_MENU_CANCEL,FALSE);
+
 	CString strCurrentDB = m_pTree->GetCurrentDB();
 	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
 	ACCHECK(pExcelDB);
@@ -160,6 +172,12 @@ int ToolApp::MenuSave()
 		m_bIsNewing = false;
 		pKeyWnd->EnableWindow(FALSE);
 		m_pTree->EnableWindow(TRUE);
+
+		m_pMenu->EnableMenuItem(ID_MENU_NEW,FALSE);
+		m_pMenu->EnableMenuItem(ID_MENU_SAVE,FALSE);
+		m_pMenu->EnableMenuItem(ID_MENU_DELETE,FALSE);
+		m_pMenu->EnableMenuItem(ID_MENU_COPY,FALSE);
+		m_pMenu->EnableMenuItem(ID_MENU_CANCEL,TRUE);
 	}
 	else
 		SaveToDB(nKey);
@@ -169,16 +187,74 @@ int ToolApp::MenuSave()
 
 int ToolApp::MenuDelete()
 {
-	return 0;
+	CEdit* pKeyWnd = (CEdit*)GetCurrentKeyWindow();
+	ACCHECK(pKeyWnd);
+
+	CString strKey;
+	pKeyWnd->GetWindowText(strKey);
+	int nKey = atoi(CStringToStlString(strKey).c_str());
+
+	CString strCurrentDB = m_pTree->GetCurrentDB();
+	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
+	ACCHECK(pExcelDB);
+
+	return pExcelDB->DeleteByKey(nKey);
 }
 
 int ToolApp::MenuCopy()
 {
+	if(m_bIsNewing)
+		return -1;
+
+	m_bIsNewing = true;
+	m_pTree->EnableWindow(FALSE);
+
+	m_pMenu->EnableMenuItem(ID_MENU_NEW,TRUE);
+	m_pMenu->EnableMenuItem(ID_MENU_SAVE,FALSE);
+	m_pMenu->EnableMenuItem(ID_MENU_DELETE,TRUE);
+	m_pMenu->EnableMenuItem(ID_MENU_COPY,TRUE);
+	m_pMenu->EnableMenuItem(ID_MENU_CANCEL,FALSE);
+
+	CString strCurrentDB = m_pTree->GetCurrentDB();
+	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
+	ACCHECK(pExcelDB);
+
+	CEdit* pKeyWnd = (CEdit*)GetCurrentKeyWindow();
+	ACCHECK(pKeyWnd);
+
+	pKeyWnd->EnableWindow(TRUE);
+
+	// 设置key默认值
+	int nNewKey = pExcelDB->GetUnusedKey();
+	CString strNewKey;
+	strNewKey.Format(_T("%d"),nNewKey);
+	pKeyWnd->SetWindowText(strNewKey);
 	return 0;
 }
 
 int ToolApp::MenuCancel()
 {
+	if(!IsNewing())
+		return -1;
+
+	CString strCurrentDB = m_pTree->GetCurrentDB();
+	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
+	ACCHECK(pExcelDB);
+	
+	LoadFromDB(pExcelDB->GetLastSelectKey());
+
+	CEdit* pKeyWnd = (CEdit*)GetCurrentKeyWindow();
+	ACCHECK(pKeyWnd);
+
+	m_bIsNewing = false;
+	pKeyWnd->EnableWindow(FALSE);
+	m_pTree->EnableWindow(TRUE);
+
+	m_pMenu->EnableMenuItem(ID_MENU_NEW,FALSE);
+	m_pMenu->EnableMenuItem(ID_MENU_SAVE,FALSE);
+	m_pMenu->EnableMenuItem(ID_MENU_DELETE,FALSE);
+	m_pMenu->EnableMenuItem(ID_MENU_COPY,FALSE);
+	m_pMenu->EnableMenuItem(ID_MENU_CANCEL,TRUE);
 	return 0;
 }
 

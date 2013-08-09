@@ -19,6 +19,13 @@ BEGIN_NS_AC
 // 将行号列好转成Cell的名字，如(1000,52) = "AZ1000"
 CString MakeCellName(int nRow,int nCol);
 
+/**
+* @class ExcelWorkbook
+* @author gaopan
+* @date 2013年08月10日
+* @file ToolExcel.h
+* @brief 操作一个Excel的类，其中的sheet,column,row从0开始编号
+*/
 class ExcelWorkbook
 {
 public:
@@ -37,7 +44,11 @@ public:
 public:
 	void DeleteRow(int sheetidx,int row);
 	void GetRowText(int sheetidx,int row,std::vector<CString>& vtStr);
+	void GetRowText(int sheetidx,int row,COleSafeArray& rSA);
+	void SetRowText(int sheetidx,int row,std::vector<CString>& vtStr);
+	void SetRowText(int sheetidx,int row,COleSafeArray& rSA);
 	void InsertRow(int sheetidx,int row,std::vector<CString>& vtStr);
+	void InsertRow(int sheetidx,int row,COleSafeArray& rSA);
 	void InsertEmptyRow(int sheetidx,int row);
 	void AppendEmptyRow(int sheetidx);
 public:

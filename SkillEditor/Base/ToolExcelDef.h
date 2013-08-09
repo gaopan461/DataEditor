@@ -5,6 +5,14 @@
 #define covFalse COleVariant((short)FALSE)
 #define covOptional COleVariant((long)DISP_E_PARAMNOTFOUND, VT_ERROR)
 
+// Excel2003的行列限制
+#define EXCEL_ROW_MAX 65536
+#define EXCEL_COLUMN_MAX 256
+
+// Excel2007和Excel2010的行列限制
+// #define EXCEL_ROW_MAX 1048576
+// #define EXCEL_COLUMN_MAX 16384
+
 //Excel文件格式
 //http://msdn.microsoft.com/zh-cn/library/office/ff198017.aspx
 typedef enum

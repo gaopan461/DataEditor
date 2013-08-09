@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(VSInstallDir)..\Lua\5.1\include&quot;;&quot;$(ProjectDir)\COptionTree&quot;;&quot;$(ProjectDir)\Utils&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_BIND_TO_CURRENT_VCLIBS_VERSION"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"

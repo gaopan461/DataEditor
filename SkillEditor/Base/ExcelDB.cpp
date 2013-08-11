@@ -296,7 +296,7 @@ int ExcelDB::InsertByKey(int key, MapCNameToValueT& mapValues)
 	COleSafeArray sa;
 	MakeCOleSafeArray(sa,vtValues,m_vtDataTypes);
 
-	m_pWorkbook->SetRowText(nSheet,nRow,sa);
+	m_pWorkbook->InsertRow(nSheet,nRow,sa);
 
 	m_pWorkbook->SaveWorkbook();
 

@@ -23,6 +23,7 @@ enum EDataType
 	DATA_INT = 0,
 	DATA_FLOAT,
 	DATA_STRING,
+	DATA_BOOL,
 };
 
 enum ECtrlType
@@ -51,6 +52,7 @@ struct SExcelConfig
 	CString m_strDesCName;		// Excel中代表Des的列的表头名字
 	std::vector<CString> m_vtLayerCName; // Excel中代表Layer的列的表头名字
 	int m_nHeadRow;				// Excel中表头所在的行(索引从0开始)
+	int m_nTypeRow;				// Excel中表头类型所在的行(索引从0开始)
 	int m_nDataRow;				// Excel中数据起始的行(索引从0开始)
 };
 

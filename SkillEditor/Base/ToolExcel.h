@@ -24,7 +24,7 @@ CString MakeCellName(int nRow,int nCol);
 * @author gaopan
 * @date 2013年08月10日
 * @file ToolExcel.h
-* @brief 操作一个Excel的类，其中的sheet,column,row从0开始编号
+* @brief 操作一个Excel的类，其中的sheet,column,row从0开始编号; COleSafeArray的行列从1开始编号
 */
 class ExcelWorkbook
 {
@@ -37,23 +37,27 @@ public:
 	int GetUsedColumnCount(int sheetidx);
 public:
 	CString GetCellText(int sheetidx,int row,int col);
-	void SetCellText(int sheetidx,int row,int col,CString val);
-	void SetCellText(int sheetidx,int row,int col,int val);
+	void SetCellText(int sheetidx,int row,int col,const CString& val);
 public:
 	void SortAllSheetByColumn(int sortByCol,int startRow);
 public:
 	void DeleteRow(int sheetidx,int row);
+
 	void GetRowText(int sheetidx,int row,std::vector<CString>& vtStr);
 	void GetRowText(int sheetidx,int row,COleSafeArray& rSA);
+
 	void SetRowText(int sheetidx,int row,std::vector<CString>& vtStr);
 	void SetRowText(int sheetidx,int row,COleSafeArray& rSA);
+
 	void InsertRow(int sheetidx,int row,std::vector<CString>& vtStr);
 	void InsertRow(int sheetidx,int row,COleSafeArray& rSA);
+
 	void InsertEmptyRow(int sheetidx,int row);
-	void AppendEmptyRow(int sheetidx);
 public:
 	void SaveWorkbook();
 	void CloseWorkbook();
+private:
+	LPDISPATCH _GetRowRange(int sheetidx,int row);
 private:
 	CWorkbook m_objWorkbook;
 	CWorksheets m_objWorkSheets;
@@ -72,6 +76,7 @@ struct STreeItemInfo
 };
 
 typedef std::vector<STreeItemInfo> VectorTreeItemInfoT;
+typedef std::vector<int> VectorDataTypeT;
 
 typedef std::pair<bool,VectorTreeItemInfoT::iterator> PairTreeInfoFoundT;
 
@@ -100,8 +105,8 @@ public:
 	STreeItemInfo GetTreeItemInfo(int nSheet,int nRow);
 	int UpdateTreeItemInfo(STreeItemInfo& rTreeItemInfo,MapCNameToValueT& mapValues,bool bForcedUpdateTree = false);
 	PairTreeInfoFoundT FindTreeInfoByKey(int key);
-
-	int GetKeyInExcel(int sheet,int row);
+public:
+	int InitVectorDataTypes();
 public:
 	int GetLastSelectKey()
 	{
@@ -119,10 +124,12 @@ private:
 	std::vector<CString> m_vtLayerCName;// 控制主树控件层级的控件名
 
 	int m_nHeadRow;
+	int m_nTypeRow;
 	int m_nDataRow;
 	MapCNameToColumnT m_mapCNameToColumn;
 	VectorTreeItemInfoT m_vtTreeItemInfos;
 	MapCNameToValueT m_mapDefaultValue;
+	VectorDataTypeT m_vtDataTypes;
 private:
 	int m_nLastSelectKey;
 };

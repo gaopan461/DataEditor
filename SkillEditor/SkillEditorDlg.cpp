@@ -235,6 +235,7 @@ void CSkillEditorDlg::OpenExcelDBs()
 	magic.m_vtLayerCName.push_back(_T("Layer1"));
 	magic.m_vtLayerCName.push_back(_T("Layer2"));
 	magic.m_nHeadRow = 2;
+	magic.m_nTypeRow = 3;
 	magic.m_nDataRow = 5;
 	ExcelDB* pMagicDB = m_pExcel->OpenWorkbook(magic);
 	ACCHECK(pMagicDB);
@@ -260,6 +261,7 @@ void CSkillEditorDlg::OpenExcelDBs()
 	buff.m_strKeyCName = _T("ID");
 	buff.m_strDesCName = _T("Des");
 	buff.m_nHeadRow = 2;
+	buff.m_nTypeRow = 3;
 	buff.m_nDataRow = 5;
 	ExcelDB* pBuffDB = m_pExcel->OpenWorkbook(buff);
 	ACCHECK(pBuffDB);

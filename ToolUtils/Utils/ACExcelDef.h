@@ -1,5 +1,5 @@
-#ifndef _TOOL_EXCEL_DEF_H_
-#define _TOOL_EXCEL_DEF_H_
+#ifndef _AC_EXCEL_DEF_H_
+#define _AC_EXCEL_DEF_H_
 
 #define covTrue COleVariant((short)TRUE)
 #define covFalse COleVariant((short)FALSE)
@@ -12,6 +12,14 @@
 // Excel2007和Excel2010的行列限制
 // #define EXCEL_ROW_MAX 1048576
 // #define EXCEL_COLUMN_MAX 16384
+
+enum
+{
+	EXCEL_DATA_INT = 0,
+	EXCEL_DATA_FLOAT,
+	EXCEL_DATA_STRING,
+	EXCEL_DATA_BOOL,
+};
 
 //Excel文件格式
 //http://msdn.microsoft.com/zh-cn/library/office/ff198017.aspx
@@ -125,4 +133,4 @@ typedef enum
 	xlYes           = 1,    //不应对整个区域进行排序
 } XlYesNoGuess;
 
-#endif//_TOOL_EXCEL_DEF_H_
+#endif//_AC_EXCEL_DEF_H_

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "ToolDef.h"
 #include "ToolApp.h"
-#include "ToolExcel.h"
 #include "ToolTree.h"
 #include "ACLog.h"
 #include "CheckComboBox.h"

@@ -282,6 +282,14 @@
 			Name="Base"
 			>
 			<File
+				RelativePath=".\Base\ExcelDB.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Base\ExcelDB.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Base\ToolApp.cpp"
 				>
 			</File>
@@ -295,18 +303,6 @@
 			</File>
 			<File
 				RelativePath=".\Base\ToolDef.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolExcel.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolExcel.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Base\ToolExcelDef.h"
 				>
 			</File>
 			<File

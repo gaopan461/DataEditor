@@ -14,23 +14,24 @@
 
 BEGIN_NS_AC
 
-class ToolTree : public COptionTree, public Module<ToolApp>
+class ToolTree : public COptionTree
 {
 public:
-	ToolTree(ToolApp* app);
+	ToolTree();
 	virtual ~ToolTree();
 public:
 	BOOL Create(RECT rcRect, CWnd* pWnd, UINT nID);
 public:
 	int Create();
 public:
-	int SetCurrentDB(const CString& strDBName);
-	CString GetCurrentDB();
-public:
 	void OnSelect(int key);
 public:
 	void ResetSelectKey();
 	void SelectKey(int key);
+	int GetSelectedKey()
+	{
+		return m_nLastSelKey;
+	}
 public:
 	int InsertUndefinedRoot();
 public:
@@ -45,7 +46,6 @@ protected:
 	static BOOL CALLBACK EnumFindItemByInfoText(COptionTree* otProp, COptionTreeItem* otiItem, LPARAM lParam);
 private:
 	int m_nLastSelKey;
-	CString m_strDBName;
 	COptionTreeItem* m_pUndefinedRoot;
 };
 

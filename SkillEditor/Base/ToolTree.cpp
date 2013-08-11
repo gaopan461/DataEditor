@@ -1,17 +1,14 @@
 #include "stdafx.h"
 #include "ToolTree.h"
 #include "ToolApp.h"
-#include "ToolExcel.h"
 #include "Resource.h"
 
 BEGIN_NS_AC
 
-ToolTree::ToolTree(ToolApp* app)
-: Module<ToolApp>(app)
-, m_nLastSelKey(-1)
+ToolTree::ToolTree()
+: m_nLastSelKey(-1)
 , m_pUndefinedRoot(NULL)
 {
-	m_strDBName = _T("");
 }
 
 ToolTree::~ToolTree()
@@ -38,7 +35,7 @@ BOOL ToolTree::Create(RECT rcRect, CWnd* pWnd, UINT nID)
 
 int ToolTree::Create()
 {
-	CWnd* pParent = m_pOwner->GetMainWnd();
+	CWnd* pParent = ToolApp::Instance().GetMainWnd();
 	ACCHECK(pParent);
 
 	CRect rect;
@@ -54,34 +51,6 @@ int ToolTree::Create()
 	SetColumn(80);
 
 	return 0;
-}
-
-int ToolTree::SetCurrentDB(const CString& strDBName)
-{
-	if(strDBName == m_strDBName)
-		return 0;
-
-	m_strDBName = strDBName;
-
-	ExcelDB* pExcelDB = ToolApp::Instance().GetExcelTool()->GetWorkbook(m_strDBName);
-	if(pExcelDB == NULL)
-	{
-		CString strError = _T("DB not exist:");
-		strError.Append(m_strDBName);
-		ErrorMessageBox(strError);
-		ExitProcess(-1);
-	}
-
-	pExcelDB->DBToTree(this);
-	ResetSelectKey();
-	SelectKey(pExcelDB->GetLastSelectKey());
-	UpdatedItems();
-	return 0;
-}
-
-CString ToolTree::GetCurrentDB()
-{
-	return m_strDBName;
 }
 
 int ToolTree::UpdateOrInsertItemByKey(int key,CString& strDes,std::vector<CString>& vtLayers)
@@ -123,10 +92,6 @@ void ToolTree::OnSelect(int key)
 
 	m_nLastSelKey = key;
 
-	ExcelDB* pExcelDB = ToolApp::Instance().GetExcelTool()->GetWorkbook(m_strDBName);
-	ACCHECK(pExcelDB);
-
-	pExcelDB->SetLastSelectKey(key);
 	ToolApp::Instance().LoadFromDB(key);
 }
 

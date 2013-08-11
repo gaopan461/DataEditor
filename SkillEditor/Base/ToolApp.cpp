@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "ToolApp.h"
-#include "ACString.h"
-
 #include "ToolTree.h"
 #include "ToolLog.h"
-#include "ToolExcel.h"
+#include "ACExcel.h"
+#include "ExcelDB.h"
+
+#include "ACString.h"
 
 BEGIN_NS_AC
 
@@ -13,18 +14,24 @@ ToolApp* ToolApp::m_pInstance = NULL;
 ToolApp::ToolApp()
 : m_bIsNewing(false)
 {
+	m_strCurrentDB = _T("");
 	m_pInstance = this;
-	m_pTree = new ToolTree(this);
 	m_pLog = new ToolLog(this);
-	m_pExcel = new ToolExcel(this);
+	m_pExcelServer = new ACExcel();
 }
 
 ToolApp::~ToolApp()
 {
 	FinalizeTool();
-	_safe_delete(m_pTree);
+
+	for(std::map<CString,ExcelDB*>::iterator iter = m_mapExcelDBs.begin(); iter != m_mapExcelDBs.end(); ++iter)
+	{
+		_safe_delete(iter->second);
+	}
+	m_mapExcelDBs.clear();
+
 	_safe_delete(m_pLog);
-	_safe_delete(m_pExcel);
+	_safe_delete(m_pExcelServer);
 	m_pInstance = NULL;
 }
 
@@ -46,7 +53,6 @@ int ToolApp::InitializeTool(const CString& strAppName)
 		_T("Î¢ÈíÑÅºÚ")); // Facename
 
 	m_pLog->Create(strAppName);
-	m_pTree->Create();
 
 	m_pMenu = new CMenu;
 	m_pMenu->CreatePopupMenu();
@@ -93,8 +99,7 @@ int ToolApp::Update()
 
 int ToolApp::LoadFromDB(int key)
 {
-	CString strCurrentDB = m_pTree->GetCurrentDB();
-	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
+	ExcelDB* pExcelDB = m_mapExcelDBs[m_strCurrentDB];
 	ACCHECK(pExcelDB);
 
 	MapCNameToValueT mapValues;
@@ -105,8 +110,7 @@ int ToolApp::LoadFromDB(int key)
 
 int ToolApp::SaveToDB(int key)
 {
-	CString strCurrentDB = m_pTree->GetCurrentDB();
-	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
+	ExcelDB* pExcelDB = m_mapExcelDBs[m_strCurrentDB];
 	ACCHECK(pExcelDB);
 
 	MapCNameToValueT mapValues;
@@ -120,18 +124,20 @@ int ToolApp::MenuNew()
 	if(m_bIsNewing)
 		return -1;
 
+	ExcelDB* pExcelDB = m_mapExcelDBs[m_strCurrentDB];
+	ACCHECK(pExcelDB);
+
+	ToolTree* pTree = pExcelDB->GetTree();
+	ACCHECK(pTree);
+
 	m_bIsNewing = true;
-	m_pTree->EnableWindow(FALSE);
+	pTree->EnableWindow(FALSE);
 
 	m_pMenu->EnableMenuItem(ID_MENU_NEW,TRUE);
 	m_pMenu->EnableMenuItem(ID_MENU_SAVE,FALSE);
 	m_pMenu->EnableMenuItem(ID_MENU_DELETE,TRUE);
 	m_pMenu->EnableMenuItem(ID_MENU_COPY,TRUE);
 	m_pMenu->EnableMenuItem(ID_MENU_CANCEL,FALSE);
-
-	CString strCurrentDB = m_pTree->GetCurrentDB();
-	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
-	ACCHECK(pExcelDB);
 
 	// ÔØÈëÄ¬ÈÏÖµ
 	MapCNameToValueT mapDefault;
@@ -169,9 +175,15 @@ int ToolApp::MenuSave()
 			return -1;
 		}
 
+		ExcelDB* pExcelDB = m_mapExcelDBs[m_strCurrentDB];
+		ACCHECK(pExcelDB);
+
+		ToolTree* pTree = pExcelDB->GetTree();
+		ACCHECK(pTree);
+
 		m_bIsNewing = false;
 		pKeyWnd->EnableWindow(FALSE);
-		m_pTree->EnableWindow(TRUE);
+		pTree->EnableWindow(TRUE);
 
 		m_pMenu->EnableMenuItem(ID_MENU_NEW,FALSE);
 		m_pMenu->EnableMenuItem(ID_MENU_SAVE,FALSE);
@@ -194,8 +206,7 @@ int ToolApp::MenuDelete()
 	pKeyWnd->GetWindowText(strKey);
 	int nKey = atoi(CStringToStlString(strKey).c_str());
 
-	CString strCurrentDB = m_pTree->GetCurrentDB();
-	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
+	ExcelDB* pExcelDB = m_mapExcelDBs[m_strCurrentDB];
 	ACCHECK(pExcelDB);
 
 	return pExcelDB->DeleteByKey(nKey);
@@ -206,18 +217,20 @@ int ToolApp::MenuCopy()
 	if(m_bIsNewing)
 		return -1;
 
+	ExcelDB* pExcelDB = m_mapExcelDBs[m_strCurrentDB];
+	ACCHECK(pExcelDB);
+
+	ToolTree* pTree = pExcelDB->GetTree();
+	ACCHECK(pTree);
+
 	m_bIsNewing = true;
-	m_pTree->EnableWindow(FALSE);
+	pTree->EnableWindow(FALSE);
 
 	m_pMenu->EnableMenuItem(ID_MENU_NEW,TRUE);
 	m_pMenu->EnableMenuItem(ID_MENU_SAVE,FALSE);
 	m_pMenu->EnableMenuItem(ID_MENU_DELETE,TRUE);
 	m_pMenu->EnableMenuItem(ID_MENU_COPY,TRUE);
 	m_pMenu->EnableMenuItem(ID_MENU_CANCEL,FALSE);
-
-	CString strCurrentDB = m_pTree->GetCurrentDB();
-	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
-	ACCHECK(pExcelDB);
 
 	CEdit* pKeyWnd = (CEdit*)GetCurrentKeyWindow();
 	ACCHECK(pKeyWnd);
@@ -237,18 +250,20 @@ int ToolApp::MenuCancel()
 	if(!IsNewing())
 		return -1;
 
-	CString strCurrentDB = m_pTree->GetCurrentDB();
-	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
+	ExcelDB* pExcelDB = m_mapExcelDBs[m_strCurrentDB];
 	ACCHECK(pExcelDB);
+
+	ToolTree* pTree = pExcelDB->GetTree();
+	ACCHECK(pTree);
 	
-	LoadFromDB(pExcelDB->GetLastSelectKey());
+	LoadFromDB(pTree->GetSelectedKey());
 
 	CEdit* pKeyWnd = (CEdit*)GetCurrentKeyWindow();
 	ACCHECK(pKeyWnd);
 
 	m_bIsNewing = false;
 	pKeyWnd->EnableWindow(FALSE);
-	m_pTree->EnableWindow(TRUE);
+	pTree->EnableWindow(TRUE);
 
 	m_pMenu->EnableMenuItem(ID_MENU_NEW,FALSE);
 	m_pMenu->EnableMenuItem(ID_MENU_SAVE,FALSE);
@@ -260,8 +275,7 @@ int ToolApp::MenuCancel()
 
 int ToolApp::InsertByKey(int key)
 {
-	CString strCurrentDB = m_pTree->GetCurrentDB();
-	ExcelDB* pExcelDB = m_pExcel->GetWorkbook(strCurrentDB);
+	ExcelDB* pExcelDB = m_mapExcelDBs[m_strCurrentDB];
 	ACCHECK(pExcelDB);
 
 	MapCNameToValueT mapDefault;
@@ -298,6 +312,55 @@ CWnd* ToolApp::FindCheckCombo(int nDlgID)
 		return iter->second;
 
 	return NULL;
+}
+
+ExcelDB* ToolApp::OpenExcelDB(const SExcelConfig& rConfig)
+{
+	ExcelDB* pExcelDB = new ExcelDB();
+	ACCHECK(pExcelDB);
+
+	if(pExcelDB->OpenDB(rConfig) != 0)
+	{
+		_safe_delete(pExcelDB);
+
+		CString strErr;
+		strErr.Format(_T("OpenExcelDB failed:%s"),rConfig.m_strExcelPath);
+		ErrorMessageBox(strErr);
+		ExitProcess(-1);
+	}
+
+	m_mapExcelDBs.insert(std::make_pair(rConfig.m_strExcelCName,pExcelDB));
+	return pExcelDB;
+}
+
+void ToolApp::SetCurrentDB(const CString& strDBName)
+{
+	if(m_strCurrentDB == strDBName)
+		return;
+
+	if(!m_strCurrentDB.IsEmpty())
+	{
+		ExcelDB* pOldDB = m_mapExcelDBs[m_strCurrentDB];
+		ACCHECK(pOldDB);
+
+		ToolTree* pOldTree = pOldDB->GetTree();
+		ACCHECK(pOldTree);
+
+		pOldTree->ShowWindow(SW_HIDE);
+	}
+
+	m_strCurrentDB = strDBName;
+
+	if(!m_strCurrentDB.IsEmpty())
+	{
+		ExcelDB* pNewDB = m_mapExcelDBs[m_strCurrentDB];
+		ACCHECK(pNewDB);
+
+		ToolTree* pNewTree = pNewDB->GetTree();
+		ACCHECK(pNewTree);
+
+		pNewTree->ShowWindow(SW_SHOW);
+	}
 }
 
 END_NS_AC

@@ -215,6 +215,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Utils\ACExcel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Utils\ACExcel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Utils\ACExcelDef.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Utils\ACLog.cpp"
 				>
 			</File>

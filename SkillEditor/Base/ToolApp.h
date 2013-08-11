@@ -8,7 +8,8 @@ BEGIN_NS_AC
 
 class ToolTree;
 class ToolLog;
-class ToolExcel;
+class ACExcel;
+class ExcelDB;
 
 class ToolApp
 {
@@ -34,6 +35,11 @@ public:
 public:
 	int InsertByKey(int key);
 public:
+	ExcelDB* OpenExcelDB(const SExcelConfig& rConfig);
+public:
+	void SetCurrentDB(const CString& strDBName);
+	CString GetCurrentDB(){return m_strCurrentDB;}
+public:
 	virtual CWnd* GetMainWnd()
 	{
 		return NULL;
@@ -48,17 +54,13 @@ public:
 		return *m_pInstance;
 	}
 public:
-	ToolTree* GetMainTree()
-	{
-		return m_pTree;
-	}
 	ToolLog* GetMainLog()
 	{
 		return m_pLog;
 	}
-	ToolExcel* GetExcelTool()
+	ACExcel* GetExcelServer()
 	{
-		return m_pExcel;
+		return m_pExcelServer;
 	}
 public:
 	bool IsNewing()
@@ -70,9 +72,8 @@ private:
 private:
 	static ToolApp* m_pInstance;
 protected:
-	ToolTree* m_pTree;
 	ToolLog* m_pLog;
-	ToolExcel* m_pExcel;
+	ACExcel* m_pExcelServer;
 public:
 	CFont m_objFont;
 	CMenu* m_pMenu;
@@ -81,6 +82,8 @@ public:
 	CWnd* FindCheckCombo(int nDlgID);
 protected:
 	std::map<int,CWnd*> m_mapCheckCombos;
+	std::map<CString,ExcelDB*> m_mapExcelDBs;
+	CString m_strCurrentDB;
 };
 
 END_NS_AC

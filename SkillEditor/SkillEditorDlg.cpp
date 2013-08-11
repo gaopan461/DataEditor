@@ -6,7 +6,7 @@
 #include "SkillEditor.h"
 #include "SkillEditorDlg.h"
 
-#include "ToolExcel.h"
+#include "ExcelDB.h"
 #include "ToolTree.h"
 
 #ifdef _DEBUG
@@ -119,7 +119,7 @@ BOOL CSkillEditorDlg::OnInitDialog()
 	// 打开ExcelDB
 	OpenExcelDBs();
 
-	m_pTree->SetCurrentDB(_T("MagicType"));
+	SetCurrentDB(_T("MagicType"));
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -237,7 +237,7 @@ void CSkillEditorDlg::OpenExcelDBs()
 	magic.m_nHeadRow = 2;
 	magic.m_nTypeRow = 3;
 	magic.m_nDataRow = 5;
-	ExcelDB* pMagicDB = m_pExcel->OpenWorkbook(magic);
+	ExcelDB* pMagicDB = OpenExcelDB(magic);
 	ACCHECK(pMagicDB);
 
 	// 设置MagicTypeConfig表默认值
@@ -263,7 +263,7 @@ void CSkillEditorDlg::OpenExcelDBs()
 	buff.m_nHeadRow = 2;
 	buff.m_nTypeRow = 3;
 	buff.m_nDataRow = 5;
-	ExcelDB* pBuffDB = m_pExcel->OpenWorkbook(buff);
+	ExcelDB* pBuffDB = OpenExcelDB(buff);
 	ACCHECK(pBuffDB);
 
 	// 设置MagicTypeConfig表默认值
@@ -280,7 +280,7 @@ void CSkillEditorDlg::OpenExcelDBs()
 
 void CSkillEditorDlg::OnLoadFromDB(MapCNameToValueT& mapValues)
 {
-	CString strCurrentDB = m_pTree->GetCurrentDB();
+	CString strCurrentDB = GetCurrentDB();
 	if(strCurrentDB == _T("MagicType"))
 		m_objMagicWindow.OnLoadFromDB(mapValues);
 	else if(strCurrentDB == _T("AuraEffectType"))
@@ -289,7 +289,7 @@ void CSkillEditorDlg::OnLoadFromDB(MapCNameToValueT& mapValues)
 
 void CSkillEditorDlg::OnSaveToDB(MapCNameToValueT& mapValues)
 {
-	CString strCurrentDB = m_pTree->GetCurrentDB();
+	CString strCurrentDB = GetCurrentDB();
 	if(strCurrentDB == _T("MagicType"))
 		m_objMagicWindow.OnSaveToDB(mapValues);
 	else if(strCurrentDB == _T("AuraEffectType"))
@@ -298,7 +298,7 @@ void CSkillEditorDlg::OnSaveToDB(MapCNameToValueT& mapValues)
 
 CWnd* CSkillEditorDlg::GetCurrentKeyWindow()
 {
-	CString strCurrentDB = m_pTree->GetCurrentDB();
+	CString strCurrentDB = GetCurrentDB();
 	if(strCurrentDB == _T("MagicType"))
 		return m_objMagicWindow.GetDlgItem(IDC_MAGIC_ID);
 	else if(strCurrentDB == _T("AuraEffectType"))
@@ -322,13 +322,13 @@ void CSkillEditorDlg::OnTcnSelchangeMainTab(NMHDR *pNMHDR, LRESULT *pResult)
 	{
 	case 0:
 		m_nTabLastSel = 0;
-		m_pTree->SetCurrentDB(_T("MagicType"));
+		SetCurrentDB(_T("MagicType"));
 		m_objMagicWindow.ShowWindow(SW_SHOW);
 		m_objEffectCommonWindow.ShowWindow(SW_HIDE);
 		break;
 	case 1:
 		m_nTabLastSel = 1;
-		m_pTree->SetCurrentDB(_T("AuraEffectType"));
+		SetCurrentDB(_T("AuraEffectType"));
 		m_objMagicWindow.ShowWindow(SW_HIDE);
 		m_objEffectCommonWindow.ShowWindow(SW_SHOW);
 		break;

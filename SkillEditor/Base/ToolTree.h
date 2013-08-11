@@ -26,7 +26,6 @@ public:
 public:
 	void OnSelect(int key);
 public:
-	void ResetSelectKey();
 	void SelectKey(int key);
 	int GetSelectedKey()
 	{

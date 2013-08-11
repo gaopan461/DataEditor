@@ -95,11 +95,6 @@ void ToolTree::OnSelect(int key)
 	ToolApp::Instance().LoadFromDB(key);
 }
 
-void ToolTree::ResetSelectKey()
-{
-	m_nLastSelKey = -1;
-}
-
 void ToolTree::SelectKey(int key)
 {
 	if(key <= 0)

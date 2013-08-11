@@ -532,10 +532,12 @@ int ExcelDB::WriteDBRecord(int key, MapCNameToValueT& mapValues)
 		ToolApp::Instance().GetMainTree()->DeleteItemByKey(infoNew.m_nKey);
 		ToolApp::Instance().GetMainTree()->UpdateOrInsertItemByKey(infoNew.m_nKey,infoNew.m_strDes,infoNew.m_vtLayers);
 		ToolApp::Instance().GetMainTree()->SelectKey(key);
+		ToolApp::Instance().GetMainTree()->UpdatedItems();
 	}
 	else if(infoNew.m_strDes != rTreeItemInfo.m_strDes)
 	{
 		ToolApp::Instance().GetMainTree()->UpdateOrInsertItemByKey(infoNew.m_nKey,infoNew.m_strDes,infoNew.m_vtLayers);
+		ToolApp::Instance().GetMainTree()->UpdatedItems();
 	}
 
 	rTreeItemInfo = infoNew;
@@ -550,27 +552,6 @@ void ExcelDB::SetDBDefaultValue(MapCNameToValueT& mapDefault)
 void ExcelDB::GetDBDefaultValue(MapCNameToValueT& mapDefault)
 {
 	mapDefault = m_mapDefaultValue;
-}
-
-int ExcelDB::UpdateTreeItemInfo(STreeItemInfo& rTreeItemInfo,MapCNameToValueT& mapValues,bool bForcedUpdateTree /* = false */)
-{
-	bool bChanged = false;
-	for(MapCNameToValueT::iterator iter = mapValues.begin(); iter != mapValues.end(); ++iter)
-	{
-		// 更新描述信息
-		if(iter->first == m_strDesCName)
-		{
-			if(rTreeItemInfo.m_strDes == iter->second)
-				bChanged = true;
-
-			rTreeItemInfo.m_strDes = iter->second;
-		}
-
-		// 更新层级信息
-	}
-
-	ToolApp::Instance().GetMainTree()->UpdateOrInsertItemByKey(rTreeItemInfo.m_nKey,rTreeItemInfo.m_strDes,rTreeItemInfo.m_vtLayers);
-	return 0;
 }
 
 int ExcelDB::ReadDBRecord(int key, MapCNameToValueT& mapValues)
@@ -609,7 +590,6 @@ int ExcelDB::DBToTree(ToolTree* pTree)
 		pTree->UpdateOrInsertItemByKey(rTreeItemInfo.m_nKey,rTreeItemInfo.m_strDes,rTreeItemInfo.m_vtLayers);
 	}
 
-	//pTree->ExpandAllItems();
 	pTree->UpdatedItems();
 	return 0;
 }
@@ -674,6 +654,7 @@ int ExcelDB::InsertByKey(int key, MapCNameToValueT& mapValues)
 	// 更新tree
 	ToolApp::Instance().GetMainTree()->UpdateOrInsertItemByKey(infoNew.m_nKey,infoNew.m_strDes,infoNew.m_vtLayers);
 	ToolApp::Instance().GetMainTree()->SelectKey(key);
+	ToolApp::Instance().GetMainTree()->UpdatedItems();
 
 	return key;
 }
@@ -730,6 +711,7 @@ int ExcelDB::DeleteByKey(int key)
 	// 更新tree
 	ToolApp::Instance().GetMainTree()->DeleteItemByKey(key);
 	ToolApp::Instance().GetMainTree()->SelectKey(nNextKey);
+	ToolApp::Instance().GetMainTree()->UpdatedItems();
 
 	return nNextKey;
 }

@@ -75,6 +75,7 @@ int ToolTree::SetCurrentDB(const CString& strDBName)
 	pExcelDB->DBToTree(this);
 	ResetSelectKey();
 	SelectKey(pExcelDB->GetLastSelectKey());
+	UpdatedItems();
 	return 0;
 }
 
@@ -101,7 +102,6 @@ int ToolTree::UpdateOrInsertItemByKey(int key,CString& strDes,std::vector<CStrin
 	pOptItem->SetLabelText(strKey);
 	pOptItem->SetInfoText(strKey);
 	pOptItem->SetStaticText(strDes);
-	UpdatedItems();
 
 	return 0;
 }
@@ -144,9 +144,9 @@ void ToolTree::SelectKey(int key)
 	if(!pTreeItem)
 		return;
 
+	SelectItems(NULL,FALSE);
+	SelectItems(pTreeItem,TRUE);
 	SetFocusedItem(pTreeItem);
-	pTreeItem->Select(TRUE);
-	UpdatedItems();
 }
 
 int ToolTree::InsertUndefinedRoot()

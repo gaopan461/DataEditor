@@ -103,7 +103,6 @@ public:
 
 	int InitTreeItemInfos();
 	STreeItemInfo GetTreeItemInfo(int nSheet,int nRow);
-	int UpdateTreeItemInfo(STreeItemInfo& rTreeItemInfo,MapCNameToValueT& mapValues,bool bForcedUpdateTree = false);
 	PairTreeInfoFoundT FindTreeInfoByKey(int key);
 public:
 	int InitVectorDataTypes();
